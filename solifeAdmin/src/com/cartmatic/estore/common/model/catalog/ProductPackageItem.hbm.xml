@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.cartmatic.estore.common.model.catalog.ProductPackageItem" table="PRODUCT_PACKAGE_ITEM" select-before-update="false" dynamic-update="false" dynamic-insert="false" optimistic-lock="version">
+		<id name="productPackageItemId" column="productPackageItemId" type="java.lang.Integer" length="10">
+			<generator class="native" />
+		</id>
+		<property name="sortOrder" type="java.lang.Integer" update="true" insert="true" access="property" column="sortOrder" length="10" not-null="false" unique="false" />
+		<property name="quantity" type="java.lang.Integer" update="true" insert="true" access="property" column="quantity" length="10" not-null="true" unique="false" />
+		<!-- imported bi-directional many-to-one association to ProductSku -->
+		<many-to-one name="productSku" class="com.cartmatic.estore.common.model.catalog.ProductSku" not-null="false" fetch="select">
+			<column name="packageSkuId" />
+		</many-to-one>
+		<!-- imported bi-directional many-to-one association to ItemSku -->
+		<many-to-one name="itemSku" class="com.cartmatic.estore.common.model.catalog.ProductSku" not-null="false" fetch="select">
+			<column name="itemSkuId" />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

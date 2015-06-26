@@ -1,0 +1,12 @@
+<Context path="/StoreAdmin" reloadable="false" swallowOutput="false"
+	antiJARLocking="false" antiResourceLocking="false"
+	privileged="false">
+
+	<!-- <Resource name="jdbc/cartmatic" auth="Container" type="javax.sql.DataSource"
+		maxActive="100" maxIdle="30" maxWait="10000"
+		driverClassName="com.mysql.jdbc.Driver"
+		username="cartmatic" password="cartmatic" 
+		url="jdbc:mysql://localhost/cartmatic?useUnicode=true&amp;characterEncoding=utf-8"
+		defaultAutoCommit="true" removeAbandoned="true" 
+		removeAbandonedTimeout="60" logAbandoned="true"/> -->
+</Context>

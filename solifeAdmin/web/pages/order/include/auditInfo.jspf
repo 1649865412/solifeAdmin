@@ -1,0 +1,131 @@
+<%@page import="com.cartmatic.estore.core.model.AppUser"%>
+<%@page import="com.cartmatic.estore.webapp.util.RequestContext"%>
+<%@ taglib prefix="cartmatic" tagdir="/WEB-INF/tags/cartmatic"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%
+AppUser appUser = (AppUser) RequestContext.getCurrentUser();
+request.setAttribute("curUsername", appUser.getUsername());
+%>
+<fmt:message key="orderAudit.addedBy" var="addedBy"/>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table-content">
+	<tr>
+		<th>
+			<fmt:message key="order.noteInfo.list" />
+		</th>
+	</tr>
+	<tr>
+		<td class="FieldLabel">
+			<cartmatic:iconBtn icon="plus" textKey="common.link.add" onclick="fnAddNote();" />
+			<table cellspacing="0" cellpadding="0" style="margin-left:0;">
+				<tr>
+					<th><fmt:message key="common.message.createTime"/></th>
+					<th>${addedBy}</th>
+					<th><fmt:message key="orderAudit.detail"/></th>
+					<th><fmt:message key="common.action"/></th>
+				</tr>
+				<c:forEach var="orderAudit" items="${salesOrder.orderAudits}">
+				<tr>
+					<td><fmt:formatDate value="${orderAudit.createTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+					<td><span id="addedByTd${orderAudit.orderAuditId}">${orderAudit.addedBy}</span></td>
+					<td><span id="detailTd${orderAudit.orderAuditId}">${orderAudit.detail}</span></td>
+					<td style="text-align:center">
+					<%--编辑状态下才显示，修改审计信息--%>
+						<c:if test="${salesOrder.unlockOrderPermission}">
+							<c:choose>
+								<c:when test="${curUsername eq orderAudit.addedBy}"><cartmatic:iconBtn icon="plus" textKey="common.link.edit" onclick="fnOpenNote('edit', ${orderAudit.orderAuditId});" /></c:when>
+								<c:otherwise><%--<a href="javascript:fnOpenNote('view', ${orderAudit.orderAuditId});"><fmt:message key="common.link.view" /></a>--%></c:otherwise>
+							</c:choose>
+						</c:if>
+					</td>
+				</tr>
+				</c:forEach>
+			</table>
+		</td>
+	</tr>
+</table>
+<fmt:message key="salesOrder.addNote" var="addNoteTitle"/>
+<fmt:message key="common.message.complete" var="buttonComplete"/>
+<fmt:message key="common.message.cancel" var="buttonCancel"/>
+<app:ui_dialog id="AddNoteDlg" title="${addNoteTitle}" width="500" height="280" buttons="'${buttonComplete}':fnCompleteAddOrEditNote, '${buttonCancel}':dlgAddNoteDlg_close">
+		<form method="post" cssClass="mainForm" id="addNoteForm">
+		<input type="hidden" id="orderAuditId" name="orderAuditId" value=""/>
+			<table cellSpacing="5" cellPadding="0" width="100%" border="0">
+		 		<tr>
+					<td width="20%" align="right" height="20px">
+						<br>${addedBy}
+					</td>
+					<td>
+						<br><span id="addedBy"></span>
+					</td>
+				</tr>
+				<tr>
+					<td width="15%" align="right">
+						<br><fmt:message key="orderAudit.noteContent"/><span class="req">(*)</span>
+					</td>
+					<td>
+						<br><textarea type="textarea" id="detail" name="detail" rows="5" class="Field300"></textarea>
+					</td>
+				</tr>
+			</table>
+		</form>
+</app:ui_dialog>
+<script type="text/javascript">
+	applyValidate($("detail"),"required");
+	
+	var _curUsername = '${curUsername}';
+	function fnAddNote(){
+		fnClear();
+		$j("#addedBy").text(_curUsername);
+		if($j("#detail").attr("disabled"))
+				$j("#detail").removeAttr("disabled");
+		dlgAddNoteDlg_show(null);
+		dlgAddNoteDlg_enableBtn('${buttonComplete}');
+	}
+	function fnCompleteAddOrEditNote(){
+		if(!validateRequired(document.getElementById("detail").value)){
+			alert(__vaMsg.notPass);
+			return;
+		}
+		var parameters = {detail:$j("#detail").val()};
+		var orderAuditId = $j("#orderAuditId").val();
+		if(orderAuditId){
+			parameters['orderAuditId']=orderAuditId;
+			$j.post(__ctxPath+'/order/salesOrder.html?doAction=editNote&orderNo=${salesOrder.orderNo}', parameters, fnCompleteAddOrEditNoteCallbackHandler,"json");
+		}else{
+    		parameters['salesOrderId']="${salesOrder.salesOrderId}";
+    		$j.post(__ctxPath+'/order/salesOrder.html?doAction=addNote&orderNo=${salesOrder.orderNo}', parameters, fnCompleteAddOrEditNoteCallbackHandler,"json");
+    	}
+    }
+    
+    function fnCompleteAddOrEditNoteCallbackHandler(result){
+    	sysMsg4p(result.msg,result.status!=1);
+        if(result.status==1){
+        	dlgAddNoteDlg_close();
+        	window.location.href=__ctxPath+'/order/window.html?doAction=edit&salesOrderId=${salesOrder.salesOrderId}&tabIndex=0&tid=${param.tid}';
+        }
+    }
+    
+    function fnOpenNote(actionType, orderAuditId){
+   	 	fnClear();
+   		$j("#detail").val( $j("#detailTd"+orderAuditId).text() );
+   		$j("#addedBy").text($j("#addedByTd"+orderAuditId).text());
+		dlgAddNoteDlg_show(null);
+    	if(actionType=='view'){
+    		$j("#detail").attr("disabled","true");
+    		$j("#orderAuditId").val("");
+    		dlgAddNoteDlg_disableBtn('${buttonComplete}');
+    	}else{
+    		if($j("#detail").attr("disabled"))
+				$j("#detail").removeAttr("disabled");
+			$j("#orderAuditId").val(orderAuditId);
+			dlgAddNoteDlg_enableBtn('${buttonComplete}');
+    	}
+    }
+    
+    function fnClear(){
+   	 	$j("#orderAuditId").val("");
+   	 	$j("#addedBy").text("");
+    	$j("#detail").val("");
+   		
+    }
+</script>

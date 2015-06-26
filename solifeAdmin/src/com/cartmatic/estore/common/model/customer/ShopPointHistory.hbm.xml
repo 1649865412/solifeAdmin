@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.customer.ShopPointHistory"
+        table="SHOP_POINT_HISTORY"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="shopPointHistoryId"
+            column="shopPointHistoryId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+         <property
+            name="shopPointType"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="shopPointType"
+            length="5"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="description"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="description"
+            length="128"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="amount"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="amount"
+            length="10"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="createTime"
+            type="java.util.Date"
+            update="true"
+            insert="true"
+            access="property"
+            column="createTime"
+            length="0"
+            not-null="false"
+            unique="false"
+        />
+     <!-- imported bi-directional many-to-one association to AppUser -->
+		<many-to-one
+			name="customer"
+			class="com.cartmatic.estore.common.model.customer.Customer"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="customerId" />
+		</many-to-one>
+    </class>
+</hibernate-mapping>

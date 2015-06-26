@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.system.TaxRate"
+        table="TAX_RATE"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="taxRateId"
+            column="taxRateId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+ 		<version
+            name="version"
+            type="java.lang.Integer"
+            column="version"
+            access="property"
+            unsaved-value="undefined"
+        />
+        <property
+            name="formula"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="formula"
+            length="255"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="rateValue"
+            type="java.math.BigDecimal"
+            update="true"
+            insert="true"
+            access="property"
+            column="rateValue"
+            precision="12"
+            scale="2"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="rateType"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="rateType"
+            length="5"
+            not-null="false"
+            unique="false"
+        />
+     <!-- imported bi-directional many-to-one association to Tax -->
+		<many-to-one
+			name="tax"
+			class="com.cartmatic.estore.common.model.system.Tax"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="taxId" />
+		</many-to-one>
+    <!-- imported bi-directional many-to-one association to ProductType -->
+		<many-to-one
+			name="productType"
+			class="com.cartmatic.estore.common.model.catalog.ProductType"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="productTypeId" />
+		</many-to-one>
+    <!-- imported bi-directional many-to-one association to Region -->
+		<many-to-one
+			name="region"
+			class="com.cartmatic.estore.common.model.system.Region"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="regionId" />
+		</many-to-one>
+    </class>
+</hibernate-mapping>

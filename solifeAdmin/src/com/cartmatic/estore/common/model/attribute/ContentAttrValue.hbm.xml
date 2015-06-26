@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.attribute.ContentAttrValue"
+        table="content_attr_value"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="contentAttrValueId"
+            column="contentAttrValueId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+         <property
+            name="shortTextValue"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="shortTextValue"
+            length="255"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="longTextValue"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="longTextValue"
+            length="65535"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="intValue"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="intValue"
+            length="10"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="decimalValue"
+            type="java.math.BigDecimal"
+            update="true"
+            insert="true"
+            access="property"
+            column="decimalValue"
+            precision="12"
+            scale="2"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="booleanValue"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="booleanValue"
+            length="5"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="attributeDataType"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="attributeDataType"
+            length="10"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="dateValue"
+            type="java.util.Date"
+            update="true"
+            insert="true"
+            access="property"
+            column="dateValue"
+            length="10"
+            not-null="false"
+            unique="false"
+        />    
+     <!-- imported bi-directional many-to-one association to Content -->
+		<many-to-one
+			name="content"
+			class="com.cartmatic.estore.common.model.content.Content"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="contentId" />
+		</many-to-one>
+    <!-- imported bi-directional many-to-one association to Attribute -->
+		<many-to-one
+			name="attribute"
+			class="com.cartmatic.estore.common.model.attribute.Attribute"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="attributeId" />
+		</many-to-one>
+    </class>
+</hibernate-mapping>

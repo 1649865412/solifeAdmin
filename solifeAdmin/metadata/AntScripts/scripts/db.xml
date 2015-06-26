@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--数据导入导出是独立于数据库的，所以应统一从缺省数据库导出一次即可-->
+<project name="DataScripts" basedir="../../../">
+	<property name="dir.this" location="${ant.file}/../" />
+	<property name="dir.conf" location="${dir.this}/../conf" />
+	<!-- 总控文件，但可以不存在 -->
+	<property file="${dir.conf}/control.properties" />
+
+	<path id="db.classpath">
+		<fileset dir="${basedir}/web/WEB-INF/lib" includes="*.jar" />
+		<fileset dir="${basedir}/metadata/ant-script/lib" includes="*.jar" />
+	</path>
+	<taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="db.classpath" />
+	<taskdef name="dbunit" classname="org.dbunit.ant.DbUnitTask" classpathref="db.classpath" />
+
+	<target name="init" description="--> ">
+		<tstamp>
+			<format property="TIMESTAMP" pattern="yyyyMMddHHmmss" />
+		</tstamp>
+		<property file="${dir.conf}/${current.db.conf}.properties" />
+		<property file="${basedir}/common/conf/app-config_user.properties" />
+		<property file="${basedir}/common/conf/app-config.properties" />
+		<property file="${dir.conf}/db.properties" />
+	</target>
+
+	<target name="switch" description="切换使用不同的数据库配置文件，缺省是db.properties">
+		<echo message="Current database configuration is: ${current.db.conf}" />
+		<input message="Input target database configuration [mysql, oracle, mssql, db2]:" addproperty="current.db.conf.new" />
+		<propertyfile file="${dir.conf}/control.properties">
+			<entry key="current.db.conf" value="${current.db.conf.new}" />
+		</propertyfile>
+	</target>
+
+	<target name="_exec_sqls" depends="init" description="--> exec multiple sql files">
+		<for list="${sql.files}" param="sql.file">
+			<sequential>
+				<sql encoding="utf-8" onerror="continue" driver="${jdbc.driverClassName}" url="${jdbc.url}" userid="${jdbc.username}" password="${jdbc.password}" classpathref="db.classpath">
+					<fileset dir="${dir.sql}">
+						<include name="@{sql.file}" />
+					</fileset>
+				</sql>
+			</sequential>
+		</for>
+	</target>
+
+	<target name="create-db" description="--> create database">
+		<antcall target="_exec_sqls">
+			<param name="sql.files" value="${createdb.sqlfiles}" />
+		</antcall>
+	</target>
+
+	<target name="run-change" description="--> running change.sql">
+		<antcall target="_exec_sqls">
+			<param name="sql.files" value="change.sql" />
+		</antcall>
+	</target>
+
+	<target name="run-change-dev" description="--> running change_dev.sql">
+		<antcall target="_exec_sqls">
+			<param name="sql.files" value="change_dev.sql" />
+		</antcall>
+	</target>
+
+	<target name="export-all" depends="init">
+		<dbunit driver="${jdbc.driverClassName}" url="${jdbc.url}" userid="${jdbc.username}" password="${jdbc.password}" classpathref="db.classpath">
+			<export dest="${xml.all.data.file}" format="xml">
+				<table name="HELP" />
+				<table name="MENU" />
+				<table name="MESSAGE_LIST" />
+				<table name="MEMBERSHIP" />
+				<table name="CURRENCY" />
+				<table name="SYSTEM_CONFIG" />
+				<table name="PAYMENT_GATEWAY" />
+				<table name="PAYMENT_METHOD" />
+				<table name="DEPARTMENT" />
+				<table name="METRIC_TYPE" />
+				<table name="METRIC_UNIT" />
+				<table name="PRODUCT_VARIATION" />
+				<table name="ATTRIBUTE" />
+				<table name="ATTRIBUTE_OPTION" />
+				<table name="CARRIER" />
+				<table name="SHIPPING_METHOD" />
+				<table name="TAX" />
+				<table name="MENU_MENU" />
+				<table name="TEMPLATE_SET" />
+
+				<table name="GIFT_CERTIFICATE" />
+				<table name="APP_ROLE" />
+				<table name="PRODUCT_SERIES" />
+				<table name="PUBLISH_HISTORY" />
+				<table name="VARIATION_ITEM" />
+				<table name="CUSTOMER_MESSAGE_LIST" />
+				<table name="WRAP" />
+				<table name="APP_USER" />
+				<table name="AD_POSITION_TYPE" />
+				<table name="RECOMMENDED_TYPE" />
+
+				<table name="PROVIDER" />
+				<table name="MANUFACTURER" />
+				<table name="PRODUCT_TYPE" />
+				<table name="PRODUCT" />
+
+				<table name="REGION" />
+				<table name="REGION_ITEM" />
+				<table name="MODULE_HELP" />
+				<table name="MEDIA_MAPPING_RULE" />
+				<table name="PRODUCT_ATTRIBUTE_VALUE" />
+				<table name="RECOMMENDED_TYPE_LOCATION" />
+				<table name="SYSTEM_MESSAGE" />
+				<table name="APP_ADMIN" />
+				<table name="SHIPPING_RATE" />
+				<table name="PROMOTION" />
+				<table name="COUPON_TYPE" />
+				<table name="PROMOTION_PRODUCT" />
+				<table name="COUPON" />
+				<table name="ADDRESS" />
+				<table name="CUSTOMER" />
+				<table name="USER_ROLE" />
+				<table name="ADVERTISEMENT" />
+				<table name="CATEGORY" />
+				<table name="CATEGORY_SHIPPING_RATE" />
+				<table name="ADVERTISEMENT_POSITION" />
+				<table name="SALES_ORDER" />
+				<table name="ORDER_COUPON" />
+				<table name="PRODUCT_ADVERTISEMENT" />
+				<table name="TAX_RATE" />
+				<table name="CATEGORY_CATEGORY" />
+
+				<table name="SHOPPINGCART" />
+
+
+
+				<table name="RECOMMENDED_PRODUCT" />
+				<table name="PRODUCT_CATEGORY" />
+				<table name="PRODUCT_SERIES_ITEM" />
+				<table name="PRODUCT_RATING" />
+				<table name="PRODUCT_PACKAGE_ITEM" />
+				<table name="PRODUCT_REVIEW" />
+				<table name="SHOPPINGCART_ITEM" />
+				<table name="PRODUCT_MEDIA" />
+				<table name="SAVED_PRODUCT_LIST" />
+				<table name="SHOPPINGCART_ITEM_PROMOTION" />
+				<table name="ORDER_ITEM" />
+				<table name="ORDER_ITEM_ATTRIBUTE" />
+				<table name="ORDER_ITEM_PROMOTION" />
+				<table name="ORDER_SHIPMENT_ITEM" />
+				<table name="REPORT_FOLDER" />
+				<table name="REPORT" />
+				<table name="COMPANY_INFO" />
+				<table name="SORT_ORDER" />
+				<table name="VALIDATION_SESSION" />
+				<table name="RESOURCE" />
+				<table name="ROLE_RES" />
+				<table name="CONTENT_TYPE" />
+				<table name="CONTENT" />
+				<table name="CHECKOUT_FLOW" />
+			</export>
+		</dbunit>
+	</target>
+
+	<!--TODO是不是要切换一个数据库，或者用一个配置文件啊-->
+	<target name="export-init" depends="init" description="--> description">
+		<property file="${dir.conf}/initdb.properties" />
+		<antcall target="_exec_sqls">
+			<param name="sql.files" value="${init.sqlfiles}" />
+		</antcall>
+		<antcall target="export-all" />
+	</target>
+
+	<target name="export-product" depends="init">
+		<dbunit driver="${jdbc.driverClassName}" url="${jdbc.url}" userid="${jdbc.username}" password="${jdbc.password}" classpathref="db.classpath">
+			<export dest="${xml.product.data.file}" format="xml">
+				<table name="PRODUCT" />
+				<table name="PRODUCT_CATEGORY" />
+			</export>
+		</dbunit>
+	</target>
+
+	<target name="_import-data" depends="init">
+		<property name="operation" value="${import.operation.type}" />
+		<dbunit supportBatchStatement="false" driver="${jdbc.driverClassName}" url="${jdbc.url}" userid="${jdbc.username}" password="${jdbc.password}" classpathref="db.classpath">
+			<operation type="${operation}" src="${data.file}" format="xml" />
+		</dbunit>
+	</target>
+
+	<target name="import-all">
+		<property name="data.file" value="${xml.all.data.file}"/>
+		<antcall target="_import-data"/>
+	</target>
+
+	<target name="import-product">
+		<property name="data.file" value="${xml.product.data.file}"/>
+		<antcall target="_import-data"/>
+	</target>
+
+	<target name="import-init">
+		<property name="data.file" value="${xml.init.data.file}"/>
+		<antcall target="_import-data"/>
+	</target>
+
+	<target name="dump-schema" depends="init">
+		<exec executable="cmd.exe" vmlauncher="false" osfamily="windows">
+			<arg value="/c" />
+			<arg value="${dump.mysqldump.path}" />
+			<arg value="-h" />
+			<arg value="${dump.host}" />
+			<arg value="-u" />
+			<arg value="${dump.user}" />
+			<arg value="-p${dump.password}" />
+			<arg value="${dump.schema}" />
+			<arg value=">${dump.out.file}" />
+		</exec>
+	</target>
+	
+</project>

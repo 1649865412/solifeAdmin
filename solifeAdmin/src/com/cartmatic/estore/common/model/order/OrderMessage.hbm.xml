@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.order.OrderMessage"
+        table="order_message"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="orderMessageId"
+            column="orderMessageId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+         <property
+            name="subject"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="subject"
+            length="128"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="message"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="message"
+            length="65535"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="customerId"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="customerId"
+            length="10"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="orderNo"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="orderNo"
+            length="20"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="status"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="status"
+            length="5"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="createTime"
+            type="java.util.Date"
+            update="true"
+            insert="true"
+            access="property"
+            column="createTime"
+            length="0"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="createBy"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="createBy"
+            length="10"
+            not-null="true"
+            unique="false"
+        />
+         <!-- imported bi-directional many-to-one association to SalesOrder -->
+		<many-to-one
+			name="salesOrder"
+			class="com.cartmatic.estore.common.model.order.SalesOrder"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="salesOrderId" />
+		</many-to-one>
+    	<!-- imported bi-directional many-to-one association to OrderAddress -->
+     </class>
+</hibernate-mapping>

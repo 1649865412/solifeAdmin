@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd"
+        updateCheck="false" monitoring="autodetect"
+        dynamicConfig="true" name="hibernateL2">
+
+    
+    <diskStore path="java.io.tmpdir/SAHCache"/>
+
+    
+    <defaultCache
+            maxElementsInMemory="10000"
+            eternal="false"
+            timeToIdleSeconds="300"
+            timeToLiveSeconds="600"
+            overflowToDisk="false"
+            diskSpoolBufferSizeMB="30"
+            maxElementsOnDisk="10000000"
+            diskPersistent="false"
+            diskExpiryThreadIntervalSeconds="120"
+            memoryStoreEvictionPolicy="LRU"
+            />
+
+	<cache name="com.cartmatic.estore.common.model.catalog.Category"
+		maxElementsInMemory="400"
+		eternal="false"
+		timeToIdleSeconds="300"
+		timeToLiveSeconds="600"
+		overflowToDisk="false"
+	/>
+
+	<cache name="com.cartmatic.estore.common.model.customer.Membership"
+		maxElementsInMemory="10"
+		eternal="false"
+		timeToIdleSeconds="3600"
+		timeToLiveSeconds="7200"
+		overflowToDisk="false"
+	/>	
+	
+	<cache name="com.cartmatic.estore.common.model.sales.RecommendedType"
+		maxElementsInMemory="20"
+		eternal="false"
+		timeToIdleSeconds="600"
+		timeToLiveSeconds="1200"
+		overflowToDisk="false"
+	/>
+	
+	<cache name="com.cartmatic.estore.common.model.attribute.Attribute"
+		maxElementsInMemory="100"
+		eternal="false"
+		timeToIdleSeconds="600"
+		timeToLiveSeconds="1200"
+		overflowToDisk="false"
+	/>
+
+	<cache name="com.cartmatic.estore.common.model.catalog.Brand"
+		maxElementsInMemory="100"
+		eternal="false"
+		timeToIdleSeconds="600"
+		timeToLiveSeconds="1200"
+		overflowToDisk="false"
+	/>
+</ehcache>

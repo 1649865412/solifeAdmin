@@ -1,0 +1,15 @@
+<%--请按以下顺序定义：1、dynamic.js；2、第三方js；3、jquery.js和core.js；4、其他框架用js；5、dwr的js；6、模块的js不应该在这里定义 --%>
+<script type="text/javascript" src="${ctxPath}/scripts/jquery/jquery-1.6.2.min.js"></script>
+
+<script type="text/javascript" src="${ctxPath}/scripts/cartmatic/dynamic.jsp"></script>
+
+<script type="text/javascript" src="${ctxPath}/scripts/cartmatic/framework/core.js"></script>
+<script type="text/javascript" src="${ctxPath}/scripts/cartmatic/framework/storeadmin.js"></script>
+<script type="text/javascript" src="${ctxPath}/scripts/cartmatic/framework/validation.js"></script>
+<script type="text/javascript" src="${ctxPath}/scripts/jquery/ui/jquery-ui-1.8.16.custom.min.js"></script>
+<script type="text/javascript" src="${ctxPath}/scripts/jquery/ui/i18n/jquery.ui.datepicker-zh-CN.js"></script>
+
+<script type="text/javascript">
+var $j = jQuery.noConflict();
+</script>
+

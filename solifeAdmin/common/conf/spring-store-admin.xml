@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd" default-lazy-init="true">
+	<!-- For all application initialization settings -->
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" lazy-init="false">
+        <property name="locations">
+            <list>
+                <value>classpath:conf/app-config.properties</value>
+                <value>classpath:conf/app-config_user.properties</value>
+            </list>
+        </property>
+        <property name="ignoreResourceNotFound" value="true" />
+        <property name="ignoreUnresolvablePlaceholders" value="true" />
+    </bean>
+	<!--Sytem (non-user) messages, spring will integrate them into JSTL-->
+	<bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="fallbackToSystemLocale" value="false" />
+		<property name="useCodeAsDefaultMessage" value="false" />
+		<property name="cacheSeconds" value="${messageSource.cacheSeconds}" />
+		<property name="defaultEncoding" value="UTF-8" />
+		<property name="basenames">
+			<list>
+				<value>/WEB-INF/classes/conf/version</value>
+				<value>/WEB-INF/classes/messages/StoreAdmin</value>
+				<value>/WEB-INF/classes/messages/Config</value>
+				<value>/WEB-INF/classes/messages/TemplateDescription</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="sitemeshFilterBean" class="com.opensymphony.sitemesh.webapp.SiteMeshFilter">
+	</bean>
+	<bean id="appEventHandler" class="com.cartmatic.estore.webapp.event.DefaultAppEventHandler">
+	</bean>
+	<bean id="uploadManager" class="com.cartmatic.estore.content.service.impl.UploadManagerImpl">
+		<property name="cleanUnusefulImageTypes">
+			<map>
+				<!-- value 为mediaType -->
+				<entry key="ProductImage" value="product"/>
+				<entry key="ProductMediaImage" value="productMedia"/>
+			</map>
+		</property>
+		<property name="imageProcessor">
+			<ref bean="imageProcessorImageMagick"/>
+		</property>
+		<property name="productSkuManager">
+			<ref bean="productSkuManager"/>
+		</property>
+		<property name="productMediaManager">
+			<ref bean="productMediaManager"/>
+		</property>
+		<property name="imageConfs">
+			<list>
+				<bean class="com.cartmatic.estore.webapp.action.ImageConf">
+					<!-- mediaType 为图片所在目录 -->
+					<property name="mediaType" value="product"/>
+					<property name="originalImageCategory" value="v"/>
+					<property name="keepOriginalImage" value="true"/>
+					<property name="imageProcessorConfMap" ref="imageProcessorConfs"/>
+					<property name="imageProcessorConfs" value="${image.config.product}" />
+				</bean>
+				<bean class="com.cartmatic.estore.webapp.action.ImageConf">
+					<property name="mediaType" value="productMedia"/>
+					<property name="originalImageCategory" value="v"/>
+					<property name="keepOriginalImage" value="true"/>
+					<property name="imageProcessorConfMap" ref="imageProcessorConfs"/>
+					<property name="imageProcessorConfs" value="${image.config.productMedia}" />
+				</bean>				
+				<bean class="com.cartmatic.estore.webapp.action.ImageConf">
+					<property name="mediaType" value="category"/>
+					<property name="originalImageCategory" value="v"/>
+					<property name="keepOriginalImage" value="true"/>
+					<property name="imageProcessorConfMap" ref="imageProcessorConfs"/>
+					<property name="imageProcessorConfs" value="${image.config.category}" />
+				</bean>				
+				<bean class="com.cartmatic.estore.webapp.action.ImageConf">
+					<property name="mediaType" value="a_and_d"/>
+				</bean>
+				
+				<bean class="com.cartmatic.estore.webapp.action.ImageConf">
+					<property name="mediaType" value="skuOptionValue"/>
+				</bean>
+				<bean class="com.cartmatic.estore.webapp.action.ImageConf">
+					<property name="mediaType" value="other"/>
+				</bean>
+				<bean class="com.cartmatic.estore.webapp.action.ImageConf">
+					<property name="mediaType" value="importSupplierProduct"/>
+				</bean>
+			</list>
+		</property>
+	</bean>    
+	<import resource="spring-resources.xml" />
+	<import resource="spring-hibernate.xml" />
+	<import resource="spring-dao.xml" />
+	<import resource="spring-service.xml" />
+	<import resource="spring-security.xml" />
+	<import resource="spring-scheduling.xml" />
+	<import resource="spring-validation.xml" />
+	<import resource="spring-jcaptcha.xml" />
+ 
+    <import resource="spring-importProductMapping.xml" />
+    <import resource="spring-importProductSkuMapping.xml" />
+    <import resource="spring-importCategoryMapping.xml" />
+     <import resource="spring-importCustomerMapping.xml" />
+	<!--<import resource="spring-webservices.xml" />-->
+</beans>

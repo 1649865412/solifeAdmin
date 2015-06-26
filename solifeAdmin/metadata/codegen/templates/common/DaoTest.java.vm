@@ -1,0 +1,129 @@
+## This is a velocity template
+## to generate a model class from an sql table input
+#set ($table = $sqlTable.Table)
+#set ($class = $utility.makeClassName($sqlTable.EntityName))
+#set ($classVar = $utility.makeFirstLetterLowerCase($class))
+#set ($packagePrefix  = $prop.getProperty("packagePrefix"))
+#set ($packageModot  = $prop.getProperty("packageModot"))
+#set ($keyfield = $sqlTable.getPrimaryKey(0).getColname())
+#set ($keytype  = $sqlTable.getPrimaryKey(0).getAttType())
+#set ($keyVar= $utility.makeVarName($keyfield))
+#set ($keyVarUC = $utility.makeFirstLetterUpperCase($keyVar))
+#set ($keyColumn = $sqlTable.getPrimaryKey(0))
+#set ($testKeyVal1   = $utility.makeSampleData($keyColumn.attType,$keyColumn.colname,$keyColumn.colsize,$keyColumn.coltype,"1", "y"))
+#set ($newTestCase   = "9")
+#set ($badTestCase   = "0")
+#set ($testKeyValNew = $utility.makeSampleData($keyColumn.attType,$keyColumn.colname,$keyColumn.colsize,$keyColumn.coltype,$newTestCase, "y"))
+#set ($testKeyValBad = $utility.makeSampleData($keyColumn.attType,$keyColumn.colname,$keyColumn.colsize,$keyColumn.coltype,$badTestCase, "y"))
+#set ($nonKeyCol     = "")
+#set ($nonKeyVal     = "")
+#set ($versionExists = false)
+#set ($hasTestableColumn = $sqlTable.hasTestableColumn)
+#if  ($hasTestableColumn)
+#set ($testableColumn    = $sqlTable.getTestableColumn())
+#set ($testCol = $utility.makeFirstLetterUpperCase($utility.makeVarName($testableColumn.colname)))
+#set ($testVal = $utility.makeSampleData($testableColumn.attType,$testableColumn.colname,$testableColumn.colsize,$testableColumn.coltype,$newTestCase, "y"))
+#end
+package ${packagePrefix}${packageModot}.dao;
+
+import java.util.List;
+#foreach ( $types in $sqlTable.typeList)
+import $types;
+#end
+
+import ${packagePrefix}.common.model${packageModot}.${class};
+
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
+
+public class ${class}DaoTest extends ${packagePrefix}.dao.BaseDAOTestCase {
+    private ${class}Dao dao = null;
+    private ${class} ${classVar} = null;
+   
+    public void set${class}Dao(${class}Dao inDao) {
+    	this.dao=inDao;
+    }
+        
+    public void testGet${class}Invalid() throws Exception {
+        try {
+            ${classVar} = dao.get${class}($testKeyValBad);
+            fail("'bad${classVar}name' found in database, failing test...");
+        } catch (DataAccessException d) {
+            assertTrue(d != null);
+        }
+    }
+
+     public void testAddAndRemove${class}() throws Exception {
+        ${classVar} = new ${class}();
+#if (!$sqlTable.hasGeneratedKey)
+        ${classVar}.set${keyVarUC}($testKeyValNew);
+#end
+#foreach( $column in $sqlTable.sqlColumns)
+#if (!$column.isKey() && !("deleted"==${column.attName}))
+#set ($nonKeyColumn=$column)
+#set ($nonKeyVal = $utility.makeSampleData($column.attType,$column.colname,$column.colsize,$column.coltype,$newTestCase, "y"))
+#set ($nonKeyCol= $utility.makeFirstLetterUpperCase($utility.makeVarName($column.colname)))
+#if  ($nonKeyCol.equalsIgnoreCase("version"))
+#set ($versionExists = true)
+        ${classVar}.setVersion(null);
+#else
+        ${classVar}.set${nonKeyCol}($nonKeyVal);
+#end
+#end
+#end      
+        dao.save${class}(${classVar});
+#if ($hasTestableColumn)
+        assertEquals($testVal, ${classVar}.get${testCol}());
+#end
+		$keytype newKeyValue = ${classVar}.get${keyVarUC}();
+        dao.remove${class}(newKeyValue);
+
+        try {
+            ${classVar} = dao.get${class}(newKeyValue);
+            fail("save${class} didn't throw DataAccessException");
+        } catch (DataAccessException d) {
+            assertNotNull(d);
+        }
+    }
+    
+    public void testGet${class}() throws Exception {
+        ${classVar} = dao.get${class}($testKeyVal1);
+        assertNotNull(${classVar});
+    }
+    
+    public void testGet${class}List() throws Exception {
+        List results = dao.get${class}s();
+
+        assertTrue(results.size() > 0);
+         
+    }
+
+#if ($hasTestableColumn)
+    public void testUpdate${class}() throws Exception {
+        ${classVar} = dao.get${class}($testKeyVal1);
+#set ($nonKeyVal = $utility.makeSampleData($testableColumn.attType,$testableColumn.colname,$testableColumn.colsize,$testableColumn.coltype,"8", "y"))
+        ${classVar}.set${testCol}($nonKeyVal);
+
+        dao.save${class}(${classVar});
+
+        assertEquals($nonKeyVal, ${classVar}.get${testCol}());
+        
+##TODO, test unique constrains. Old code maybe incorrect, there are nothing to do with version
+##if ($versionExists)
+##        // verify that violation occurs when adding new ${classVar}
+##        // with same ${classVar}$keyVar
+##        
+##        ${classVar}.setVersion(null);
+##
+##        try {
+##            dao.save${class}(${classVar});
+##            fail("save${class} didn't throw DataIntegrityViolationException");
+##        } catch (DataIntegrityViolationException e) {
+##            assertNotNull(e);
+##            logger.debug("expected exception: " + e.getMessage());
+##        }
+##end
+    }
+#end
+
+}

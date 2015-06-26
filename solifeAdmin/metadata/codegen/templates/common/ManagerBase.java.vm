@@ -1,0 +1,82 @@
+## This is a velocity template
+## to generate a model class from an sql table input
+#set ($table = $sqlTable.Table)
+#set ($class = $utility.makeClassName($sqlTable.EntityName))
+#set ($classVar = $utility.makeFirstLetterLowerCase($class))
+#set ($packagePrefix  = $prop.getProperty("packagePrefix"))
+#set ($packageModot  = $prop.getProperty("packageModot"))
+#set ($keyfield = $sqlTable.getPrimaryKey(0).getColname())
+#set ($keytype  = $sqlTable.getPrimaryKey(0).getAttType())
+#set ($keyVar= $utility.makeVarName($keyfield))
+#set ($keyVarUC = $utility.makeFirstLetterUpperCase($keyVar))
+package ${packagePrefix}${packageModot}.service;
+
+import java.util.List;
+import ${packagePrefix}.common.model${packageModot}.${class};
+import ${packagePrefix}${packageModot}.dao.${class}DAO;
+import ${packagePrefix}.common.PagingBean;
+import ${packagePrefix}.service.BaseManager;
+#if ($sqlTable.hasCompositeKey)
+import ${packagePrefix}.common.model${packageModot}.base.${class}PK;
+#end
+
+
+/**
+ * Base Business Delegate (Proxy) Interface to handle communication between web and
+ * persistence layer.
+ *
+ * Generated and maintained by tools (AppfuseGenerator).
+ * Avoid changing in this file, because it will be overwritten.
+ */
+public interface ${class}ManagerBase extends BaseManager{
+
+    /**
+     * Retrieves a ${classVar} by ${classVar}name.  An exception is thrown if now ${classVar} 
+     * is found.
+     *
+     * @param ${classVar}name
+     * @return ${class}
+     * @throws ServiceException
+     */
+#if ($sqlTable.hasCompositeKey)
+    public ${class} get${class}(${class}PK pkey);
+#else
+    public ${class} get${class}($keytype pkey);
+#end
+
+    /**
+     * Saves a ${classVar}'s information
+     *
+     * @param ${classVar} the ${classVar}'s information
+     * @throws ServiceException
+     */
+    public void save${class}(${class} ${classVar});
+
+    /**
+     * Removes a ${classVar} from the database by their ${keyVar}
+     *
+     * @param $keyVar the ${classVar}'s ${classVar}name
+     * @throws ServiceException
+     */
+#if ($sqlTable.hasCompositeKey)
+    public void remove${class}(${class}PK pkey);
+#else
+    public void remove${class}($keytype pkey);
+#end
+    
+    /**
+     * sets DAO for ${classVar}
+     *
+     */
+	public void set${class}DAO(${class}DAO inDao);
+     
+    /**
+     * Retrieves a list of ${classVar}s, filtering using the example ${classVar} object
+     * @param ${classVar} example ${class} object to filter on
+     * @param orderProperty order by what property
+     * @param useDesc true for desc order, false for asc order
+     * @param pb a PagingBean to hold paging info, data inside will be changed
+     * @return List
+     */
+    public List get${class}sByExample(final ${class} $classVar,final String orderProperty,final boolean useDesc, PagingBean pb);
+}

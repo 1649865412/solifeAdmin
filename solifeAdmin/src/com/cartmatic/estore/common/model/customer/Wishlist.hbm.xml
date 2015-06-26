@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.customer.Wishlist"
+        table="WISHLIST"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="wishListId"
+            column="wishListId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+ 		<version
+            name="version"
+            type="java.lang.Integer"
+            column="version"
+            access="property"
+            unsaved-value="undefined"
+        />
+        <property
+            name="wishListTitle"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="wishListTitle"
+            length="128"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="wishListType"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="wishListType"
+            length="5"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="wishListDetail"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="wishListDetail"
+            length="512"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="shareLevel"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="shareLevel"
+            length="10"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="isDefault"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="isDefault"
+            length="5"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="recipientEmailList"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="recipientEmailList"
+            length="512"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="eventDate"
+            type="java.util.Date"
+            update="true"
+            insert="true"
+            access="property"
+            column="eventDate"
+            length="0"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="priority"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="priority"
+            length="10"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="createTime"
+            type="java.util.Date"
+            update="true"
+            insert="true"
+            access="property"
+            column="createTime"
+            length="0"
+            not-null="true"
+            unique="false"
+        />
+     <!-- imported bi-directional many-to-one association to Address -->
+		<many-to-one
+			name="address"
+			class="com.cartmatic.estore.common.model.customer.Address"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="shippingAddressId" />
+		</many-to-one>
+    <!-- imported bi-directional many-to-one association to AppUser -->
+		<many-to-one
+			name="customer"
+			class="com.cartmatic.estore.common.model.customer.Customer"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="customerId" />
+		</many-to-one>
+ <!-- exported bi-directional one-to-many association to WishlistItem -->
+	<set name="wishlistItems"
+	     table="wishlist_item"
+	     lazy="true"
+	     inverse="true"
+	     cascade="save-update"
+	     sort="unsorted"
+	>
+		<key>
+			<column name="wishListId"/>
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.customer.WishlistItem"
+		/>
+	</set>     
+    </class>
+</hibernate-mapping>

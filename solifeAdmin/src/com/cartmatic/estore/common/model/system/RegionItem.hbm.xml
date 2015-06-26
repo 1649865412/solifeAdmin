@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.system.RegionItem"
+        table="REGION_ITEM"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="regionItemId"
+            column="regionItemId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+ 		<version
+            name="version"
+            type="java.lang.Integer"
+            column="version"
+            access="property"
+            unsaved-value="undefined"
+        />
+       <many-to-one
+			name="item"
+			class="com.cartmatic.estore.common.model.system.Region"
+            not-null="false"
+			fetch="select" 
+		>	 
+			<column name="itemId" />
+		</many-to-one>
+     <!-- imported bi-directional many-to-one association to Region -->
+		<many-to-one
+			name="region"
+			class="com.cartmatic.estore.common.model.system.Region"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="regionId" />
+		</many-to-one>
+    </class>
+</hibernate-mapping>

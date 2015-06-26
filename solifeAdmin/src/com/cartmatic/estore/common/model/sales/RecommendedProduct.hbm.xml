@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.sales.RecommendedProduct"
+        table="recommended_product"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="recommendedProductId"
+            column="recommendedProductId"
+            type="java.lang.Integer"
+            length="11"
+        >
+            <generator class="native"/>
+        </id>
+ 		<version
+            name="version"
+            type="java.lang.Integer"
+            column="version"
+            access="property"
+            unsaved-value="undefined"
+        />
+        <property
+            name="sourceId"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="sourceId"
+            length="11"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="status"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="status"
+            length="6"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="sortOrder"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="sortOrder"
+            length="11"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="startTime"
+            type="java.util.Date"
+            update="true"
+            insert="true"
+            access="property"
+            column="startTime"
+            length="19"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="expireTime"
+            type="java.util.Date"
+            update="true"
+            insert="true"
+            access="property"
+            column="expireTime"
+            length="19"
+            not-null="false"
+            unique="false"
+        />
+     <!-- imported bi-directional many-to-one association to RecommendedType -->
+		<many-to-one
+			name="recommendedType"
+			class="com.cartmatic.estore.common.model.sales.RecommendedType"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="recommendedTypeId" />
+		</many-to-one>
+    <!-- imported bi-directional many-to-one association to Product -->
+		<many-to-one
+			name="product"
+			class="com.cartmatic.estore.common.model.catalog.Product"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="productId" />
+		</many-to-one>
+    </class>
+</hibernate-mapping>

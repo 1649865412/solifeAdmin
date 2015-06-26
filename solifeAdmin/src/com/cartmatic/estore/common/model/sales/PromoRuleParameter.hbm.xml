@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.sales.PromoRuleParameter"
+        table="promo_rule_parameter"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+        
+    >
+		<id
+            name="promoRuleParameterId"
+            column="promoRuleParameterId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+         <property
+            name="paramName"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="paramName"
+            length="32"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="paramValue"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="paramValue"
+            length="64"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="isExcluded"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="isExcluded"
+            length="5"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="excludedType"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="excludedType"
+            length="16"
+            not-null="false"
+            unique="false"
+        />
+     <!-- imported bi-directional many-to-one association to PromoRuleElement -->
+		<many-to-one
+			name="promoRuleElement"
+			class="com.cartmatic.estore.common.model.sales.PromoRuleElement"
+            not-null="false"
+			fetch="select"
+			access="property" 
+			cascade="none" 
+			outer-join="auto" 
+			insert="true" 
+			update="true"
+		>	
+			<column name="promoRuleElementId" />
+		</many-to-one>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.cartmatic.estore.common.model.catalog.ProductDescription" table="PRODUCT_DESCRIPTION" select-before-update="false" dynamic-update="false" dynamic-insert="false" optimistic-lock="version">
+		<id name="productDescriptionId" column="productDescriptionId" type="java.lang.Integer" length="10">
+			<generator class="native" />
+		</id>
+		<property name="shortDescription" type="java.lang.String" update="true" insert="true" access="property" column="shortDescription" length="512" not-null="false" unique="false" />
+		<property name="fullDescription" type="java.lang.String" update="true" insert="true" access="property" column="fullDescription" not-null="false" unique="false" />
+		<property name="imageDescription" type="java.lang.String" update="true" insert="true" access="property" column="imageDescription" not-null="false" unique="false" />
+	</class>
+</hibernate-mapping>

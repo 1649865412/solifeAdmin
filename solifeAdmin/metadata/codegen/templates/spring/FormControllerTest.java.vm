@@ -1,0 +1,101 @@
+## This is a velocity template
+## to generate a Webwork Action class from an sql table input
+#set ($table = $sqlTable.Table)
+#set ($class = $utility.makeClassName($sqlTable.EntityName))
+#set ($classVar = $utility.makeFirstLetterLowerCase($class))
+#set ($packagePrefix  = $prop.getProperty("packagePrefix"))
+#set ($packageMod  = $prop.getProperty("packageMod"))
+#set ($keyfield = $sqlTable.getPrimaryKey(0).getColname())
+#set ($keytype  = $sqlTable.getPrimaryKey(0).getAttType())
+#set ($keyVar= $utility.makeVarName($keyfield))
+#set ($keyVarUC = $utility.makeFirstLetterUpperCase($keyVar))
+#set ($keyColumn = $sqlTable.getPrimaryKey(0))
+#set ($testKeyVal1   = $utility.makeSampleData($keyColumn.attType,$keyColumn.colname,$keyColumn.colsize,$keyColumn.coltype,"1", "n"))
+#set ($testKeyVal2   = $utility.makeSampleData($keyColumn.attType,$keyColumn.colname,$keyColumn.colsize,$keyColumn.coltype,"2", "n"))
+#set ($testKeyVal3   = $utility.makeSampleData($keyColumn.attType,$keyColumn.colname,$keyColumn.colsize,$keyColumn.coltype,"3", "y"))
+#set ($hasTestableColumn = $sqlTable.hasTestableColumn)
+#if  ($hasTestableColumn)
+#set ($testableColumn    = $sqlTable.getTestableColumn())
+#set ($testCol = $utility.makeFirstLetterUpperCase($utility.makeVarName($testableColumn.colname)))
+#set ($testVal = $utility.makeSampleData($testableColumn.attType,$testableColumn.colname,$testableColumn.colsize,$testableColumn.coltype,"8", "y"))
+#end
+#macro( keyparms $testCase )
+#foreach( $column in $sqlTable.primaryKeys)
+#set ($reqCol = $utility.makeVarName($column.colname))
+#set ($reqVal = $utility.makeSampleData("MM/dd/yyyy",$column.attType,$column.colname,$column.colsize,$column.coltype,$testCase, "n"))
+        request.addParameter("${reqCol}", "${reqVal}");
+#end
+#end
+#macro( nonkeyparms $testCase )
+#foreach( $column in $sqlTable.sqlColumns)
+#if (!$column.isKey() && !("deleted"==${column.attName}))
+#set ($reqCol = $utility.makeVarName($column.colname))
+#if  (!$reqCol.equalsIgnoreCase("version"))
+#set ($reqVal = $utility.makeSampleData("MM/dd/yyyy",$column.attType,$column.colname,$column.colsize,$column.coltype,$testCase, "n"))
+        request.addParameter("${reqCol}", "${reqVal}");
+#end
+#end
+#end
+#end
+package ${packagePrefix}.${packageMod}.web.action;
+
+import ${packagePrefix}.Constants;
+import ${packagePrefix}.common.model.${packageMod}.${class};
+ 
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.validation.BindException;
+import org.springframework.validation.Errors;
+import org.springframework.web.servlet.ModelAndView;
+
+public class ${class}FormControllerTest extends ${packagePrefix}.webapp.action.BaseControllerTestCase {
+   
+    private ${class}FormController c;
+    private MockHttpServletRequest request;
+    private ModelAndView mv;
+  
+    protected void setUp() throws Exception {
+        // needed to initialize a controller
+        super.setUp();
+        c = (${class}FormController) ctx.getBean("${classVar}FormController");
+    }
+
+    protected void tearDown() {
+        c = null;
+    }
+
+    public void testEdit() throws Exception {
+        logger.debug("testing edit...");
+        request = newGet("/${packageMod}/edit${class}.html");
+#keyparms("1")
+        mv = c.handleRequest(request, new MockHttpServletResponse());
+        assertEquals("${packageMod}/${classVar}Form", mv.getViewName());
+    }
+
+    public void testSave() throws Exception {
+        request = newGet("/${packageMod}/edit${class}.html");
+#keyparms("1")
+        mv = c.handleRequest(request, new MockHttpServletResponse());
+
+        ${class} ${classVar} = (${class}) request.getAttribute(Constants.${class}_EDIT_KEY);
+        assertNotNull(${classVar});
+        
+        request = newPost("/${packageMod}/edit${class}.html");
+#keyparms("1")
+#nonkeyparms("9")
+        mv = c.handleRequest(request, new MockHttpServletResponse());
+        
+        Errors errors =
+            (Errors) mv.getModel().get(org.springframework.validation.BindingResult.MODEL_KEY_PREFIX + "${classVar}");
+        assertNull(errors);
+        assertNotNull(request.getSession().getAttribute("messages"));        
+    }
+    
+    public void testRemove() throws Exception {
+        request = newPost("/${packageMod}/edit${class}.html");
+        request.addParameter("delete", "");
+#keyparms("2")
+        mv = c.handleRequest(request, new MockHttpServletResponse());
+        assertNotNull(request.getSession().getAttribute("messages"));
+    }
+}

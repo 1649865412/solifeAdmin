@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.cartmatic.estore.common.model.sales.Coupon"
+		table="coupon" select-before-update="false" dynamic-update="false"
+		dynamic-insert="false" optimistic-lock="version">
+		<id name="couponId" column="couponId" type="java.lang.Integer"
+			length="10">
+			<generator class="native" />
+		</id>
+		<version name="version" type="java.lang.Integer" column="version"
+			access="property" unsaved-value="undefined" />
+		<property name="couponNo" type="java.lang.String" update="true"
+			insert="true" access="property" column="couponNo" length="16"
+			not-null="true" unique="false" />
+		<property name="isSent" type="java.lang.Short" update="true"
+			insert="true" access="property" column="isSent" length="5" not-null="false"
+			unique="false" />
+		<property name="sentEmail" type="java.lang.String" update="true"
+			insert="true" access="property" column="sentEmail" length="255" not-null="false"
+			unique="false" />
+		<property name="remainedTimes" type="java.lang.Integer"
+			update="true" insert="true" access="property" column="remainedTimes"
+			length="10" not-null="false" unique="false" />
+
+		<property name="status" type="java.lang.Short" update="true"
+			insert="true" access="property" column="status" length="5" not-null="false"
+			unique="false" />
+		<!-- imported bi-directional many-to-one association to PromoRule -->
+		<many-to-one name="promoRule"
+			class="com.cartmatic.estore.common.model.sales.PromoRule" not-null="false"
+			lazy="false">
+			<column name="promoRuleId" />
+		</many-to-one>
+		
+		<set name="userCoupons" table="user_coupon" lazy="false">
+			<key>
+				<column name="couponId" />
+			</key>
+			<many-to-many class="com.cartmatic.estore.common.model.system.AppUser" column="userId" fetch="join" />
+		</set>
+		
+	</class>
+</hibernate-mapping>

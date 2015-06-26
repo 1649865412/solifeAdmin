@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<beans>
+	<!-- Hibernate SessionFactory -->
+	<bean id="sessionFactory" class="com.cartmatic.estore.core.hibernate.LocalSessionFactoryBean" lazy-init="false">
+		<property name="dataSource" ref="dataSource" />
+		<property name="lobHandler">
+			<bean
+				class="org.springframework.jdbc.support.lob.DefaultLobHandler"
+				lazy-init="true" />
+		</property>
+		<!-- I tried cacheableMappingLocations but it turned out to be more slow. -->
+		<property name="mappingLocations">
+			<list>
+				<value>classpath*:com/cartmatic/*/common/model/**/*.hbm.xml</value>
+			</list>
+		</property>
+		<!-- Create/update the database tables automatically when the JVM starts up -->
+		<!-- <property name="schemaUpdate" value="true"/> -->
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+				<prop key="hibernate.jdbc.batch_size">10</prop>
+				<prop key="hibernate.default_batch_fetch_size">10</prop>
+				<prop key="hibernate.jdbc.batch_versioned_data">true</prop>
+				<prop key="hibernate.jdbc.fetch_size">10</prop>
+				<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+				<prop key="hibernate.default_entity_mode">pojo</prop>
+				<prop key="hibernate.generate_statistics">false</prop>
+				<prop key="hibernate.max_fetch_depth">3</prop>
+				<prop key="hibernate.cache.provider_class">net.sf.ehcache.hibernate.EhCacheProvider</prop>
+				<prop key="net.sf.ehcache.configurationResourceName">conf/ehcache.xml</prop>
+				<!-- Note, you can turn off hibernate caching by setting it to be false -->
+				<prop key="hibernate.cache.use_second_level_cache">${hibernate.cache.use_second_level_cache}</prop>
+				<prop key="hibernate.cache.use_query_cache">false</prop>
+			</props>
+		</property>
+		<property name="entityCacheStrategies">
+			<props>
+				<prop key="com.cartmatic.estore.common.model.customer.Membership">nonstrict-read-write</prop>
+				<prop key="com.cartmatic.estore.common.model.attribute.Attribute">nonstrict-read-write</prop>
+				<prop key="com.cartmatic.estore.common.model.catalog.Brand">nonstrict-read-write</prop>
+				<prop key="com.cartmatic.estore.common.model.sales.RecommendedType">nonstrict-read-write</prop>
+				<prop key="com.cartmatic.estore.common.model.catalog.Category">nonstrict-read-write</prop>
+			</props>
+		</property>
+		<!-- <property name="collectionCacheStrategies">
+			<props>
+			</props> 
+			</property>-->
+	</bean>
+
+	<!-- Transaction manager for a single Hibernate SessionFactory (alternative to JTA) -->
+	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+		<property name="defaultTimeout" value="600" />
+	</bean>
+
+</beans>

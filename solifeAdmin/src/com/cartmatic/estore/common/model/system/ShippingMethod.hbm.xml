@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.cartmatic.estore.common.model.system.ShippingMethod"
+		table="SHIPPING_METHOD" select-before-update="false" dynamic-update="false"
+		dynamic-insert="false" optimistic-lock="version" where="deleted=0">
+		<id name="shippingMethodId" column="shippingMethodId" type="java.lang.Integer"
+			length="10">
+			<generator class="native" />
+		</id>
+		<version name="version" type="java.lang.Integer" column="version"
+			access="property" unsaved-value="undefined" />
+		<property name="shippingMethodName" type="java.lang.String"
+			update="true" insert="true" access="property" column="shippingMethodName"
+			length="64" not-null="true" unique="false" />
+		<property name="shippingMethodDetail" type="java.lang.String"
+			update="true" insert="true" access="property" column="shippingMethodDetail"
+			length="1024" not-null="false" unique="false" />
+		<property name="isDomestic" type="java.lang.Short" update="true"
+			insert="true" access="property" column="isDomestic" length="5"
+			not-null="false" unique="false" />
+		<property name="deliveryTime" type="java.lang.String" update="true"
+			insert="true" access="property" column="deliveryTime" length="256"
+			not-null="false" unique="false" />
+		<property name="status" type="java.lang.Short" update="true"
+			insert="true" access="property" column="status" length="5" not-null="false"
+			unique="false" />
+		<property name="isCod" type="java.lang.Short" update="true"
+			insert="true" access="property" column="isCod" length="5" not-null="false"
+			unique="false" />
+		<property name="deleted" type="java.lang.Short" update="true"
+			insert="true" access="property" column="deleted" length="5" not-null="true"
+			unique="false" />
+		<!-- imported bi-directional many-to-one association to Carrier -->
+		<many-to-one name="carrier"
+			class="com.cartmatic.estore.common.model.system.Carrier" not-null="false"
+			fetch="select">
+			<column name="carrierId" />
+		</many-to-one>
+		<!-- exported bi-directional one-to-many association to ShippingRate -->
+		<set name="shippingRates" table="shipping_rate" lazy="true"
+			inverse="true" cascade="save-update" sort="unsorted" where="deleted=0">
+			<key>
+				<column name="shippingMethodId" />
+			</key>
+			<one-to-many class="com.cartmatic.estore.common.model.system.ShippingRate" />
+		</set>
+		<set name="stores" table="store_shipping_method" lazy="true" cascade="save-update">
+			<key>
+				<column name="shippingMethodId" />
+			</key>
+			<many-to-many class="com.cartmatic.estore.common.model.system.Store" column="storeId" fetch="join" />
+		</set>
+		<sql-delete>UPDATE SHIPPING_METHOD SET deleted=1 WHERE
+			shippingMethodId=? and version=?</sql-delete>
+	</class>
+</hibernate-mapping>

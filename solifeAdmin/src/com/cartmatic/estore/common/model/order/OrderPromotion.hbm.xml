@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.order.OrderPromotion"
+        table="order_promotion"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="orderPromotionId"
+            column="orderPromotionId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+         <property
+            name="promoRuleId"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="promoRuleId"
+            length="10"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="couponNo"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="couponNo"
+            length="16"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="promotionName"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="promotionName"
+            length="64"
+            not-null="true"
+            unique="false"
+        />
+     <!-- imported bi-directional many-to-one association to SalesOrder -->
+		<many-to-one
+			name="salesOrder"
+			class="com.cartmatic.estore.common.model.order.SalesOrder"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="salesOrderId" />
+		</many-to-one>
+    </class>
+</hibernate-mapping>

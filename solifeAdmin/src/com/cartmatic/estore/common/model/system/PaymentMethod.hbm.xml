@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.cartmatic.estore.common.model.system.PaymentMethod"
+		table="PAYMENT_METHOD" select-before-update="false" dynamic-update="false"
+		dynamic-insert="false" optimistic-lock="version">
+		<id name="paymentMethodId" column="paymentMethodId" type="java.lang.Integer"
+			length="10">
+			<generator class="native" />
+		</id>
+		<version name="version" type="java.lang.Integer" column="version"
+			access="property" unsaved-value="undefined" />
+		<property name="paymentMethodName" type="java.lang.String"
+			update="true" insert="true" access="property" column="paymentMethodName"
+			length="64" not-null="true" unique="false" />
+		<property name="paymentMethodCode" type="java.lang.String"
+			update="true" insert="true" access="property" column="paymentMethodCode"
+			length="32" not-null="true" unique="false" />
+		<property name="paymentMethodDetail" type="java.lang.String"
+			update="true" insert="true" access="property" column="paymentMethodDetail"
+			length="2048" not-null="false" unique="false" />
+		<property name="paymentMethodType" type="java.lang.Short"
+			update="true" insert="true" access="property" column="paymentMethodType"
+			length="5" not-null="false" unique="false" />
+		<property name="paymentMethodIcon" type="java.lang.String"
+			update="true" insert="true" access="property" column="paymentMethodIcon"
+			length="255" not-null="false" unique="false" />
+		<property name="protocol" type="java.lang.String" update="true"
+			insert="true" access="property" column="protocol" length="8"
+			not-null="false" unique="false" />
+		<property name="processorFile" type="java.lang.String"
+			update="true" insert="true" access="property" column="processorFile"
+			length="255" not-null="false" unique="false" />
+		<property name="configFile" type="java.lang.String" update="true"
+			insert="true" access="property" column="configFile" length="256"
+			not-null="false" unique="false" />
+		<property name="testModel" type="java.lang.String" update="true"
+			insert="true" access="property" column="testModel" length="10"
+			not-null="false" unique="false" />
+		<property name="isCod" type="java.lang.Short" update="true"
+			insert="true" access="property" column="isCod" length="5" not-null="true"
+			unique="false" />
+		<property name="sortOrder" type="java.lang.Integer" update="true"
+			insert="true" access="property" column="sortOrder" length="10"
+			not-null="false" unique="false" />
+		<property name="status" type="java.lang.Short" update="true"
+			insert="true" access="property" column="status" length="5" not-null="false"
+			unique="false" />
+		<property name="configData" type="java.util.HashMap" update="true"
+			insert="true" access="property" column="configData" length="65535"
+			not-null="false" unique="false" />
+		<set name="stores" table="store_payment_method" lazy="true" cascade="save-update">
+			<key>
+				<column name="paymentMethodId" />
+			</key>
+			<many-to-many class="com.cartmatic.estore.common.model.system.Store" column="storeId" fetch="join" />
+		</set>
+		<sql-delete>UPDATE payment_method SET status=3 WHERE
+			paymentMethodId=? and version=?</sql-delete>
+		
+	</class>
+</hibernate-mapping>

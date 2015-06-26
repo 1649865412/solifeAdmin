@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.catalog.Catalog"
+        table="CATALOG"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="catalogId"
+            column="catalogId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+ 		<version
+            name="version"
+            type="java.lang.Integer"
+            column="version"
+            access="property"
+            unsaved-value="undefined"
+        />
+        <property
+            name="name"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="name"
+            length="32"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="code"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="code"
+            length="32"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="description"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="description"
+            length="65535"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="isVirtual"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="isVirtual"
+            length="5"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="status"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="status"
+            length="5"
+            not-null="true"
+            unique="false"
+        />
+        <property name="availabilityRule" type="java.lang.Short" update="true" insert="true" access="property" column="availabilityRule" length="5" not-null="false" unique="false" />
+        <many-to-one name="category" class="com.cartmatic.estore.common.model.catalog.Category" not-null="false" fetch="select">
+			<column name="categoryId" />
+		</many-to-one>
+  <!-- exported bi-directional one-to-many association to Category -->
+	<set name="categorys"
+	     table="category"
+	     lazy="true"
+	     inverse="true"
+	     cascade="save-update"
+	     sort="unsorted"
+	>
+		<key>
+			<column name="catalogId"/>
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.catalog.Category"
+		/>
+	</set>     
+ <!-- exported bi-directional one-to-many association to PromoRule -->
+	<set name="promoRules"
+	     table="promo_rule"
+	     lazy="true"
+	     inverse="true"
+	     cascade="save-update"
+	     sort="unsorted"
+	>
+		<key>
+			<column name="catalogId"/>
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.sales.PromoRule"
+		/>
+	</set>     
+ <!-- exported bi-directional one-to-many association to Store -->
+	<set name="stores"
+	     table="store"
+	     lazy="true"
+	     inverse="true"
+	     cascade="save-update"
+	     sort="unsorted"
+	>
+		<key>
+			<column name="catalogId"/>
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.system.Store"
+		/>
+	</set>     
+    </class>
+</hibernate-mapping>

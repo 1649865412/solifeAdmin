@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.cartmatic.estore.common.model.sales.PromoRule"
+		table="promo_rule" select-before-update="false" dynamic-update="false"
+		dynamic-insert="false" optimistic-lock="version">
+		<id name="promoRuleId" column="promoRuleId" type="java.lang.Integer"
+			length="10">
+			<generator class="native" />
+		</id>
+		<version name="version" type="java.lang.Integer" column="version"
+			access="property" unsaved-value="undefined" />
+		<property name="name" type="java.lang.String" update="true"
+			insert="true" access="property" column="name" length="64" not-null="true"
+			unique="false" />
+		<property name="description" type="java.lang.String" update="true"
+			insert="true" access="property" column="description" length="65535"
+			not-null="false" unique="false" lazy="true" />
+
+		<property name="priority" type="java.lang.Integer" update="true"
+			insert="true" access="property" column="priority" length="10"
+			not-null="true" unique="false" />
+		<property name="availableCount" type="java.lang.Integer"
+			update="true" insert="true" access="property" column="availableCount"
+			length="10" not-null="false" unique="false" />
+		<property name="enableDiscountAgain" type="java.lang.Short"
+			update="true" insert="true" access="property" column="enableDiscountAgain"
+			length="5" not-null="true" unique="false" />
+		<property name="startTime" type="java.util.Date" update="true"
+			insert="true" access="property" column="startTime" length="0"
+			not-null="true" unique="false" />
+		<property name="endTime" type="java.util.Date" update="true"
+			insert="true" access="property" column="endTime" length="0" not-null="false"
+			unique="false" />
+		<property name="promoType" type="java.lang.String" update="true"
+			insert="true" access="property" column="promoType" length="32"
+			not-null="true" unique="false" />
+		<property name="triggerType" type="java.lang.Short" update="true"
+			insert="true" access="property" column="triggerType" length="5" not-null="false"
+			unique="false" />
+		<property name="status" type="java.lang.Short" update="true"
+			insert="true" access="property" column="status" length="5" not-null="true"
+			unique="false" />
+		<property name="eligibilityOperator" type="java.lang.Short"
+			update="true" insert="true" access="property" column="eligibilityOperator"
+			length="5" not-null="true" unique="false" />
+		<property name="conditionOperator" type="java.lang.Short"
+			update="true" insert="true" access="property" column="conditionOperator"
+			length="5" not-null="true" unique="false" />
+		<property name="createTime" type="java.util.Date" update="true"
+			insert="true" access="property" column="createTime" length="0"
+			not-null="true" unique="false" />
+		<property name="updateTime" type="java.util.Date" update="true"
+			insert="true" access="property" column="updateTime" length="0"
+			not-null="true" unique="false" />
+		<property name="createBy" type="java.lang.Integer" update="true"
+			insert="true" access="property" column="createBy" length="10"
+			not-null="false" unique="false" />
+		<property name="updateBy" type="java.lang.Integer" update="true"
+			insert="true" access="property" column="updateBy" length="10"
+			not-null="false" unique="false" />
+
+		<!-- imported bi-directional many-to-one association to Catalog -->
+		<many-to-one name="catalog"
+			class="com.cartmatic.estore.common.model.catalog.Catalog" not-null="false"
+			fetch="select">
+			<column name="catalogId" />
+		</many-to-one>
+		<!-- imported bi-directional many-to-one association to Store -->
+		<many-to-one name="store"
+			class="com.cartmatic.estore.common.model.system.Store" not-null="false"
+			fetch="select">
+			<column name="storeId" />
+		</many-to-one>
+		<!-- exported bi-directional one-to-many association to Coupon -->
+		<set name="coupons" table="coupon" lazy="true" inverse="true"
+			cascade="delete" sort="unsorted" order-by="couponId asc">
+			<key>
+				<column name="promoRuleId" />
+			</key>
+			<one-to-many class="com.cartmatic.estore.common.model.sales.Coupon" />
+		</set>
+		<!--
+			exported bi-directional one-to-many association to PromoRuleElement
+		-->
+		<set name="promoRuleElements" table="promo_rule_element" lazy="false"
+			inverse="true" cascade="delete" sort="unsorted" order-by="promoRuleElementId asc">
+			<key>
+				<column name="promoRuleId" />
+			</key>
+			<one-to-many
+				class="com.cartmatic.estore.common.model.sales.PromoRuleElement" />
+		</set>
+	</class>
+</hibernate-mapping>

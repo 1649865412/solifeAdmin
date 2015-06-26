@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.cartmatic.estore.common.model.customer.ShopPoint"
+		table="SHOP_POINT" select-before-update="false" dynamic-update="false"
+		dynamic-insert="false" optimistic-lock="version">
+		<id name="shopPointId" column="shopPointId" type="java.lang.Integer"
+			length="10">
+			<generator class="native" />
+		</id>
+		<property name="total" type="java.lang.Integer" update="true"
+			insert="true" access="property" column="total" length="10" not-null="true"
+			unique="false" />
+		<property name="gainedTotal" type="java.lang.Integer" update="true"
+			insert="true" access="property" column="gainedTotal" length="10"
+			not-null="true" unique="false" />
+		<property name="usedTotal" type="java.lang.Integer" update="true"
+			insert="true" access="property" column="usedTotal" length="10"
+			not-null="true" unique="false" />
+		<property name="updateTime" type="java.util.Date" update="true"
+			insert="true" access="property" column="updateTime" length="0"
+			not-null="false" unique="false" />
+		<!-- imported bi-directional many-to-one association to AppUser -->
+		<many-to-one name="customer"
+			class="com.cartmatic.estore.common.model.customer.Customer" not-null="false"
+			fetch="select">
+			<column name="customerId" />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

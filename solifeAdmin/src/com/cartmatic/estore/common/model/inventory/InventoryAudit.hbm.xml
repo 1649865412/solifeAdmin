@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.inventory.InventoryAudit"
+        table="INVENTORY_AUDIT"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="inventoryAuditId"
+            column="inventoryAuditId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+         <property
+            name="quantity"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="quantity"
+            length="10"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="quantityOnHand"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="quantityOnHand"
+            length="10"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="allocatedQuantity"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="allocatedQuantity"
+            length="10"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="eventType"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="eventType"
+            length="5"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="reason"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="reason"
+            length="128"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="comment"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="comment"
+            length="1024"
+            not-null="false"
+            unique="false"
+        />
+
+        <property
+            name="eventHandler"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="eventHandler"
+            length="128"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="createTime"
+            type="java.util.Date"
+            update="true"
+            insert="true"
+            access="property"
+            column="createTime"
+            length="0"
+            not-null="true"
+            unique="false"
+        />
+     <!-- imported bi-directional many-to-one association to Inventory -->
+		<many-to-one
+			name="inventory"
+			class="com.cartmatic.estore.common.model.inventory.Inventory"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="inventoryId" />
+		</many-to-one>
+     <!-- imported bi-directional many-to-one association to Inventory -->
+		<many-to-one
+			name="salesOrder"
+			class="com.cartmatic.estore.common.model.order.SalesOrder"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="orderId" />
+		</many-to-one>
+     <!-- imported bi-directional many-to-one association to ProductSku -->
+		<many-to-one
+			name="productSku"
+			class="com.cartmatic.estore.common.model.catalog.ProductSku"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="productSkuId" />
+		</many-to-one>
+    </class>
+</hibernate-mapping>

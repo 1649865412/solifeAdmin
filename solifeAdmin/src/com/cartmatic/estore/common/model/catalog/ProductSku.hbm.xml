@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.cartmatic.estore.common.model.catalog.ProductSku" table="PRODUCT_SKU" select-before-update="false" dynamic-update="false" dynamic-insert="false" optimistic-lock="version">
+		<id name="productSkuId" column="productSkuId" type="java.lang.Integer" length="10">
+			<generator class="native" />
+		</id>
+		<version name="version" type="java.lang.Integer" column="version" access="property" unsaved-value="undefined" />
+		<property name="productSkuCode" type="java.lang.String" update="true" insert="true" access="property" column="productSkuCode" length="32" not-null="true" unique="false" />
+		<property name="weight" type="java.math.BigDecimal" update="true" insert="true" access="property" column="weight" precision="12" scale="2" not-null="false" unique="false" />
+		<property name="length" type="java.math.BigDecimal" update="true" insert="true" access="property" column="length" precision="12" scale="2" not-null="false" unique="false" />
+		<property name="width" type="java.math.BigDecimal" update="true" insert="true" access="property" column="width" precision="12" scale="2" not-null="false" unique="false" />
+		<property name="height" type="java.math.BigDecimal" update="true" insert="true" access="property" column="height" precision="12" scale="2" not-null="false" unique="false" />
+		<property name="image" type="java.lang.String" update="true" insert="true" access="property" column="image" length="255" not-null="false" unique="false" />
+		<property name="skuKind" type="java.lang.Short" update="true" insert="true" access="property" column="skuKind" length="5" not-null="true" unique="false" />
+		<property name="price" type="java.math.BigDecimal" update="true" insert="true" access="property" column="price" precision="12" scale="2" not-null="true" unique="false" />
+		<property name="costPrice" type="java.math.BigDecimal" update="true" insert="true" access="property" column="costPrice" precision="12" scale="2" not-null="true" unique="false" />
+		<property name="salePrice" type="java.math.BigDecimal" update="true" insert="true" access="property" column="salePrice" precision="12" scale="2" not-null="false" unique="false" />
+		<property name="listPrice" type="java.math.BigDecimal" update="true" insert="true" access="property" column="listPrice" precision="12" scale="2" not-null="false" unique="false" />
+		<property name="createTime" type="java.util.Date" update="true" insert="true" access="property" column="createTime" length="0" not-null="true" unique="false" />
+		<property name="updateTime" type="java.util.Date" update="true" insert="true" access="property" column="updateTime" length="0" not-null="true" unique="false" />
+		<property name="status" type="java.lang.Short" update="true" insert="true" access="property" column="status" length="5" not-null="true" unique="false" />
+		<!-- imported bi-directional many-to-one association to Product -->
+		<many-to-one name="product" class="com.cartmatic.estore.common.model.catalog.Product" not-null="false" fetch="select">
+			<column name="productId" />
+		</many-to-one>
+		<!-- exported bi-directional one-to-many association to Inventory -->
+		<set name="inventorys" table="inventory" lazy="true" inverse="true" cascade="save-update" sort="unsorted">
+			<key>
+				<column name="productSkuId" />
+			</key>
+			<one-to-many class="com.cartmatic.estore.common.model.inventory.Inventory" />
+		</set>
+
+		<!--
+			exported bi-directional one-to-many association to ProductPackageItem
+		-->
+		<set name="productPackageItems" table="product_package_item" lazy="true" order-by="sortOrder">
+			<key>
+				<column name="packageSkuId" />
+			</key>
+			<one-to-many class="com.cartmatic.estore.common.model.catalog.ProductPackageItem" />
+		</set>
+		<!--
+			exported bi-directional one-to-many association to
+			ProductSkuOptionValue
+		-->
+		<set name="productSkuOptionValues" table="product_sku_option_value" lazy="true" sort="unsorted">
+			<key>
+				<column name="productSkuId" />
+			</key>
+			<one-to-many class="com.cartmatic.estore.common.model.catalog.ProductSkuOptionValue" />
+		</set>
+		<!--
+			exported bi-directional one-to-many association to WholesalePrice
+		-->
+		<set name="wholesalePrices" table="wholesale_price" lazy="true" inverse="true" order-by="minQuantity">
+			<key>
+				<column name="productSkuId" />
+			</key>
+			<one-to-many class="com.cartmatic.estore.common.model.catalog.WholesalePrice" />
+		</set>
+		
+		<set name="productMedias" table="product_media" lazy="true" inverse="true" order-by="sortOrder">
+			<key>
+				<column name="productSkuId" />
+			</key>
+			<one-to-many class="com.cartmatic.estore.common.model.catalog.ProductMedia" />
+		</set>
+	</class>
+</hibernate-mapping>

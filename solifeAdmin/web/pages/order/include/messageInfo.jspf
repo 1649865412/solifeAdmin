@@ -1,0 +1,144 @@
+<%@ taglib prefix="cartmatic" tagdir="/WEB-INF/tags/cartmatic"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page pageEncoding="UTF-8"%>
+<c:set var="defaultSubject" value="Re: Order ${salesOrder.orderNo}"></c:set>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table-content">
+	<tr>
+		<th>
+			<fmt:message key="order.messageInfo.list" />
+		</th>
+	</tr>
+	<tr>
+		<td>
+			<c:choose>
+				<c:when test="${empty salesOrder.customerId or salesOrder.customerId == -2}">
+					匿名客户下的订单，不支持Message功能。
+				</c:when>
+				<c:otherwise>
+					&nbsp;&nbsp;<cartmatic:iconBtn icon="plus" textKey="order.messageInfo.send" onclick="fnAddMessage();" />
+					<table cellspacing="0" cellpadding="0" class="table-list">
+						<tr>
+							<th width="20%"><fmt:message key="orderMessage.subject" /></th>
+							<th width="42%"><fmt:message key="orderMessage.message" /></th>
+							<th width="15%"><fmt:message key="orderMessage.createBy" /></th>
+							<th width="10%"><fmt:message key="orderMessage.createTime" /></th>
+							<th width="5%"><fmt:message key="orderMessage.status" /></th>
+							<th width="8%">操作</th>
+						</tr>
+						<c:forEach var="message" items="${salesOrder.orderMessages}">
+						<tr>
+							<td>${message.subject}
+								<c:if test="${message.customerId==message.createBy}">
+									<c:set var="defaultSubject" value="Re: ${message.subject}"></c:set>
+								</c:if>
+							</td>
+							<td>
+								<c:set var="temp_message"><c:out value="${message.message}"></c:out></c:set>
+								<%request.setAttribute("vEnter", "\n"); %>
+								${fn:replace(temp_message,vEnter,"<br/>")}
+							</td>
+							<td>
+								[<c:choose><c:when test="${message.customerId==message.createBy}">客户</c:when><c:otherwise>管理员</c:otherwise></c:choose>]
+								<app:userName userId="${message.createBy}" noFormat="true"></app:userName>
+							</td>
+							<td>
+								<fmt:formatDate value="${message.createTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
+							</td>
+							<td>
+								<c:choose>
+									<c:when test="${message.customerId!=message.createBy}">无</c:when>
+									<c:when test="${message.status==1}"><span class="green">已读</span></c:when>
+									<c:otherwise><span class="yellow">未读</span></c:otherwise>
+								</c:choose>
+							</td>
+							<td>
+								<a href="javascript:void(0);" onclick="fnDeleteMessage(${message.id});">删除</a>
+								<c:choose>
+									<c:when test="${message.customerId==message.createBy&&message.status==1}">|&nbsp;<a href="${ctxPath}/order/window.html?doAction=updateMessageStatus&status=unread&salesOrderId=${salesOrder.id}&orderMessageId=${message.id}&tid=${param.tid}">标识为未读</a></c:when>
+									<c:when test="${message.customerId==message.createBy&&message.status!=1}">|&nbsp;<a href="${ctxPath}/order/window.html?doAction=updateMessageStatus&status=read&salesOrderId=${salesOrder.id}&orderMessageId=${message.id}&tid=${param.tid}">标识为已读</a></c:when>
+								</c:choose>
+							</td>
+						</tr>
+						</c:forEach>
+					</table>
+				</c:otherwise>
+			</c:choose>
+		</td>
+	</tr>
+</table>
+<app:ui_dialog id="AddMessageDlg" title="Add Message" width="515" height="390" buttons="'Submit':fnCompleteAddOrEditMessage, 'Cancel':dlgAddMessageDlg_close">
+		<form method="post" cssClass="mainForm" id="addMessageForm">
+		<input type="hidden" id="orderMessageId" name="orderMessageId" value=""/>
+			<table cellSpacing="5" cellPadding="0" width="100%" border="0">
+				<tr>
+					<th width="15%" align="right" height="20px">
+						To
+					</th>
+					<td>
+						${salesOrder.customerFirstname}&nbsp;${salesOrder.customerLastname}&nbsp;&lt;<app:maskEmail email="${salesOrder.customerEmail}"/>&gt;
+					</td>
+				</tr>
+		 		<tr>
+					<th align="right">
+						Subject
+					</th>
+					<td>
+						<input type="text" name="subject" id="subject" class="Field400" value="${defaultSubject}"/>
+					</td>
+				</tr>
+				<tr>
+					<th align="right">
+						Message
+					</th>
+					<td>
+						<textarea type="textarea" id="messageContent" name="message" rows="12" class="Field400"></textarea>
+					</td>
+				</tr>
+			</table>
+		</form>
+</app:ui_dialog>
+
+<script type="text/javascript">
+	applyValidate($("subject"),"required");
+	applyValidate($("messageContent"),"required");
+	
+	function fnAddMessage(){
+		fnClearMessageFrom();
+		dlgAddMessageDlg_show(null);		
+	}
+	function fnCompleteAddOrEditMessage(){
+		if(!validateForm($("addMessageForm")))
+		{
+			alert(__vaMsg.notPass);
+			return;
+		}
+		var parameters = {subject:$j("#subject").val(),
+				message:$j("#messageContent").val(),
+				customerId:"${salesOrder.customerId}",
+				orderNo:"${salesOrder.orderNo}",
+				salesOrderId:"${salesOrder.salesOrderId}"};
+    	$j.post(__ctxPath+'/order/salesOrder.html?doAction=addMessage', parameters, fnCompleteAddOrEditMessageCallbackHandler,"json");
+    }
+
+
+	function fnDeleteMessage(messageId){
+		if(confirm("确定要删除本消息?")){
+			window.location.href=__ctxPath+"/order/window.html?doAction=delMessage&salesOrderId=${salesOrder.id}&orderNo=${salesOrder.orderNo}&tid=${param.tid}&orderMessageId="+messageId;
+		}
+    }
+    
+    function fnCompleteAddOrEditMessageCallbackHandler(result){
+    	sysMsg4p(result.msg,result.status!=1);
+        if(result.status==1){
+        	dlgAddNoteDlg_close();
+        	window.location.href=__ctxPath+'/order/window.html?doAction=edit&salesOrderId=${salesOrder.salesOrderId}&tabIndex=4&tid=${param.tid}';
+        }
+    }
+    
+    function fnClearMessageFrom(){
+   	 	$j("#orderMessageId").val("");
+   	 	//$j("#subject").val("");
+    	$j("#messageContent").val("");
+    }
+</script>

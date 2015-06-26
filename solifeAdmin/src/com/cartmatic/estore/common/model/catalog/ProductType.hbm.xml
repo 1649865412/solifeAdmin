@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.catalog.ProductType"
+        table="PRODUCT_TYPE"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="productTypeId"
+            column="productTypeId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+ 		<version
+            name="version"
+            type="java.lang.Integer"
+            column="version"
+            access="property"
+            unsaved-value="undefined"
+        />
+        <property
+            name="productTypeName"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="productTypeName"
+            length="32"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="productTypeDescription"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="productTypeDescription"
+            length="128"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="templatePath"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="templatePath"
+            length="128"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="minOrderQuantity"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="minOrderQuantity"
+            length="10"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="status"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="status"
+            length="5"
+            not-null="true"
+            unique="false"
+        />
+  <!-- exported bi-directional one-to-many association to AttributeGroup -->
+	<set name="productAttGroups"
+	     table="product_att_group"
+	     lazy="true"
+	     inverse="true"
+	     cascade="save-update"
+	     order-by="sortOrder"
+	>
+		<key>
+			<column name="productTypeId"/>
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.catalog.ProductAttGroup"
+		/>
+	</set>     
+ <!-- exported bi-directional one-to-many association to Product -->
+	<set name="products"
+	     table="product"
+	     lazy="true"
+	     inverse="true"
+	     cascade="save-update"
+	     sort="unsorted"
+	>
+		<key>
+			<column name="productTypeId"/>
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.catalog.Product"
+		/>
+	</set>     
+ <!-- exported bi-directional one-to-many association to ProductRateItem -->
+	<set name="productRateItems"
+	     table="product_rate_item"
+	     lazy="true"
+	     order-by="sortOrder"
+	>
+		<key>
+			<column name="productTypeId"/>
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.catalog.ProductRateItem"
+		/>
+	</set>     
+ <!-- exported bi-directional one-to-many association to ProductTypeSkuOption -->
+	<set name="productTypeSkuOptions"
+	     table="product_type_sku_option"
+	     lazy="true"
+	     order-by="sortOrder"
+	>
+		<key>
+			<column name="productTypeId"/>
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.catalog.ProductTypeSkuOption"
+		/>
+	</set>     
+    </class>
+</hibernate-mapping>

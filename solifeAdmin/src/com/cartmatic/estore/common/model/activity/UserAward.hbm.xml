@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.cartmatic.estore.common.model.activity.UserAward"
+		table="user_award" select-before-update="false" dynamic-update="false"
+		dynamic-insert="false" optimistic-lock="version">
+		
+		<id name="id" column="id" type="java.lang.Integer"
+			length="10">
+			<generator class="native" />
+		</id>
+		
+		<property name="prize" type="java.lang.String" update="true"
+			insert="true" access="property" column="prize" length="40" not-null="false"
+			unique="false" />
+
+		<property name="createTime" type="java.util.Date" update="true"
+			insert="true" access="property" column="createTime" length="0"
+			not-null="false" unique="false" />
+			
+		<property name="updateTime" type="java.util.Date" update="true"
+			insert="true" access="property" column="updateTime" length="0"
+			not-null="false" unique="false" />
+			
+		<many-to-one name="customer"
+			class="com.cartmatic.estore.common.model.customer.Customer" not-null="false"
+			fetch="select">
+			<column name="userId" />
+		</many-to-one>
+		
+		<property name="awardLevel" type="java.lang.Integer" update="true"
+			insert="true" access="property" column="awardLevel" length="10" not-null="false"
+			unique="false" />
+
+		<property name="awardTitle" type="java.lang.String" update="true"
+			insert="true" access="property" column="awardTitle" length="40" not-null="false"
+			unique="false" />
+
+	</class>
+</hibernate-mapping>

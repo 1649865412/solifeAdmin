@@ -1,0 +1,23 @@
+## This is a velocity template
+## to generate a model class from an sql table input
+#set ($table = $sqlTable.Table)
+#set ($class = $utility.makeClassName($sqlTable.EntityName))
+#set ($classVar = $utility.makeFirstLetterLowerCase($class))
+#set ($packagePrefix  = $prop.getProperty("packagePrefix"))
+#set ($packageModot  = $prop.getProperty("packageModot"))
+#set ($keyfield = $sqlTable.getPrimaryKey(0).getColname())
+#set ($keytype  = $sqlTable.getPrimaryKey(0).getAttType())
+#set ($keyVar= $utility.makeVarName($keyfield))
+#set ($keyVarUC = $utility.makeFirstLetterUpperCase($keyVar))
+package ${packagePrefix}${packageModot}.dao.impl;
+
+import ${packagePrefix}${packageModot}.dao.${class}Dao;
+import ${packagePrefix}.common.model${packageModot}.${class};
+import com.cartmatic.estore.core.dao.impl.HibernateGenericDaoImpl;
+
+/**
+ * Dao implementation for ${class}.
+*/
+public class ${class}DaoImpl extends HibernateGenericDaoImpl<${class}> implements ${class}Dao {
+
+}

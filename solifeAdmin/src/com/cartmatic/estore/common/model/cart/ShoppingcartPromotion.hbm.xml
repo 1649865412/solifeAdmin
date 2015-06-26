@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.cartmatic.estore.common.model.cart.ShoppingcartPromotion"
+		table="shoppingcart_promotion" select-before-update="false" dynamic-update="false"
+		dynamic-insert="false" optimistic-lock="version">
+		
+		<id name="shoppingcartPromotionId" column="shoppingcartPromotionId" type="java.lang.Integer"
+			length="10">
+			<generator class="native" />
+		</id>
+
+		<!--<many-to-one name="shoppingcart"
+			class="com.cartmatic.estore.common.model.cart.Shoppingcart" not-null="false"
+			fetch="select">
+			<column name="shoppingcartId"></column>
+		</many-to-one>-->
+
+		<property name="promoRuleId" type="java.lang.Integer" update="true"
+			insert="true" access="property" column="promoRuleId" 	unique="false" />
+			
+		<property name="promotionName" type="java.lang.String" update="true"
+			insert="true" access="property" column="promotionName" 	unique="false" />
+			
+		<property name="isUsedCoupon" type="java.lang.Short" update="true"
+			insert="true" access="property" column="isUsedCoupon" 	unique="false" />
+
+		<property name="usedCouponNo" type="java.lang.String" update="true"
+			insert="true" access="property" column="usedCouponNo" 	unique="false" />
+
+		<property name="type" type="java.lang.String" update="true"
+			insert="true" access="property" column="type" 	unique="false" />
+			
+	</class>
+</hibernate-mapping>

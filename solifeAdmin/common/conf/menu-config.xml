@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MenuConfig>
+	<Displayers>
+	    <Displayer name="Simple" type="net.sf.navigator.displayer.SimpleMenuDisplayer"/>
+	    <Displayer name="ListMenu" type="net.sf.navigator.displayer.ListMenuDisplayer"/>
+	</Displayers>
+	<Menus>
+		<Menu name="MainMenu" title="mainMenu.title" page="/index.html" width="90" >
+		</Menu>
+		<Menu name="salesMenu" title="menu.viewsalesMenu" description="View salesMenu" width="120" page="/sales/index.html">
+<!-- start:  Generated for PromoRule From Template: menu-config.xml.vm  -->
+			<Item name="PromoRulesMenu" title="menu.viewPromoRules" page="/sales/promoRule.html"/>
+<!-- end:  Generated for PromoRule From Template: menu-config.xml.vm  -->
+<!-- start:  Generated for GiftCertificate From Template: menu-config.xml.vm  -->
+			<Item name="GiftCertificatesMenu" title="menu.viewGiftCertificates" page="/sales/giftCertificate.html"/>
+<!-- end:  Generated for GiftCertificate From Template: menu-config.xml.vm  -->
+<!-- start:  Generated for RecommendedType From Template: menu-config.xml.vm  -->
+			<Item name="RecommendedTypesMenu" title="menu.viewRecommendedTypes" page="/sales/recommendedType.html"/>
+<!-- end:  Generated for RecommendedType From Template: menu-config.xml.vm  -->
+		<Item name="AwardMenu" title="menu.viewAwards" page="/activity/award.html"/>
+		<Item name="UserAwardMenu" title="menu.viewUserAwards" page="/activity/userAward.html"/>
+<!--end of sales menu items-->
+		</Menu>
+		<Menu name="catalogMenu" title="menu.viewcatalogMenu" description="View catalogMenu" width="120" page="/catalog/index.html">
+			<!-- start:  Generated for Catalog From Template: menu-config.xml.vm  -->
+			<Item name="CatalogsMenu" title="menu.viewCatalogs" page="/catalog/catalog.html"/>
+<!-- end:  Generated for Catalog From Template: menu-config.xml.vm  -->
+			<Item name="ProductTypesMenu" title="menu.viewProductTypes" page="/catalog/productType.html"/>
+<!-- end:  Generated for ProductType From Template: menu-config.xml.vm  -->
+<!-- start:  Generated for Brand From Template: menu-config.xml.vm  -->
+			<Item name="BrandsMenu" title="menu.viewBrands" page="/catalog/brand.html"/>
+<!-- end:  Generated for Brand From Template: menu-config.xml.vm  -->
+<!-- start:  Generated for ProductReview From Template: menu-config.xml.vm  -->
+			<Item name="ProductReviewsMenu" title="menu.viewProductReviews" page="/catalog/productReview.html"/>
+<!-- end:  Generated for ProductReview From Template: menu-config.xml.vm  -->
+<!-- start:  Generated for SkuOption From Template: menu-config.xml.vm  -->
+			<Item name="SkuOptionsMenu" title="menu.viewSkuOptions" page="/catalog/skuOption.html"/>
+<!-- end:  Generated for SkuOption From Template: menu-config.xml.vm  -->
+<!-- start:  Generated for AccessoryGroup From Template: menu-config.xml.vm  -->
+			<Item name="AccessoryGroupsMenu" title="menu.viewAccessoryGroups" page="/catalog/accessoryGroup.html"/>
+<!-- end:  Generated for AccessoryGroup From Template: menu-config.xml.vm  -->
+		</Menu>
+		<Menu name="inventoryMenu" title="menu.viewinventoryMenu" description="View inventoryMenu" width="120" page="/inventory/index.html">
+        	<Item name="InventorysMenu" title="menu.viewInventorys" page="/inventory/inventory.html"/>
+        	<Item name="InventoryAuditsMenu" title="menu.viewInventoryAudits" page="/inventory/inventoryAudit.html"/>
+     		<Item name="OrderPickListsMenu" title="menu.viewOrderPickShipping" page="/inventory/orderPickList.html">
+				<Item name="OrderPickListsMenu" title="menu.viewMyOrderPickShipping" page="/inventory/orderPickList.html" />
+				<Item name="ViewAllOrderPickShippingMenu" title="menu.viewOrderPickLists" page="/inventory/orderPickListExtend.html" />
+				<Item name="ViewAllOrderShipmentMenu" title="menu.viewOrderShipment" page="/inventory/orderShipment.html" />
+			</Item>
+     		<Item name="OrderReturnsMenu" title="menu.viewOrderReturns" page="/inventory/orderReturn.html"/>
+      	</Menu>
+      <!--end of inventory menu items-->
+		<Menu name="orderMenu" title="menu.order" description="View orderMenu" width="120" page="/order/index.html">
+			<Item name="SalesOrdersMenu" title="menu.viewSalesOrders" page="/order/salesOrder.html"/>
+			<Item name="PaymentsMenu" title="menu.payments" page="/order/createPayment.html"/>
+			<Item name="OrderSettlementsMenu" title="menu.viewOrderSettlements" page="/order/orderSettlement.html"/>
+			<!-- start:  Generated for TransferRecord From Template: menu-config.xml.vm  -->
+			<Item name="TransferRecordsMenu" title="menu.viewTransferRecords" page="/order/transferRecord.html"/>
+			<!-- end:  Generated for TransferRecord From Template: menu-config.xml.vm  -->
+		</Menu>		
+        <Menu name="supplierMenu" title="menu.viewSupplier" description="View supplierMenu" roles="admin" width="120" page="/supplier/index.html">
+<!-- start:  Generated for Supplier From Template: menu-config.xml.vm  -->
+			<Item name="SuppliersMenu" title="menu.viewSuppliers" page="/supplier/supplier.html"/>
+<!-- end:  Generated for Supplier From Template: menu-config.xml.vm  -->
+		<!-- start:  Generated for SupplierProduct From Template: menu-config.xml.vm  -->
+			<Item name="SupplierProductsMenu" title="menu.viewSupplierProducts" page="/supplier/supplierProduct.html"/>
+			<Item name="ProductPricesMenu" title="menu.viewProductPrices" page="/supplier/productPrice.html"/>
+<!-- end:  Generated for SupplierProduct From Template: menu-config.xml.vm  -->
+<!-- start:  Generated for PurchaseOrder From Template: menu-config.xml.vm  -->
+			<Item name="PurchaseOrdersMenu" title="menu.viewPurchaseOrders" page="/supplier/purchaseOrder.html"/>
+<!-- end:  Generated for PurchaseOrder From Template: menu-config.xml.vm  -->
+<!-- start:  Generated for AwaitingPurchase From Template: menu-config.xml.vm  -->
+			<Item name="AwaitingPurchasesMenu" title="menu.viewAwaitingPurchases" page="/supplier/awaitingPurchase.html"/>
+<!-- end:  Generated for AwaitingPurchase From Template: menu-config.xml.vm  -->
+<!-- start:  Generated for TbCategoryRefer From Template: menu-config.xml.vm  -->
+			<Item name="TbCategoryRefersMenu" title="menu.viewTbCategoryRefers" page="/supplier/tbCategoryRefer.html"/>
+<!-- end:  Generated for TbCategoryRefer From Template: menu-config.xml.vm  -->
+<!-- start:  Generated for TbCatPropRefer From Template: menu-config.xml.vm  -->
+			<Item name="TbCatPropRefersMenu" title="menu.viewTbCatPropRefers" page="/supplier/tbCatPropRefer.html"/>
+<!-- end:  Generated for TbCatPropRefer From Template: menu-config.xml.vm  -->
+<!--end of supplier menu items-->
+		</Menu>
+		<Menu name="customerMenu" title="menu.viewcustomerMenu" description="View customerMenu" width="120" page="/customer/index.html">
+<!-- start:  Generated for Customer From Template: menu-config.xml.vm  -->
+			<Item name="CustomersMenu" title="menu.viewCustomers" page="/customer/customer.html?btnSearch=true"/>
+<!-- end:  Generated for Customer From Template: menu-config.xml.vm  -->
+<!-- start:  Generated for Feedback From Template: menu-config.xml.vm  -->
+			<Item name="FeedbacksMenu" title="menu.viewFeedbacks" page="/customer/feedback.html?btnSearch=true"/>
+<!-- end:  Generated for Feedback From Template: menu-config.xml.vm  -->
+<!-- start:  Generated for Membership From Template: menu-config.xml.vm  -->
+			<Item name="MembershipsMenu" title="menu.viewMemberships" page="/customer/membership.html"/>
+<!-- end:  Generated for Membership From Template: menu-config.xml.vm  -->
+			<Item name="ShoppingcartItemMenu" title="menu.viewShoppingcartItems" page="/customer/shoppingcartItem.html"/>			
+			<Item name="ShoppingcartItemStatMenu" title="menu.viewShoppingcartItem.itemStat" page="/customer/shoppingcartItemStat.html"/>
+<!--end of customer menu items-->
+		</Menu>
+		<Menu name="contentMenu" title="menu.viewcontentMenu" description="View contentMenu" width="120" page="/content/index.html">
+<!-- start:  Generated for Content From Template: menu-config.xml.vm  -->
+			<Item name="ContentCategoryMenu" title="menu.viewContentCategory" page="/content/contentCategory.html" />
+<!-- end:  Generated for Content From Template: menu-config.xml.vm  -->
+   			<Item name="AdvertisementsMenu" title="menu.viewAdvertisements" page="/content/advertisement.html"> 
+				<Item name="AdvertisementsMenu" title="menu.viewAdvertisements" page="/content/advertisement.html"/>
+				<Item name="AdPositionTypesMenu" title="menu.viewAdPositionTypes" page="/content/adPositionType.html"/>
+           </Item>
+<!--end of content menu items-->
+		</Menu>		
+		<Menu name="systemMenu" title="menu.viewsystemMenu" description="View systemMenu" width="120" page="/system/index.html">
+            <!--start: of system security items--> 
+            <Item name="SysSecurityMenu" title="menu.viewSecuritys" page="/system/appAdmin.html" >
+            <!-- start:  Generated for AppAdmin From Template: menu-config.xml.vm  -->
+			<Item name="AppAdminsMenu" title="menu.viewAppAdmins" page="/system/appAdmin.html"/>
+            <!-- end:  Generated for AppAdmin From Template: menu-config.xml.vm  --> 
+<!-- start:  Generated for AppRole From Template: menu-config.xml.vm  -->
+			<Item name="AppRolesMenu" title="menu.viewAppRoles" page="/system/appRole.html"/>
+<!-- end:  Generated for AppRole From Template: menu-config.xml.vm  -->
+<!-- start:  Generated for AppAudit From Template: menu-config.xml.vm  -->
+			<Item name="AppAuditsMenu" title="menu.viewAppAudits" page="/system/appAudit.html"/>
+<!-- end:  Generated for AppAudit From Template: menu-config.xml.vm  -->
+        </Item>
+        <!--end: of system security items-->
+        <!--start: of system config items-->
+        <Item name="SysConfigMenu" title="menu.viewSystemConfigs" page="/system/systemConfig.html" >
+<!-- start:  Generated for SystemConfig From Template: menu-config.xml.vm  -->
+			<Item name="SystemConfigsMenu" title="menu.viewSystemConfigs" page="/system/systemConfig.html"/>
+<!-- end:  Generated for SystemConfig From Template: menu-config.xml.vm  -->
+            <Item name="LogMgrMenu" title="menu.viewLog4jMgr" page="/system/log4jMgr.html"/>
+            <Item name="SchedulerMenu" title="menu.viewSchedulerMgr" page="/system/schedulers.html"/>
+            <!-- start:  Generated for Currency From Template: menu-config.xml.vm  -->
+			<Item name="CurrencysMenu" title="menu.viewCurrencys" page="/system/currency.html"/>
+			<!-- end:  Generated for Currency From Template: menu-config.xml.vm  -->
+            <Item name="systemInfoMenu" title="menu.systemInfo" page="/system/systemInfo.html"/>
+            <Item name="SystemVersionsMenu" title="menu.viewSystemVersions" page="/system/systemVersion.html"/>
+        </Item>
+        <!--end: of system config items--> 
+        <Item name="attributeMenu" title="menu.configattribute" page="/system/attribute.html"/>
+        <!--start: of region items--> 
+        <!-- start:  Generated for Country From Template: menu-config.xml.vm  -->
+		<Item name="CountrysMenu" title="menu.shippingRegionManage" page="/system/shippingMethod.html">
+			<Item name="ShippingMenu" title="menu.viewShippingMethods" page="/system/shippingMethod.html"/>
+			<Item name="CarriersMenu" title="menu.viewCarriers" page="/system/carrier.html"/>
+			<Item name="RegionsMenu" title="menu.customRegion" page="/system/region.html"/>
+			<Item name="CountrysMenu" title="menu.viewCountrys" page="/system/country.html"/>
+		</Item>
+		<!-- end:  Generated for Country From Template: menu-config.xml.vm  -->
+        <!--end: of region items-->
+        <!--start: of payment items--> 
+        <Item name="PaymentMenu" title="menu.viewPayments" page="/system/paymentMethod.html" >
+<!-- start:  Generated for PaymentMethod From Template: menu-config.xml.vm  -->
+			<Item name="PaymentMethodsMenu" title="menu.viewPaymentMethods" page="/system/paymentMethod.html"/>
+<!-- end:  Generated for PaymentMethod From Template: menu-config.xml.vm  -->
+<!-- start:  Generated for PaymentHistory From Template: menu-config.xml.vm  -->
+			<Item name="PaymentHistorysMenu" title="menu.viewPaymentHistorys" page="/system/paymentHistory.html"/>
+<!-- end:  Generated for PaymentHistory From Template: menu-config.xml.vm  -->
+        </Item>
+        <!--end: of payment items--> 
+        <!--start: of tax items--> 
+        <Item name="TaxsMenu" title="menu.viewTaxs" page="/system/tax.html" >
+            <!-- start:  Generated for Tax From Template: menu-config.xml.vm  -->
+			<Item name="TaxsMenu" title="menu.viewTaxs" page="/system/tax.html"/>
+            <!-- end:  Generated for Tax From Template: menu-config.xml.vm  -->
+<!-- start:  Generated for TaxRate From Template: menu-config.xml.vm  -->
+			<Item name="TaxRatesMenu" title="menu.viewTaxRates" page="/system/taxRate.html"/>
+<!-- end:  Generated for TaxRate From Template: menu-config.xml.vm  -->
+        </Item>
+        <!--end: of tax items-->
+<!-- start:  Generated for Wrap From Template: menu-config.xml.vm  -->
+			<Item name="WrapsMenu" title="menu.viewWraps" page="/system/wrap.html"/>
+<!-- end:  Generated for Wrap From Template: menu-config.xml.vm  -->
+        <!--start: of ImportDataMenu items--> 
+		<Item name="ImportDataMenu" title="menu.importData" page="/system/import.html"/>
+        <!--end: of ImportDataMenu items-->
+<!-- start:  Generated for SystemQueue From Template: menu-config.xml.vm  -->
+		<Item name="SystemQueuesMenu" title="menu.viewSystemQueues" page="/system/systemQueue.html"/>
+<!-- end:  Generated for SystemQueue From Template: menu-config.xml.vm  -->
+<!-- start:  Generated for SearchServer From Template: menu-config.xml.vm  -->
+		<Item name="SearchServer" title="menu.viewSearchServer" page="/system/searchServer.html"/>
+<!-- end:  Generated for SearchServer From Template: menu-config.xml.vm  -->
+	</Menu>
+	
+	<Menu name="ReportMenu" title="menu.JasperReport" page="/report/jasperReport.html" width="90" >
+	</Menu>	
+	
+	<Menu name="systemMenu" title="menu.viewsystemMenu" description="View systemMenu" roles="admin" width="120" page="/system/index.html">
+		<Item name="StoresMenu" title="menu.viewStores" page="/system/store.html"/>
+	</Menu>
+
+	 
+	 
+</Menus>
+</MenuConfig>

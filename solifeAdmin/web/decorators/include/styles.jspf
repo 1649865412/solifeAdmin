@@ -1,0 +1,7 @@
+<%-- <link rel="stylesheet" type="text/css" href="${ctxPath}/styles/ext-all.css" />
+<link href="<c:url value='/styles/content.css'/>" rel="stylesheet" type="text/css" />
+<link href="<c:url value='/styles/utility.css'/>" rel="stylesheet" type="text/css" />
+<link href="<c:url value='/styles/layout.css'/>" rel="stylesheet" type="text/css" />
+<link href="<c:url value='/styles/module.css'/>" rel="stylesheet" type="text/css" />--%>
+<link href="<c:url value='/styles/global.css'/>" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="${ctxPath}/scripts/jquery/themes/cartmatic/jquery-ui-1.8.16.custom.css" type="text/css" />

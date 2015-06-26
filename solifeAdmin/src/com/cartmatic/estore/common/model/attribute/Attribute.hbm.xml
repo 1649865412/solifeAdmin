@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.attribute.Attribute"
+        table="attribute"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="attributeId"
+            column="attributeId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+         <property
+            name="attributeName"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="attributeName"
+            length="64"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="attributeType"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="attributeType"
+            length="5"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="attributeDataType"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="attributeDataType"
+            length="10"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="attributeUnit"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="attributeUnit"
+            length="32"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="defaultValue"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="defaultValue"
+            length="255"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="isRequired"
+            type="java.lang.Boolean"
+            update="true"
+            insert="true"
+            access="property"
+            column="isRequired"
+            length="5"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="attributeCode"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="attributeCode"
+            length="32"
+            not-null="true"
+            unique="false"
+        />
+        
+        <property
+            name="description"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="description"
+            length="255"
+            not-null="false"
+            unique="false"
+        />
+  <!-- exported bi-directional one-to-many association to CategoryAttrValue -->
+	<set name="categoryAttrValues"
+	     table="category_attr_value"
+	     lazy="true"
+	     inverse="true"
+	     cascade="save-update"
+	     sort="unsorted"
+	>
+		<key>
+			<column name="attributeId"/>
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.attribute.CategoryAttrValue"
+		/>
+	</set>     
+ <!-- exported bi-directional one-to-many association to ContentAttrValue -->
+	<set name="contentAttrValues"
+	     table="content_attr_value"
+	     lazy="true"
+	     inverse="true"
+	     cascade="save-update"
+	     sort="unsorted"
+	>
+		<key>
+			<column name="attributeId"/>
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.attribute.ContentAttrValue"
+		/>
+	</set>     
+ <!-- exported bi-directional one-to-many association to CustomerAttrValue -->
+	<set name="customerAttrValues"
+	     table="customer_attr_value"
+	     lazy="true"
+	     inverse="true"
+	     cascade="save-update"
+	     sort="unsorted"
+	>
+		<key>
+			<column name="attributeId"/>
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.attribute.CustomerAttrValue"
+		/>
+	</set>     
+ <!-- exported bi-directional one-to-many association to ProductAttrValue -->
+	<set name="productAttrValues"
+	     table="product_attr_value"
+	     lazy="true"
+	     inverse="true"
+	     cascade="save-update"
+	     sort="unsorted"
+	>
+		<key>
+			<column name="attributeId"/>
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.attribute.ProductAttrValue"
+		/>
+	</set>     
+ <!-- exported bi-directional one-to-many association to SalesorderAttrValue -->
+
+	<!-- exported bi-directional one-to-many association to ProductAttGroupItem -->
+	<set name="productAttGroupItems"
+	     table="product_att_group_item"
+	     lazy="true"
+	     inverse="true"
+	     cascade="save-update"
+	     sort="unsorted"
+	>
+		<key>
+			<column name="attributeId"/>
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.catalog.ProductAttGroupItem"
+		/>
+	</set> 
+    </class>
+</hibernate-mapping>

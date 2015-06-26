@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="copy-to-front-search">
+	<!--一个项目组有多个项目，项目间某些资源可以重用，这是用来复制重用的文件的，所以需要根据每个项目组的实际情况来修改和配置-->
+	<!--注意：这个target是在build完成后调用的且只调用一次，以兼容eclipse下的情况，且避免更新source影响到SVN同步-->
+	<!--注意：需要兼容开发时的eclipse环境和正式的build环境-->
+	<target name="copy-to-front-search" description="">
+		<property name="dir.sync.source_" location="${dir.sync.source}"/>
+		<property name="dir.sync.dest_" location="${dir.sync.dest}"/>
+		<echo level="info" message="Copying resources from ${dir.sync.source_} to ${dir.sync.dest_} ..." />
+		<!--Sync classes-->
+		<copy todir="${dir.sync.dest_}/WEB-INF/classes" preservelastmodified="true">
+			<fileset dir="${dir.sync.source_}/WEB-INF/classes">
+				<include name="**/*.class" />
+				<include name="conf/spring-resources.xml" />
+				<include name="conf/spring-hibernate.xml" />
+				<include name="conf/spring-dao.xml" />
+				<include name="conf/spring-validation.xml" />
+				<include name="conf/spring-service.xml" />
+				<include name="conf/spring-jcaptcha.xml" />
+				<include name="conf/oscache.properties" />
+				<include name="conf/validator-rules.xml" />
+				<include name="conf/validator-rules-custom.xml" />
+				<include name="conf/version.properties" />
+				<include name="com/cartmatic/estore/**/*.xml" />
+				<exclude name="com/cartmatic/estoresa/**/*" />
+				<exclude name="**/*Test.class" />
+				<exclude name="**/*TestCase.class" />
+			</fileset>
+		</copy>
+		<!--Sync tld files-->
+		<copy todir="${dir.sync.dest_}/WEB-INF" preservelastmodified="true" verbose="true">
+			<fileset dir="${dir.sync.source_}/WEB-INF">
+				<include name="I18n.tld" />
+			</fileset>
+		</copy>
+		<!--Copy JS & UI framework-->
+		<copy todir="${dir.sync.dest_}" preservelastmodified="true" failonerror="true" overwrite="false">
+			<fileset dir="${dir.sync.source_}">
+				<exclude name="*.*" />
+				<include name="scripts/jquery/**/*.*" />
+				<include name="scripts/tiny_mce/**/*.*" />
+				<include name="scripts/swfupload/**/*.*" />
+			</fileset>
+		</copy>
+		<!--Copy Tag files-->
+		<!--
+		<copy todir="${dir.sync.dest_}" preservelastmodified="true" failonerror="true" verbose="true" overwrite="false">
+			<fileset dir="${dir.sync.source_}">
+				<exclude name="*.*" />
+				<include name="WEB-INF/tags/cartmatic/*.tag" />
+			</fileset>
+		</copy>
+		-->
+		<!--Copy reusable files between storeadmin and storefront -->				
+		<!--复制文件到search server -->
+		<echo level="info" message="Copying resources from ${dir.sync.source_} to ${dir.sync.dest.search} ..." />
+		<!--Sync classes-->
+		<copy todir="${dir.sync.dest.search}/WEB-INF/classes" preservelastmodified="true">
+			<fileset dir="${dir.sync.source_}/WEB-INF/classes">
+				<include name="**/*.class" />
+				<include name="conf/spring-resources.xml" />
+				<include name="conf/spring-hibernate.xml" />
+				<include name="conf/spring-dao.xml" />
+				<include name="conf/spring-service.xml" />
+				<include name="conf/oscache.properties" />
+				<include name="conf/version.properties" />
+				<include name="com/cartmatic/estore/**/*.xml" />
+				<exclude name="com/cartmatic/estoresa/**/*" />
+				<exclude name="**/*Test.class" />
+				<exclude name="**/*TestCase.class" />
+			</fileset>
+		</copy>
+	</target>
+</project>

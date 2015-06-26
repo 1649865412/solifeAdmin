@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.cart.ShoppingcartItemGc"
+        table="shoppingcart_item_gc"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="shoppingcartItemGcId"
+            column="shoppingcartItemGcId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+        
+        <many-to-one name="shoppingcartItem" 
+          class="com.cartmatic.estore.common.model.cart.ShoppingcartItem" 
+          not-null="true"
+          fetch="select"
+          lazy="false"
+          >
+          <column name="shoppingcartItemId"/>
+        </many-to-one> 
+       
+          <property
+            name="purchaser"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="purchaser"
+            length="64"
+            not-null="true"
+            unique="false"
+            
+        />
+        <property
+            name="recipient"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="recipient"
+            length="64"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="recipientEmail"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="recipientEmail"
+            length="64"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="message"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="message"
+            length="512"
+            not-null="false"
+            unique="false"
+        />
+      	<property
+            name="giftCertAmt"
+            type="java.math.BigDecimal"
+            update="true"
+            insert="true"
+            access="property"
+            column="giftCertAmt"
+            precision="12"
+            scale="2"
+            not-null="true"
+            unique="false"
+        />      
+     </class>
+</hibernate-mapping>

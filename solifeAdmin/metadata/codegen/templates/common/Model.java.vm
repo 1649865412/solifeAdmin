@@ -1,0 +1,64 @@
+## This is an the velocity template
+## to generate a model class from an sql table input
+#set ($table = $sqlTable.Table.toLowerCase())
+#set ($class = $utility.makeClassName($sqlTable.EntityName))
+#set ($classVar = $utility.makeFirstLetterLowerCase($class))
+#set ($tableClass = $utility.makeClassName($sqlTable.Table))
+#set ($packagePrefix  = $prop.getProperty("packagePrefix"))
+#set ($packageModot  = $prop.getProperty("packageModot"))
+#set ($keyColumn = $sqlTable.getPrimaryKey(0))
+#set ($mailId    = $prop.getProperty("mailId"))
+#set ($mailName  = $prop.getProperty("mailName"))
+package ${packagePrefix}.common.model${packageModot};
+
+import ${packagePrefix}.common.model${packageModot}.base.${tableClass}Tbl;
+
+/**
+ * Model class for ${class}. Add not database mapped fileds in this class.
+ */
+public class ${class} extends ${tableClass}Tbl {
+
+  	/**
+	 * Default Empty Constructor for class ${class}
+	 */
+	public ${class} () {
+		super();
+	}
+	
+	/**
+	 * 定义实体的业务名取值； ${classVar}Name
+	 * 必须手工完成这个部分，否则编译不通过。
+	 */
+	public String get${class}Name () {
+		if (${classVar}Id == null)
+	        return "";
+	    else
+			//返回一个指定有业务意义的属性值;
+			//如：product的VO就用product.productName
+	        return this.;
+	}
+	
+	/**
+	 * Default Key Fields Constructor for class ${class}
+	 */
+	public ${class} (
+#set ($comma = " ")
+#foreach( $column in $sqlTable.sqlColumns)
+#if ($column.isKey())
+		${comma}${column.attType} in_${column.attName}
+#set ($comma=",")
+#end
+#end
+		) {
+#set ($comma = " ")
+		super (
+#foreach( $column in $sqlTable.sqlColumns)
+#if ($column.isKey())
+		${comma} in_${column.attName}
+#set ($comma=",")
+#end
+#end
+		);
+	}
+
+}

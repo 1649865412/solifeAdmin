@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<beans default-lazy-init="true">
+	<!-- use the default ,it's simple. -->
+	<!-- <bean id="imageCaptchaService" class="com.octo.captcha.service.image.DefaultManageableImageCaptchaService"/> -->
+	<bean id="imageCaptchaService"
+		class="com.octo.captcha.service.multitype.GenericManageableCaptchaService">
+		<constructor-arg index="0">
+			<ref bean="imageEngine" />
+		</constructor-arg>
+		<constructor-arg index="1">
+			<value>180</value>
+		</constructor-arg>
+		<constructor-arg index="2">
+			<value>180000</value>
+		</constructor-arg>
+	</bean>
+	<bean class="com.octo.captcha.engine.GenericCaptchaEngine" id="imageEngine">
+		<constructor-arg index="0">
+			<list>
+				<ref bean="imageCaptchaFactory" />
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<!-- ************ FACTORIES declaration ************ -->
+
+	<!-- Constructs a captcha factory which produce captcha, from a word generator 
+		(the content) and a word to image (the representation) -->
+
+	<bean id="imageCaptchaFactory" class="com.octo.captcha.image.gimpy.GimpyFactory">
+		<constructor-arg>
+			<ref bean="wordgen" />
+		</constructor-arg>
+		<constructor-arg>
+			<ref bean="wordtoimage" />
+		</constructor-arg>
+	</bean>
+
+
+
+	<!-- ************ WORD 2 IMAGE declaration ************ -->
+
+	<!-- Constructs a WordToImage, which assemble components: a font generator, 
+		a background generator, a paster and deformations: the fist one deform the 
+		background only (none is the "null" deformation, which does nothing) the 
+		second one deform the text only (none is the "null" deformation, which does 
+		nothing) the third one deform the hole picture -->
+	<bean id="wordtoimage"
+		class="com.octo.captcha.component.image.wordtoimage.ComposedWordToImage">
+		<constructor-arg index="0">
+			<ref bean="fontGenRandom" />
+		</constructor-arg>
+		<constructor-arg index="1">
+			<ref bean="backGenUni" />
+		</constructor-arg>
+		<constructor-arg index="2">
+			<ref bean="simpleColoredPaster" />
+		</constructor-arg>
+		<!-- <constructor-arg index="3"><ref bean="none"/></constructor-arg> -->
+		<!-- <constructor-arg index="4"><ref bean="none"/></constructor-arg> -->
+		<!-- <constructor-arg index="5"><ref bean="ripple3Def"/></constructor-arg> -->
+	</bean>
+
+	<!-- ************ BACKGROUND declaration ************ -->
+
+	<!-- Constructs a background generator, this one is the default Unicolor, 
+		white is background color -->
+	<bean id="backGenUni"
+		class="com.octo.captcha.component.image.backgroundgenerator.UniColorBackgroundGenerator">
+		<constructor-arg index="0">
+			<value>200</value>
+		</constructor-arg>
+		<constructor-arg index="1">
+			<value>70</value>
+		</constructor-arg>
+	</bean>
+
+	<!-- ************ FONT declaration ************ -->
+
+	<bean id="fontArial" class="java.awt.Font">
+		<constructor-arg index="0">
+			<value>Arial</value>
+		</constructor-arg>
+		<constructor-arg index="1">
+			<value>0</value>
+		</constructor-arg>
+		<constructor-arg index="2">
+			<value>10</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="fontTahoma" class="java.awt.Font">
+		<constructor-arg index="0">
+			<value>Tahoma</value>
+		</constructor-arg>
+		<constructor-arg index="1">
+			<value>0</value>
+		</constructor-arg>
+		<constructor-arg index="2">
+			<value>10</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="fontVerdana" class="java.awt.Font">
+		<constructor-arg index="0">
+			<value>Verdana</value>
+		</constructor-arg>
+		<constructor-arg index="1">
+			<value>0</value>
+		</constructor-arg>
+		<constructor-arg index="2">
+			<value>10</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="fontComic" class="java.awt.Font">
+		<constructor-arg index="0">
+			<value>Comic sans MS</value>
+		</constructor-arg>
+		<constructor-arg index="1">
+			<value>0</value>
+		</constructor-arg>
+		<constructor-arg index="2">
+			<value>10</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="fontLucida" class="java.awt.Font">
+		<constructor-arg index="0">
+			<value>Lucida console</value>
+		</constructor-arg>
+		<constructor-arg index="1">
+			<value>0</value>
+		</constructor-arg>
+		<constructor-arg index="2">
+			<value>10</value>
+		</constructor-arg>
+	</bean>
+	<!-- ************ FONT GENERATOR declaration ************ -->
+
+	<!-- Constructs Font generator, with the min and max size of font, and with 
+		a list of fonts -->
+	<bean id="fontGenRandom"
+		class="com.octo.captcha.component.image.fontgenerator.RandomFontGenerator">
+		<constructor-arg index="0">
+			<value>30</value>
+		</constructor-arg>
+		<constructor-arg index="1">
+			<value>40</value>
+		</constructor-arg>
+		<constructor-arg index="2">
+			<list>
+				<ref bean="fontArial" />
+				<ref bean="fontTahoma" />
+				<ref bean="fontVerdana" />
+				<ref bean="fontComic" />
+				<ref bean="fontLucida" />
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<!-- ************ PASTER declaration ************ -->
+
+	<!-- Constructs the paster component, a baffle one, which make holes in 
+		characters Parameters : int for the min length of the word int for the max 
+		length of the word ColorGenerator for the color of the word boolean to know 
+		if each character can have a different color -->
+	<bean id="simpleColoredPaster"
+		class="com.octo.captcha.component.image.textpaster.RandomTextPaster">
+		<constructor-arg type="java.lang.Integer" index="0">
+			<value>4</value>
+		</constructor-arg>
+		<constructor-arg type="java.lang.Integer" index="1">
+			<value>6</value>
+		</constructor-arg>
+		<constructor-arg
+			type="com.octo.captcha.component.image.color.ColorGenerator" index="2">
+			<ref bean="colorGenRandomDark" />
+		</constructor-arg>
+		<constructor-arg index="3">
+			<value>true</value>
+		</constructor-arg>
+	</bean>
+
+
+	<!-- ************ DIC and WORD GENERATOR declaration ************ -->
+
+	<!-- Constructs a File diconnary, which will read words from a file, corresponding 
+		to Locle (for instance with locale France, it will look for the file : toddlist_fr_FR.properties, 
+		if not found, take toddlist.properties -->
+	<bean id="filedict"
+		class="com.octo.captcha.component.word.FileDictionary">
+		<constructor-arg index="0">
+			<value>toddlist</value>
+		</constructor-arg>
+	</bean>
+
+	<!-- <bean id="wordgen" class="com.octo.captcha.component.wordgenerator.DictionaryWordGenerator" 
+		> <constructor-arg><ref bean="filedict"/></constructor-arg> </bean> -->
+
+	<!-- Constructs a word generator, which composed words from existing words 
+		It takes a diconnary for the existing words -->
+	<bean id="wordgen"
+		class="com.octo.captcha.component.word.wordgenerator.ComposeDictionaryWordGenerator">
+		<constructor-arg>
+			<ref bean="filedict" />
+		</constructor-arg>
+	</bean>
+
+	<!-- ************ FILTER declaration ************ -->
+
+	<!-- Constructs the "null" deformation component -->
+	
+
+	<!-- ************ COLORS Declarations ************ -->
+
+	<!-- Constructs a java Color -->
+	<bean id="white" class="java.awt.Color">
+		<constructor-arg type="int" index="0">
+			<value>255</value>
+		</constructor-arg>
+		<constructor-arg type="int" index="1">
+			<value>255</value>
+		</constructor-arg>
+		<constructor-arg type="int" index="2">
+			<value>255</value>
+		</constructor-arg>
+	</bean>
+
+	<!-- Constructs a color generator which generate one color -->
+	<bean id="colorGenWhite"
+		class="com.octo.captcha.component.image.color.SingleColorGenerator">
+		<constructor-arg index="0">
+			<ref bean="white" />
+		</constructor-arg>
+	</bean>
+
+	<!-- Constructs a color generator which generate dark color correspond to 
+		the different ranges -->
+	<bean id="colorGenRandomDark"
+		class="com.octo.captcha.component.image.color.RandomRangeColorGenerator">
+		<constructor-arg index="0">
+			<list>
+				<value>0</value>
+				<value>150</value>
+			</list>
+		</constructor-arg>
+		<constructor-arg index="1">
+			<list>
+				<value>0</value>
+				<value>150</value>
+			</list>
+		</constructor-arg>
+		<constructor-arg index="2">
+			<list>
+				<value>0</value>
+				<value>150</value>
+			</list>
+		</constructor-arg>
+		<constructor-arg index="3">
+			<list>
+				<value>255</value>
+				<value>255</value>
+			</list>
+		</constructor-arg>
+	</bean>
+
+
+</beans>

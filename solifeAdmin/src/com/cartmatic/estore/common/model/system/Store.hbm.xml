@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.system.Store"
+        table="STORE"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="storeId"
+            column="storeId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+ 		<version
+            name="version"
+            type="java.lang.Integer"
+            column="version"
+            access="property"
+            unsaved-value="undefined"
+        />
+        <property
+            name="name"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="name"
+            length="32"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="code"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="code"
+            length="32"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="siteUrl"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="siteUrl"
+            length="255"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="description"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="description"
+            length="65535"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="status"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="status"
+            length="5"
+            not-null="true"
+            unique="false"
+        />
+     <!-- imported bi-directional many-to-one association to Catalog -->
+		<many-to-one
+			name="catalog"
+			class="com.cartmatic.estore.common.model.catalog.Catalog"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="catalogId" />
+		</many-to-one>
+		<many-to-one name="category" class="com.cartmatic.estore.common.model.catalog.Category" not-null="false" fetch="select">
+			<column name="categoryId" />
+		</many-to-one>
+ <!-- exported bi-directional one-to-many association to AppUser -->
+	<set name="appUsers"
+	     table="app_user"
+	     lazy="true"
+	     inverse="true"
+	     cascade="save-update"
+	     sort="unsorted"
+	>
+		<key>
+			<column name="storeId"/>
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.system.AppUser"
+		/>
+	</set>     
+ <!-- exported bi-directional one-to-many association to Category -->
+	<set name="categorys"
+	     table="category"
+	     lazy="true"
+	     inverse="true"
+	     cascade="save-update"
+	     sort="unsorted"
+	>
+		<key>
+			<column name="storeId"/>
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.catalog.Category"
+		/>
+	</set>     
+ <!-- exported bi-directional one-to-many association to Content -->
+	<set name="contents"
+	     table="content"
+	     lazy="true"
+	     inverse="true"
+	     cascade="save-update"
+	     sort="unsorted"
+	>
+		<key>
+			<column name="storeId"/>
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.content.Content"
+		/>
+	</set>     
+ <!-- exported bi-directional one-to-many association to ProductReview -->
+	<set name="productReviews"
+	     table="product_review"
+	     lazy="true"
+	     inverse="true"
+	     cascade="save-update"
+	     sort="unsorted"
+	>
+		<key>
+			<column name="storeId"/>
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.catalog.ProductReview"
+		/>
+	</set>     
+ <!-- exported bi-directional one-to-many association to ProductStat -->
+	<set name="productStats"
+	     table="product_stat"
+	     lazy="true"
+	     inverse="true"
+	     cascade="save-update"
+	     sort="unsorted"
+	>
+		<key>
+			<column name="storeId"/>
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.catalog.ProductStat"
+		/>
+	</set>     
+ <!-- exported bi-directional one-to-many association to PromoRule -->
+	<set name="promoRules"
+	     table="promo_rule"
+	     lazy="true"
+	     inverse="true"
+	     cascade="save-update"
+	     sort="unsorted"
+	>
+		<key>
+			<column name="storeId"/>
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.sales.PromoRule"
+		/>
+	</set>     
+ <!-- exported bi-directional one-to-many association to SalesOrder -->
+	<set name="salesOrders"
+	     table="sales_order"
+	     lazy="true"
+	     inverse="true"
+	     cascade="save-update"
+	     sort="unsorted"
+	>
+		<key>
+			<column name="storeId"/>
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.order.SalesOrder"
+		/>
+	</set>     
+ <!-- exported bi-directional one-to-many association to Shoppingcart -->
+	<set name="shoppingcarts"
+	     table="shoppingcart"
+	     lazy="true"
+	     inverse="true"
+	     cascade="save-update"
+	     sort="unsorted"
+	>
+		<key>
+			<column name="storeId"/>
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.cart.Shoppingcart"
+		/>
+	</set>
+	<set name="shippingMethods" table="store_shipping_method" lazy="false" cascade="save-update">
+		<key>
+			<column name="storeId" />
+		</key>
+		<many-to-many class="com.cartmatic.estore.common.model.system.ShippingMethod" column="shippingMethodId" fetch="join" />
+	</set>
+	<set name="paymentMethods" table="store_payment_method" lazy="false" cascade="save-update">
+		<key>
+			<column name="storeId" />
+		</key>
+		<many-to-many class="com.cartmatic.estore.common.model.system.PaymentMethod" column="paymentMethodId" fetch="join" />
+	</set>	
+	<set name="systemConfigs"
+	     table="system_config"
+	     lazy="true"
+	     inverse="true"
+	     cascade="save-update"
+	     sort="unsorted"
+	     order-by="category"
+	>
+		<key>
+			<column name="storeId"/>
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.system.SystemConfig"
+		/>
+	</set>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,2 @@
+INSERT INTO system_version ( sysVersion, productCode, domainName, licenseKey, createTime, version ) 
+		 VALUES ( '5.2', 'CartMatic Java Ecommerce Platform', 'localhost', 'yCebOVM-7552-6383324191', '2013-01-01', 0 );

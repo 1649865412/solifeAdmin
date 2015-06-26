@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.catalog.AccessoryGroup"
+        table="ACCESSORY_GROUP"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="accessoryGroupId"
+            column="accessoryGroupId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+         <property
+            name="groupName"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="groupName"
+            length="32"
+            not-null="true"
+            unique="false"
+        />
+         <property name="groupCode" type="java.lang.String" update="true" insert="true" access="property" column="groupCode" length="32" not-null="true" unique="false" />
+        <property
+            name="groupDesc"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="groupDesc"
+            length="64"
+            not-null="false"
+            unique="false"
+        />
+  <!-- exported bi-directional one-to-many association to Accessory -->
+	<set name="accessorys"
+	     table="accessory"
+	     lazy="true"
+	     inverse="true"
+	     cascade="save-update"
+	     order-by="sortOrder"
+	>
+		<key>
+			<column name="accessoryGroupId"/>
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.catalog.Accessory"
+		/>
+	</set>     
+    </class>
+</hibernate-mapping>

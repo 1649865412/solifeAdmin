@@ -1,0 +1,191 @@
+<%@page pageEncoding="UTF-8" %>
+<table cellspacing="0" cellpadding="0" width="100%" class="table-content">
+				<tr>
+					<td width="300" class="FieldLabel">
+						<p>
+							<b>客户下单IP</b>
+							<br/>${salesOrder.ipAddress}
+							<br/>
+							<c:choose>
+								<c:when test="${salesOrder.paymentStatus==30}">
+									<c:choose>
+										<c:when test="${empty placeOrder_geoIP}">此IP未进行解析<input type="button" value="马上解析IP" onclick="fnTracerPlaceOrderIp();"/></c:when>
+										<c:when test="${placeOrder_geoIP.country=='N/A'}">此IP无法解析</c:when>
+										<c:otherwise>
+											${placeOrder_geoIP.city }, ${placeOrder_geoIP.state }
+											<br/>
+											${placeOrder_geoIP.country}
+										</c:otherwise>
+									</c:choose>
+								</c:when>
+								<c:otherwise>
+									订单无全额支付，此IP未进行解析。
+								</c:otherwise>
+							</c:choose>
+						</p>
+						<c:forEach var="orderShipment" items="${salesOrder.orderShipments}" varStatus="orderShipment_varStatus">
+						<p>
+							<b>Shipping Address</b>
+							<br/>
+							${orderShipment.orderAddress.firstname }&nbsp;${orderShipment.orderAddress.lastname }
+							<br/>
+							${orderShipment.orderAddress.address1 }
+							<br/>
+							<c:if test="${not empty orderShipment.orderAddress.address2 }">
+							${orderShipment.orderAddress.address2 }<br/>
+							</c:if>
+							${orderShipment.orderAddress.city }, ${orderShipment.orderAddress.state }&nbsp;${orderShipment.orderAddress.postalcode}
+							<br/>
+							${orderShipment.orderAddress.country }
+							<br />
+							${orderShipment.orderAddress.phoneNumber }
+							<br />
+							<span id="shippingAddressError"/>
+						</p>
+						<c:set var="shipmentAddress">${orderShipment.orderAddress.city },${orderShipment.orderAddress.state },${orderShipment.orderAddress.country}</c:set>
+						</c:forEach>
+						<p>
+							<b>Billing Address</b>
+							<br/>${salesOrder.orderAddress.firstname}${emptySpace}${salesOrder.orderAddress.lastname}<br/>
+			  				${salesOrder.orderAddress.address1}
+			  				<br/>
+			  				<c:if test="${not empty salesOrder.orderAddress.address2}">
+			  				${salesOrder.orderAddress.address2} <br/>
+			  				</c:if>
+			  				${salesOrder.orderAddress.city},${salesOrder.orderAddress.state}${emptySpace}${salesOrder.orderAddress.postalcode}
+			  				<br/>
+							${salesOrder.orderAddress.country}
+							<br />
+							${salesOrder.orderAddress.phoneNumber }
+							<br />
+							<span id="billingAddressError"/>
+						</p>
+					</td>
+					<%-- TODO set googlemap here.--%>
+					<td>
+						<div id="map_canvas" style="width: 1000px; height: 500px"></div>
+					</td>
+				</tr>
+ </table>
+<script type="text/javascript">
+var geocoder;
+var googleMap;
+var zoomLevel=8;
+
+function initializeMap(latlng){
+	geocoder = new google.maps.Geocoder();
+	var mapOptions = {
+	  zoom: zoomLevel,
+	  //center: latlng?latlng:null,
+	  mapTypeId: google.maps.MapTypeId.ROADMAP
+	}
+	googleMap = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
+
+	var placeOrderLatLng =null;
+	<c:if test="${not empty placeOrder_geoIP && placeOrder_geoIP.country != 'N/A'}">
+		placeOrderLatLng=new google.maps.LatLng(${placeOrder_geoIP.lat},${placeOrder_geoIP.lon});
+		addMarker(placeOrderLatLng,'下单位置:${placeOrder_geoIP.city},${placeOrder_geoIP.state },${placeOrder_geoIP.country}','https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld=O|FFFF00|000000');
+	</c:if>
+	addAddressMarker("${shipmentAddress}","收货地址","https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld=S|FF0000|000000",function(l){
+		if(l){
+			addPolyline(placeOrderLatLng,l);
+		}else{
+			$("shippingAddressError").innerHTML="注意：本地址在地图无法解析。<br />"+'Geocode was not successful for the following reason: ' + status;
+		}
+	});
+}
+function addMarker(latlng,title,image){
+	if(latlng){
+		var marker = new google.maps.Marker({
+			position: latlng,
+			map: googleMap,
+			title: title,
+			icon: image
+		});
+		var infowindow = new google.maps.InfoWindow({
+				content: title
+			});
+		google.maps.event.addListener(marker, 'click', function() {
+			  infowindow.open(googleMap,marker);
+			});
+	}
+}
+function addAddressMarker(address,title,image,handler) {
+	geocoder.geocode( { 'address': address}, function(results, status) {
+	  if (status == google.maps.GeocoderStatus.OK) {
+		googleMap.setCenter(results[0].geometry.location);
+		var marker = new google.maps.Marker({
+			map: googleMap,
+			position: results[0].geometry.location,
+			icon: image
+		});
+		var infowindow = new google.maps.InfoWindow({
+            content: title
+        });
+		google.maps.event.addListener(marker, 'click', function() {
+          infowindow.open(googleMap,marker);
+        });
+		handler.call(this,results[0].geometry.location);
+	  } else {
+		handler.call(this);
+	  }
+	});
+}
+
+function addPolyline(latLng1,latLng2){
+	if(latLng1&&latLng2){
+		var flightPlanCoordinates = [latLng1,latLng2];
+		var flightPath = new google.maps.Polyline({
+		  path: flightPlanCoordinates,
+		  strokeColor: '#FF0000',
+		  strokeOpacity: 0.4,
+		  strokeWeight: 4
+		});
+		flightPath.setMap(googleMap);
+		var distance=calDistance(latLng1.lat(),latLng1.lng(),latLng2.lat(),latLng2.lng());
+		var infowindow = new google.maps.InfoWindow({
+			content: "两位置相距是: " + distance + " 公里."
+		});
+		google.maps.event.addListener(flightPath, 'click', function(event) {
+		  infowindow.position = event.latLng;
+		  infowindow.open(googleMap);
+		});
+	}
+}
+
+var EARTH_RADIUS = 6378.137;//地球半径，单位为公里
+function rad(d){   //计算弧度
+	return d * Math.PI / 180.0;
+}
+//计算两个经纬度坐标之间的距离，返回单位为公里的数值
+function calDistance(lat1, lng1, lat2, lng2){
+	var radLat1 = rad(lat1);
+	var radLat2 = rad(lat2);
+	var a = radLat1 - radLat2;
+	var b = rad(lng1) - rad(lng2)
+	var s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a/2),2) + Math.cos(radLat1)*Math.cos(radLat2)*Math.pow(Math.sin(b/2),2)));
+	s = s * EARTH_RADIUS;
+	s = Math.round(s * 10000) / 10000;
+	return s;
+}
+
+function loadGoogleMapScript() {
+	var script = document.createElement('script');
+	script.type = 'text/javascript';
+	script.src = 'https://maps.googleapis.com/maps/api/js?sensor=false&' +'callback=initializeMap';
+	document.body.appendChild(script);
+}
+
+//$j(document).ready(function(){loadGoogleMapScript();});
+</script>
+<script type="text/javascript">
+function fnTracerPlaceOrderIp(){
+	$j.post(__ctxPath+"/system/systemQueue.html",{doAction:"tracerPlaceOrderIp",orderNo:"${salesOrder.orderNo}",ipAddress:"${salesOrder.ipAddress}"},function(result){
+		if(result.status==1){
+			sysMsg("IP已提交到系统进行解析，大概30秒后请刷新本页面查看结果。");
+		}else{
+			sysMsg(result.msg,false);
+		}
+		},"json");
+}
+</script>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.content.ProductAdvertisement"
+        table="PRODUCT_ADVERTISEMENT"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="productAdvertisementId"
+            column="productAdvertisementId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+ 		<version
+            name="version"
+            type="java.lang.Integer"
+            column="version"
+            access="property"
+            unsaved-value="undefined"
+        />
+
+     <!-- imported bi-directional many-to-one association to Advertisement -->
+		<many-to-one
+			name="advertisement"
+			class="com.cartmatic.estore.common.model.content.Advertisement"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="advertisementId" />
+		</many-to-one>
+    <!-- imported bi-directional many-to-one association to Category -->
+		<many-to-one
+			name="category"
+			class="com.cartmatic.estore.common.model.catalog.Category"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="categoryId" />
+		</many-to-one>
+    </class>
+</hibernate-mapping>

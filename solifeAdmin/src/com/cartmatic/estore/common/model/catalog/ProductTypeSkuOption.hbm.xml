@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.catalog.ProductTypeSkuOption"
+        table="PRODUCT_TYPE_SKU_OPTION"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="productTypeSkuOptionId"
+            column="productTypeSkuOptionId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+         <property
+            name="sortOrder"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="sortOrder"
+            length="10"
+            not-null="false"
+            unique="false"
+        />
+     <!-- imported bi-directional many-to-one association to ProductType -->
+		<many-to-one
+			name="productType"
+			class="com.cartmatic.estore.common.model.catalog.ProductType"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="productTypeId" />
+		</many-to-one>
+    <!-- imported bi-directional many-to-one association to SkuOption -->
+		<many-to-one
+			name="skuOption"
+			class="com.cartmatic.estore.common.model.catalog.SkuOption"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="skuOptionId" />
+		</many-to-one>
+    </class>
+</hibernate-mapping>

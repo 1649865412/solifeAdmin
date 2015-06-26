@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.catalog.Accessory"
+        table="ACCESSORY"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="accessoryId"
+            column="accessoryId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+ 		<version
+            name="version"
+            type="java.lang.Integer"
+            column="version"
+            access="property"
+            unsaved-value="undefined"
+        />
+        <property
+            name="accessoryName"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="accessoryName"
+            length="32"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="price"
+            type="java.math.BigDecimal"
+            update="true"
+            insert="true"
+            access="property"
+            column="price"
+            precision="12"
+            scale="2"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="sortOrder"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="sortOrder"
+            length="10"
+            not-null="false"
+            unique="false"
+        />
+     <!-- imported bi-directional many-to-one association to AccessoryGroup -->
+		<many-to-one
+			name="accessoryGroup"
+			class="com.cartmatic.estore.common.model.catalog.AccessoryGroup"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="accessoryGroupId" />
+		</many-to-one>
+ 	<!-- exported bi-directional many-to-many association to Product -->
+	<set name="products" table="product_accessory" lazy="true" cascade="save-update" inverse="false">
+		<key>
+			<column name="accessoryId" />
+		</key>
+		<many-to-many class="com.cartmatic.estore.common.model.catalog.Product" column="productId"/>
+	</set>
+    </class>
+</hibernate-mapping>

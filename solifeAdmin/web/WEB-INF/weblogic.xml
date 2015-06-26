@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<weblogic-web-app xmlns="http://www.bea.com/ns/weblogic/90">
+	<context-root>StoreAdmin</context-root>
+	<container-descriptor>
+		<prefer-web-inf-classes>false</prefer-web-inf-classes>
+		<index-directory-enabled>false</index-directory-enabled>
+		<servlet-reload-check-secs>-1</servlet-reload-check-secs>
+		<resource-reload-check-secs>-1</resource-reload-check-secs>
+		<optimistic-serialization>true</optimistic-serialization>
+	</container-descriptor>
+	<session-descriptor>
+		<timeout-secs>600</timeout-secs>
+		<invalidation-interval-secs>60</invalidation-interval-secs>
+		<!-- <cookie-path>StoreAdmin</cookie-path> -->
+	</session-descriptor>
+	<jsp-descriptor>
+		<page-check-seconds>-1</page-check-seconds>
+		<verbose>false</verbose>
+		<!-- <precompile>true</precompile>
+		<precompile-continue>true</precompile-continue>
+		<keepgenerated>true</keepgenerated> -->
+	</jsp-descriptor>
+</weblogic-web-app>
+

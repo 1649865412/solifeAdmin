@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.order.OrderPickList"
+        table="order_pick_list"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="orderPickListId"
+            column="orderPickListId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+         <property
+            name="createTime"
+            type="java.util.Date"
+            update="true"
+            insert="true"
+            access="property"
+            column="createTime"
+            length="0"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="updateTime"
+            type="java.util.Date"
+            update="true"
+            insert="true"
+            access="property"
+            column="updateTime"
+            length="0"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="createBy"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="createdBy"
+            length="10"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="isActive"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="isActive"
+            length="5"
+            not-null="true"
+            unique="false"
+        />
+  <!-- exported bi-directional one-to-many association to OrderShipment -->
+	<set name="orderShipments"
+	     table="order_shipment"
+	     lazy="true"
+	     inverse="true"
+	     cascade="save-update"
+	     sort="unsorted"
+	     order-by="shipmentNo"
+	>
+		<key>
+			<column name="orderPickListId"/>
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.order.OrderShipment"
+		/>
+	</set>     
+    </class>
+</hibernate-mapping>

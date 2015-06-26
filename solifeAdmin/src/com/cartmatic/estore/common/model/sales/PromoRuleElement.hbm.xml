@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.sales.PromoRuleElement"
+        table="promo_rule_element"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+       
+    >
+		<id
+            name="promoRuleElementId"
+            column="promoRuleElementId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+         <property
+            name="kind"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="kind"
+            length="16"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="type"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="type"
+            length="64"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="sort"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="sort"
+            length="10"
+            not-null="false"
+            unique="false"
+        />
+     <!-- imported bi-directional many-to-one association to PromoRule -->
+		<many-to-one
+			name="promoRule"
+			class="com.cartmatic.estore.common.model.sales.PromoRule"
+            not-null="false"
+			fetch="select"
+			cascade="none" 
+		>	
+			<column name="promoRuleId" />
+		</many-to-one>
+ <!-- exported bi-directional one-to-many association to PromoRuleParameter -->
+	<set name="promoRuleParameters"
+	     table="promo_rule_parameter"
+	     lazy="false"
+	     inverse="true"
+	     cascade="delete"
+	     sort="unsorted"
+	     order-by="promoRuleParameterId asc"
+	>
+		<key on-delete="noaction">
+			<column name="promoRuleElementId" />
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.sales.PromoRuleParameter"
+		/>
+	</set>     
+    </class>
+</hibernate-mapping>

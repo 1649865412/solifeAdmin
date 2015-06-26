@@ -1,0 +1,26 @@
+<%@ page language="java" errorPage="/error.jsp" contentType="text/html; charset=UTF-8" isELIgnored="false" buffer="24kb" pageEncoding="UTF-8"%>
+<div class="position">
+	<div class="left">
+	<c:if test="${not empty CartmaticMenuNav[0]}"><fmt:message key="${CartmaticMenuNav[0]}"/> > </c:if><c:if test="${not empty CartmaticMenuNav[2]}"><fmt:message key="${CartmaticMenuNav[1]}"/> > </c:if>
+	<c:forEach items="${navigationList}" var="nav" varStatus="status">
+		<c:if test="${not status.last}"><a href="${nav.uri}">${nav.navName}</a>&nbsp;&gt;&nbsp;</c:if>
+		<c:if test="${status.last}"><span>${nav.navName}</span></c:if>
+	</c:forEach>
+	<%-- 以下代码是为了兼容旧框架的code而设置的 --%>
+	<c:if test="${empty navigationList}">
+		<span><decorator:title /></span>
+		<c:if test="${not empty IS_FORM_ACTION}">&nbsp;&nbsp;<decorator:getProperty property="page.heading" /></c:if>
+	</c:if>
+	</div>
+	 <div class="right">
+	 	<c:if test="${sessionScope.navigationList!=null && requestScope.SwitchItemEnabled!=null}">
+	    <ul>
+	    	<c:if test="${empty requestScope.ENTITY_IS_NEW}"><li class="former"><a href="#" onclick="return fnDoPrevItem(this);"><fmt:message key="list.record.prev" /></a></li></c:if>
+			<li class="back-search"><a href="#" onclick="return fnDoReturnToSearch(this);"><fmt:message	key="list.record.return" /></a></li>
+			<c:if test="${empty requestScope.ENTITY_IS_NEW}"><li class="next"><a href="#" onclick="return fnDoNextItem(this);"><fmt:message key="list.record.next" /></a></li></c:if>
+		</ul>
+		</c:if>
+	</div>
+	<div class="top-showMsg-close" id="showMsg_id" style="display: none;">
+	</div>
+</div>

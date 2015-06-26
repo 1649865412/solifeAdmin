@@ -1,0 +1,68 @@
+## This is a velocity template
+## to generate a model class from an sql table input
+#set ($table = $sqlTable.Table)
+#set ($class = $utility.makeClassName($sqlTable.EntityName))
+#set ($classVar = $utility.makeFirstLetterLowerCase($class))
+#set ($packagePrefix  = $prop.getProperty("packagePrefix"))
+#set ($packageModot  = $prop.getProperty("packageModot"))
+#set ($keyColumn = $sqlTable.getPrimaryKey(0))
+#set ($keyfield = $sqlTable.getPrimaryKey(0).getColname())
+#set ($keyVar= $utility.makeVarName($keyfield))
+#set ($keyType= $keyColumn.attType)
+#set ($mailId    = $prop.getProperty("mailId"))
+#set ($mailName  = $prop.getProperty("mailName"))
+package ${packagePrefix}${packageModot}.dao;
+
+import java.util.List;
+#if ($sqlTable.hasCompositeKey)
+import ${packagePrefix}.common.model${packageModot}.base.${class}PK;
+#end
+import ${packagePrefix}.common.model${packageModot}.${class};
+import ${packagePrefix}.common.PagingBean;
+
+/**
+ * ${class} Base Data Access Object (DAO) interface.
+ * Generated and maintained by tools (AppfuseGenerator).
+ * Avoid changing in this file, because it will be overwritten.
+ */
+public interface ${class}DAOBase extends ${packagePrefix}.dao.BaseDAO{
+    /**
+     * Gets ${class}s information based on ${keyVar}
+     * @param $keyVar the current $keyfield
+     * @return $class populated $class object
+     */
+#if ($sqlTable.hasCompositeKey)
+	public ${class} get${class}(${class}PK pkey);
+#else
+    public ${class} get${class}($keyType $keyVar);
+#end
+
+    /**
+     * Gets all of ${class}s.
+     *
+     * @return List populated list of ${class}s
+     */
+    public List get${class}s();
+
+    /**
+     * Saves a ${classVar}'s information
+     * @param $classVar the object to be saved
+     */
+    public void save$class(${class} $classVar);
+
+    /**
+     * Removes a $classVar from the database by primary Key id
+     * @param $keyField the ${classVar}'s $keyVar
+     */
+    public void remove${class}($keyType $keyVar);
+    
+    /**
+     * Retrieves a list of ${classVar}s, filtering using the example ${classVar} object
+     * @param ${classVar} example ${class} object to filter on
+     * @param orderProperty order by what property
+     * @param useDesc true for desc order, false for asc order
+     * @param pb a PagingBean to hold paging info, data inside will be changed
+     * @return List
+     */
+    public List get${class}sByExample(final ${class} $classVar,final String orderProperty,final boolean useDesc, PagingBean pb);
+}

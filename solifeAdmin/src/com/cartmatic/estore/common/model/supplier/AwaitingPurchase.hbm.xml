@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.supplier.AwaitingPurchase"
+        table="V_AWAITING_PURCHASE"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="supplierId"
+            column="supplierId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+         <property
+            name="quantity"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="quantity"
+            length="10"
+            not-null="true"
+            unique="false"
+        />
+        <many-to-one name="supplier" 
+          class="com.cartmatic.estore.common.model.supplier.Supplier"
+          not-null="true"
+          fetch="select"
+          lazy="false"
+          insert="false"
+          update="false"
+          >
+          <column name="supplierId"/>
+        </many-to-one>
+        
+     </class>
+</hibernate-mapping>

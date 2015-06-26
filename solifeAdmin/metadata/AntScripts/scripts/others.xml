@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ProbizBuild" basedir="../../../">
+	<import file="properties.xml" />
+
+	<target name="remove-oldcode" depends="" description="Remove old code">
+		<echo level="info">Remove old code...</echo>
+		<echo level="info">Replacing plain text</echo>
+		<replaceregexp flags="si" byline="true">
+			<regexp pattern='(.*)No=(\S*)No' />
+			<substitution expression='\1No=\2 No' />
+			<fileset dir="D:/workspace/StoreAdmin/common/" includes="ApplicationResources_en.properties" />
+		</replaceregexp>
+	</target>
+
+	<target name="remove-veryoldcode" depends="" description="Remove old code">
+		<echo level="info">Remove old code...</echo>
+		<echo level="info">removing yourposition</echo>
+		<replaceregexp flags="i" byline="true">
+			<regexp pattern='&lt;div id="yourposition"(.*)/div&gt;' />
+			<substitution expression="" />
+			<fileset dir="D:/workspace/StoreAdmin/web/pages/" includes="**/*.jsp" />
+		</replaceregexp>
+		<echo level="info">replacing content-title</echo>
+		<replaceregexp flags="i" byline="true">
+			<regexp pattern='&lt;div id="content-title"(.*)/div&gt;' />
+			<substitution expression='&lt;content tag="heading"\1/content&gt;' />
+			<fileset dir="D:/workspace/StoreAdmin/web/pages/" includes="**/*.jsp" />
+		</replaceregexp>
+		<echo level="info">replacing display user name</echo>
+		<replaceregexp flags="i" byline="true">
+			<regexp pattern='&lt;span&gt;TODO, show user name:(.*)&lt;/span&gt;' />
+			<substitution expression='&lt;probiz:userName userId="${status.value}"/&gt;' />
+			<fileset dir="D:/workspace/StoreAdmin/web/pages/" includes="**/*.jsp" />
+		</replaceregexp>
+		<echo level="info">removing top 2006-04-28</echo>
+		<replaceregexp flags="i" byline="true">
+			<regexp pattern="&lt;!-- top 2006(.*)--&gt;" />
+			<substitution expression="" />
+			<fileset dir="D:/workspace/StoreAdmin/web/pages/" includes="**/*.jsp" />
+		</replaceregexp>
+		<echo level="info">Updating RequestContext call</echo>
+		<replaceregexp flags="g" byline="false">
+			<regexp pattern="RequestContext\.getCurrentContext\(\)\.getCurrentUserID\(\)" />
+			<substitution expression="RequestContext\.getCurrentUserId\(\)" />
+			<fileset dir="D:/workspace/StoreAdmin/src/" includes="**/*.java" />
+		</replaceregexp>
+		<echo level="info">Updating index.html</echo>
+		<replaceregexp flags="i" byline="true">
+			<regexp pattern='onclick="location.href=(.*)/(.*)/(.*)Menu.html(.*)' />
+			<substitution expression='onclick="location.href=\1index.html\4' />
+			<fileset dir="D:/workspace/StoreAdmin/web/pages/" includes="**/*.jsp" />
+		</replaceregexp>
+		<replaceregexp flags="g">
+			<regexp pattern='Short.valueOf' />
+			<substitution expression='new Short' />
+			<fileset dir="D:/workspace/StoreAdmin/">
+				<include name="src/**/*.java" />
+				<include name="common/**/*.java" />
+				<include name="test/**/*.java" />
+				<include name="web/**/*.jsp" />
+			</fileset>
+		</replaceregexp>
+		<echo level="info">Replacing imgs/spacer.gif</echo>
+		<replaceregexp flags="g">
+			<regexp pattern='imgs/spacer.gif' />
+			<substitution expression='/images/spacer.gif' />
+			<fileset dir="D:/workspace/StoreAdmin/web/">
+				<include name="**/*.jsp" />
+				<include name="**/*.vm" />
+				<include name="**/*.js" />
+			</fileset>
+		</replaceregexp>
+		<echo level="info">Replacing btnSearch</echo>
+		<replaceregexp flags="i" byline="true">
+			<regexp pattern='(.*)name="button7"(.*)id="button7"(.*)value="Search"(.*)' />
+			<substitution expression='\1name="btnSearch"\2id="btnSearch"\3value="Search"\4' />
+			<fileset dir="D:/workspace/StoreAdmin/web/pages/" includes="**/*.jsp" />
+		</replaceregexp>
+		<echo level="info">Replacing id in displaytag to uid</echo>
+		<replaceregexp flags="s" byline="false">
+			<regexp pattern='(.*)&lt;display:table(.*)id="(.*)&gt;' />
+			<substitution expression='\1&lt;display:table \2uid="\3&gt;' />
+			<fileset dir="D:/workspace/StoreAdmin/web/pages/" includes="**/systemConfigList.jsp" />
+		</replaceregexp>
+	</target>
+
+	<!-- =================================================================== -->
+	<!-- Create JavaDoc Documentation                                        -->
+	<!-- =================================================================== -->
+	<!--TODO fix the problem-->
+	<target name="javadoc" depends="java2html" description="Generate JavaDoc API docs">
+		<javadoc destdir="${dir.build}/docs/api" packagenames="com.probiz.estore.*" author="true" version="true" windowtitle="${webapp.name} api" doctitle="&lt;h1&gt;${webapp.name} javadocs for
+                version ${webapp.version}&lt;/h1&gt;" bottom="Copyright &#169; 2006-${copyright.year}" stylesheetfile="${dir.build}/docs/api/stylesheet.css" useexternalfile="yes">
+
+			<fileset dir="${dir.src.src}">
+				<patternset refid="java.files.pattern" />
+			</fileset>
+			<fileset dir="${dir.src.common}">
+				<patternset refid="java.files.pattern" />
+			</fileset>
+			<fileset dir="${dir.src.test}">
+				<patternset refid="java.files.pattern" />
+			</fileset>
+
+			<classpath refid="test.classpath" />
+
+			<!-- XDoclet Tags -->
+			<tag name="hibernate.class" scope="all" description="Class:" />
+			<tag name="hibernate.id" scope="all" description="Id:" />
+			<tag name="hibernate.property" scope="all" description="Property:" />
+			<tag name="jsp.tag" scope="all" description="JSP Tag:" />
+			<tag name="jsp.attribute" scope="all" description="JSP Attribute:" />
+			<tag name="struts.action" scope="all" description="Mapping:" />
+			<tag name="struts.action-forward" scope="all" description="ActionForward:" />
+			<tag name="struts.form" scope="all" description="Form Name:" />
+			<tag name="struts.validator" scope="all" description="Validator:" />
+			<tag name="struts.validator-args" scope="all" description="Validator Args:" />
+			<tag name="struts.validator-var" scope="all" description="Validator Var:" />
+			<tag name="web.listener" scope="all" description="Listener:" />
+			<tag name="web.filter" scope="all" description="Filter:" />
+			<tag name="web.filter-prepare-param" scope="all" description="prepare-Param:" />
+			<tag name="web.filter-mapping" scope="all" description="Mapping:" />
+			<tag name="web.servlet" scope="all" description="Servlet:" />
+			<tag name="web.servlet-prepare-param" scope="all" description="prepare-Param:" />
+			<tag name="web.servlet-mapping" scope="all" description="Mapping:" />
+
+			<!-- Application frameworks -->
+			<link href="http://jakarta.apache.org/commons/lang/api" />
+			<link href="http://struts.apache.org/struts-doc-1.2.9/api" />
+			<link href="http://www.springframework.org/docs/api" />
+			<link href="http://www.hibernate.org/hib_docs/api" />
+
+			<!-- Testing frameworks -->
+			<link href="http://www.junit.org/junit/javadoc/${junit.version}" />
+			<link href="http://strutstestcase.sf.net/api/" />
+
+			<!-- SDKs -->
+			<link href="http://java.sun.com/j2se/1.4/docs/api/" />
+			<link href="http://java.sun.com/j2ee/1.4/docs/api/" />
+		</javadoc>
+	</target>
+
+	<!-- =================================================================== -->
+	<!-- Create HTML versions of the Java code in this project               -->
+	<!-- =================================================================== -->
+	<target name="java2html" depends="" description="creates HTML pages of code for online viewing">
+		<taskdef name="java2html" classname="com.java2html.Java2HTMLTask" classpathref="project.classpath" />
+
+		<java2html destination="${dir.build}/docs/api">
+			<fileset dir="${dir.src.src}">
+				<patternset refid="java.files.pattern" />
+			</fileset>
+			<fileset dir="${dir.src.common}">
+				<patternset refid="java.files.pattern" />
+			</fileset>
+			<fileset dir="${dir.src.test}">
+				<patternset refid="java.files.pattern" />
+			</fileset>
+		</java2html>
+	</target>
+	<!-- Utilities -->
+	<patternset id="java.files.pattern" includes="**/*.java" />
+
+	<target name="checkstyle" depends="" description="Check code style for compliance with coding standards">
+		<property name="checkstyle.data.dir" location="${dir.build}/docs/checkstyle" />
+		<property name="checkstyle.data.file" location="${checkstyle.data.dir}/checkstyle.xml" />
+		<property name="checkstyle.report.file" location="${checkstyle.data.dir}/checkstyle.html" />
+		<property name="checkstyle.xsl.file" location="${dir.lib}/contrib/checkstyle-probiz-filtered.xsl" />
+		<mkdir dir="${checkstyle.data.dir}" />
+		<taskdef resource="checkstyletask.properties" classpathref="project.classpath" />
+		<checkstyle config="${dir.lib}/probiz_checks.xml" classpathref="project.classpath" failOnViolation="false" failureProperty="checkstyle.failure">
+			<fileset dir="${dir.src.common}">
+				<patternset refid="java.files.pattern" />
+			</fileset>
+			<fileset dir="${dir.src.src}">
+				<patternset refid="java.files.pattern" />
+			</fileset>
+			<!--
+            <fileset dir="${dir.src.test}">
+                <patternset refid="java.files.pattern"/>
+            </fileset>
+            -->
+			<!-- uncomment to print to console as well -->
+			<!--formatter type="plain"/-->
+			<formatter type="xml" toFile="${checkstyle.data.file}" />
+		</checkstyle>
+		<xslt in="${checkstyle.data.file}" out="${checkstyle.report.file}" style="${checkstyle.xsl.file}" />
+	</target>
+
+	<target name="pmd" depends="" description="Locates unused imports, unused variables, etc.">
+		<mkdir dir="${dir.build}/docs/pmd" />
+		<property name="pmd.data.file" value="${dir.build}/docs/pmd/pmdreport.xml" />
+		<property name="pmd.report.file" value="${dir.build}/docs/pmd/pmdreport.html" />
+		<property name="pmd.xsl.file" value="${dir.lib}/pmdxslt/probiz-pmd-report.xslt" />
+		<taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpathref="project.classpath" />
+
+		<pmd failonerror="no" shortFilenames="true" encoding="UTF-8">
+			<!--
+
+    		<ruleset>rulesets/favorites.xml</ruleset>
+    		<ruleset>rulesets/finalizers.xml</ruleset>
+    		<ruleset>rulesets/design.xml</ruleset>
+    		<ruleset>rulesets/imports.xml</ruleset>
+    		<ruleset>rulesets/j2ee.xml</ruleset>
+    		<ruleset>rulesets/naming.xml</ruleset>
+    		<ruleset>rulesets/optimizations.xml</ruleset>
+    		<ruleset>rulesets/unusedcode.xml</ruleset>
+    		<ruleset>rulesets/basic-jsp.xml</ruleset>
+    		<ruleset>rulesets/coupling.xml</ruleset>
+    		<ruleset>rulesets/logging-jakarta-commons.xml</ruleset>
+    		<ruleset>rulesets/sunsecure.xml</ruleset>
+    	-->
+			<ruleset>rulesets/basic.xml</ruleset>
+			<formatter type="xml" toFile="${pmd.data.file}" />
+			<fileset dir="${dir.src.src}">
+				<patternset refid="java.files.pattern" />
+			</fileset>
+			<fileset dir="${dir.src.common}">
+				<patternset refid="java.files.pattern" />
+			</fileset>
+		</pmd>
+		<xslt in="${pmd.data.file}" out="${pmd.report.file}" style="${pmd.xsl.file}" />
+	</target>
+
+	<target name="cpd">
+		<taskdef name="cpd" classname="net.sourceforge.pmd.cpd.CPDTask" classpathref="project.classpath" />
+		<cpd minimumTokenCount="100" outputFile="${dir.build}/docs/pmd/cpd.txt" ignoreLiterals="true" ignoreIdentifiers="true">
+			<fileset dir="${dir.src.src}">
+				<include name="**/*.java" />
+				<exclude name="**/*Tbl.java" />
+			</fileset>
+		</cpd>
+	</target>
+
+	<target name="emma" description="turns on EMMA instrumentation/reporting">
+		<property name="emma.enabled" value="true" />
+		<mkdir dir="${dir.out.instr}" />
+		<!-- Filter for classes to instrument -->
+		<property name="emma.filter" value="com.probiz.estore.*" />
+	</target>
+
+	<target name="todo" description="creates report of todos in code">
+
+		<taskdef name="todo" classname="xdoclet.modules.doc.DocumentDocletTask" classpathref="project.classpath" />
+
+		<mkdir dir="${dir.build}/docs/todo" />
+		<todo destdir="${dir.build}/docs/todo">
+			<fileset dir="${dir.src.src}">
+				<patternset refid="java.files.pattern" />
+			</fileset>
+			<fileset dir="${dir.src.common}">
+				<patternset refid="java.files.pattern" />
+			</fileset>
+			<fileset dir="${dir.src.test}">
+				<patternset refid="java.files.pattern" />
+			</fileset>
+		</todo>
+	</target>
+
+	<target name="docs" depends="javadoc, todo, checkstyle, pmd" description="runs javadoc, todo, checkstyle and pmd tasks">
+		<echo level="info">API and Reports generated successfully...</echo>
+	</target>
+
+	<!-- =================================================================== -->
+	<!--            Creates documentation from wiki                          -->
+	<!-- =================================================================== -->
+	<target name="wiki" description="downloads files from wiki for doco" unless="nodocs">
+		<!-- Get latest stylesheet -->
+		<get src="http://raibledesigns.com/wiki/templates/redman/jspwiki.css" dest="docs/style.css" />
+		<!-- Get wiki pages -->
+		<get src="http://raibledesigns.com/wiki/printwikishow.jsp?${wiki.pages}" dest="docs/wiki.html" />
+		<!-- Add some style -->
+		<replaceregexp flags="g" file="docs/wiki.html" match='&lt;/HEAD&gt;' replace='&lt;/HEAD&gt; &lt;link rel="stylesheet" type="text/css" href="style.css" /&gt; &lt;style type="text/css"&gt;body {margin: 20px}&lt;/style&gt;' />
+	</target>
+	<fileset dir="${dir.src.web}/scripts" id="js.fileset">
+		<include name="prototype/prototype.js"/>
+		<include name="dwr/engine.js"/>
+		<include name="dwr/util.js"/>
+		<include name="ext/adapter/ext/ext-base.js"/>
+		<include name="ext/ext-all.js"/>
+		<include name="probiz/framework/probizExt.js"/>
+		<include name="probiz/framework/global.js"/>
+		<include name="probiz/framework/validation.js"/>
+	</fileset>
+
+	<fileset dir="${dir.src.web}/styles" id="css.fileset">
+		<include name="ext-all.css"/>
+		<include name="content.css"/>
+		<include name="global.css"/>
+		<include name="layout.css"/>
+		<include name="module.css"/>
+	</fileset>
+
+	<target name="js.concatenate">
+		<concat destfile="${dir.build.web}/scripts/probiz-all.js">
+			<fileset refid="js.fileset"/>
+		</concat>
+	</target>
+
+	<target name="js.minify" depends="js.concatenate">
+		<java jar="${dir.lib}/yuicompressor.jar" fork="true" classpathref="project.classpath">
+			<arg line="--type js --charset UTF8 -o ${dir.build.web}/scripts/probiz-all-min.js --warn ${dir.build.web}/scripts/probiz-all.js"/>
+		</java>
+	</target>
+
+	<target name="js.gzip" depends="js.minify">
+		<gzip src="${dir.build.web}/scripts/probiz-all-min.js" destfile="${dir.build.web}/scripts/probiz-all-min-zip.js"/>
+	</target>
+
+	<target name="css.concatenate">
+		<concat destfile="${dir.build.web}/styles/probiz-all.css">
+			<fileset refid="css.fileset"/>
+		</concat>
+	</target>
+
+	<target name="css.minify" depends="css.concatenate">
+		<java jar="${dir.lib}/yuicompressor.jar" fork="true" classpathref="project.classpath">
+			<arg line="--type css --charset UTF8 -o ${dir.build.web}/styles/probiz-all-min.css ${dir.build.web}/styles/probiz-all.css"/>
+		</java>
+	</target>
+
+	<target name="css.gzip" depends="css.minify">
+		<gzip src="${dir.build.web}/styles/probiz-all-min.css" destfile="${dir.build.web}/styles/probiz-all-min-zip.css"/>
+	</target>
+
+	<!--未测试-->
+	<target name="-trim.html.comments">
+		<fileset id="html.fileset"
+	        dir="${dir.build.web}"
+	        includes="**/*.jsp, **/*.jspf"/>
+		<!-- HTML Comments -->
+		<replaceregexp replace="" flags="g"
+	        match="&lt;![ \r\n\t]*(--([^\-]|[\r\n]|-[^\-])*--[ \r\n\t]*)&gt;">
+			<fileset refid="html.fileset"/>
+		</replaceregexp>
+		<!-- Empty lines -->
+		<replaceregexp match="^s+[\r\n]" replace="" flags="mg">
+			<fileset refid="html.fileset"/>
+		</replaceregexp>
+	</target>
+</project>

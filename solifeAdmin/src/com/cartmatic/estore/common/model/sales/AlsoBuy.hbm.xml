@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.sales.AlsoBuy"
+        table="also_buy"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="alsoBuyId"
+            column="alsoBuyId"
+            type="java.lang.Integer"
+            length="11"
+        >
+            <generator class="native"/>
+        </id>
+ 		<version
+            name="version"
+            type="java.lang.Integer"
+            column="version"
+            access="property"
+            unsaved-value="undefined"
+        />
+        <property
+            name="productId"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="productId"
+            length="11"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="times"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="times"
+            length="11"
+            not-null="false"
+            unique="false"
+        />
+         <property
+            name="createTime"
+            type="java.util.Date"
+            update="true"
+            insert="true"
+            access="property"
+            column="createTime"
+            length="0"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="updateTime"
+            type="java.util.Date"
+            update="true"
+            insert="true"
+            access="property"
+            column="updateTime"
+            length="0"
+            not-null="true"
+            unique="false"
+        />
+      
+     <!-- imported bi-directional many-to-one association to Product -->
+		<many-to-one
+			name="alsoProduct"
+			class="com.cartmatic.estore.common.model.catalog.Product"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="alsoProductId" />
+		</many-to-one>
+    </class>
+</hibernate-mapping>

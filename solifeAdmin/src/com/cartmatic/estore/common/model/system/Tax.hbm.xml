@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.system.Tax"
+        table="tax"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<!--The unsaved-value attribute is almost never needed in Hibernate3. (From hibernate doc.)-->
+		<id
+            name="taxId"
+            column="taxId"
+            type="java.lang.Integer"
+        >
+            <generator class="native"/>
+        </id>
+		<version
+            name="version"
+            type="java.lang.Integer"
+            column="version"
+            access="property"
+            unsaved-value="undefined"
+        />
+        <property
+            name="taxName"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="taxName"
+            length="64"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="taxRegisterNo"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="taxRegisterNo"
+            length="64"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="status"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="status"
+            length="6"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="createBy"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="createBy"
+            length="11"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="updateBy"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="updateBy"
+            length="11"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="createTime"
+            type="java.util.Date"
+            update="true"
+            insert="true"
+            access="property"
+            column="createTime"
+            length="19"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="updateTime"
+            type="java.util.Date"
+            update="true"
+            insert="true"
+            access="property"
+            column="updateTime"
+            length="19"
+            not-null="false"
+            unique="false"
+        />
+ <!-- exported bi-directional one-to-many association to TaxRate -->
+	<set name="taxRates"
+	     table="tax_rate"
+	     lazy="true"
+	     inverse="true"
+	     cascade="save-update"
+	     sort="unsorted"
+	>
+		<key>
+			<column name="taxId"/>
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.system.TaxRate"
+		/>
+	</set>     
+    </class>
+</hibernate-mapping>

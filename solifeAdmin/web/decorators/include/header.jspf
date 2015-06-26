@@ -1,0 +1,145 @@
+<%@page import="com.cartmatic.estore.webapp.util.RequestContext"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="net.sf.navigator.menu.MenuComponent"%>
+<%@page import="java.util.List"%>
+<%@page import="com.cartmatic.estore.Constants"%>
+<%@ page pageEncoding="UTF-8"%>
+<%@ include file="/common/taglibs.jsp"%>
+<script type="text/javascript" src="${ctxPath}/scripts/jquery/plugins/droppy/jquery.droppy.js"></script>
+<link rel="stylesheet" href="${ctxPath}/scripts/jquery/plugins/droppy/droppy.css" type="text/css" />
+<%@ taglib prefix="authz" uri="http://www.springframework.org/security/tags" %>
+<%request.setAttribute("now", new java.util.Date());%>
+	<div class="header">
+		<c:choose>
+			<c:when test="${not empty CartmaticMenuNav}">
+				<div class="index-layer ${fn:replace(CartmaticMenuNav[0],'.','-')}">
+					<fmt:message key="${CartmaticMenuNav[0]}"/>
+				</div>
+			</c:when>
+			<c:otherwise>
+				<div class="index-layer mainMenu-title">
+					<fmt:message key="mainMenu.title"/>
+				</div>
+			</c:otherwise>
+		</c:choose>
+		<ul class="nav">
+			<li>
+				<a id="headerBarBtn" href="#" onclick="$j(this).addClass('selected');$j('#headerBar').slideDown();$j('#headerBarBG').show();"></a>
+				<div class="nav-sub" id="headerBar" style="display: none;">
+					<table width="100%" border="0" cellspacing="0" cellpadding="0">
+						<tr>
+							<td class="btn-index">
+								<a href="${ctxPath}/index.html"><img src="${ctxPath}/images/btn_index.png" />
+								</a>
+							</td>
+							<c:forEach var="menu" items="${CartmaticMenuContextList}" varStatus="varStatus">
+								<c:if test="${varStatus.first||varStatus.count%11==1}">
+									<td valign="top">
+										<ul>
+								</c:if>
+								<li<c:if test="${menu.image=='1'}"> class="title"</c:if>>
+									<a href="${ctxPath}${menu.page}"><fmt:message key="${menu.title}"/></a>
+								</li>
+								<c:if test="${varStatus.last||varStatus.count%11==0}">
+										</ul>
+									</td>
+								</c:if>
+							</c:forEach>
+						</tr>
+					</table>
+				</div>
+				<div class="top-layer" id="headerBarBG" style="display: none;" onclick="$j('#headerBarBtn').removeClass('selected');$j('#headerBar').slideUp();$j('#headerBarBG').hide();"></div>
+			 </li>
+		</ul>
+		<div class="admin-button" id="active-btn-space">
+			<decorator:getProperty property="page.buttons" />
+			<%--
+			<input type="button" onclick="return dlgCreatePromoDialog_show();" id="common" title="新增商品包" value="新增商品包" name="common">
+			<input type="button" onclick="return dlgCreatePromoDialog_show();" id="common" title="新增商品包" value="新增商品包" name="common">
+			<input type="button" onclick="return dlgCreatePromoDialog_show();" id="common" title="新增商品包" value="新增商品包" name="common">
+			<input type="button" onclick="return dlgCreatePromoDialog_show();" id="common" title="新增商品包" value="新增商品包" name="common">
+			<input type="button" onclick="return dlgCreatePromoDialog_show();" id="common" title="新增商品包" value="新增商品包" name="common">
+			 --%>
+			 <%--显示第三级菜单开始 --%>
+			 <c:set var="show3Cat" value="false"></c:set>
+			 <c:choose>
+			 	<c:when test="${CartmaticCurrentMenu.image=='3'}">
+			 		<c:forEach items="${CartmaticCurrentMenu.parent.components}" var="menu">
+			 			<c:if test="${fn:indexOf(OriginalRequestURI,menu.page)==-1}"><c:set var="show3Cat" value="true"></c:set></c:if>
+			 		</c:forEach>
+			 	</c:when>
+			 	<c:otherwise>
+			 		<c:forEach items="${CartmaticCurrentMenu.components}" var="menu">
+			 			<c:if test="${fn:indexOf(OriginalRequestURI,menu.page)==-1}"><c:set var="show3Cat" value="true"></c:set></c:if>
+			 		</c:forEach>
+			 	</c:otherwise>
+			 </c:choose>
+			 <c:if test="${show3Cat}">
+			 <ul id="guide-nav" class="guide-nav">
+			 	<li class="moveto">
+					<a href="#" onclick="openPopMenu(this,'moveToMenu');">转移至</a>
+					<ul class="sub-nav" id="moveToMenu" style="display: none;">
+						<li>
+						 <c:choose>
+						 	<c:when test="${CartmaticCurrentMenu.image=='3'}">
+						 		<c:forEach items="${CartmaticCurrentMenu.parent.components}" var="menu">
+						 			<c:if test="${fn:indexOf(OriginalRequestURI,menu.page)==-1}"><p><a href="${ctxPath}${menu.page}"><fmt:message key="${menu.title}"/></a></p></c:if>
+						 		</c:forEach>
+						 	</c:when>
+						 	<c:otherwise>
+						 		<c:forEach items="${CartmaticCurrentMenu.components}" var="menu">
+						 			<c:if test="${fn:indexOf(OriginalRequestURI,menu.page)==-1}"><p><a href="${ctxPath}${menu.page}"><fmt:message key="${menu.title}"/></a></p></c:if>
+						 		</c:forEach>
+						 	</c:otherwise>
+						 </c:choose>
+						 </li>
+					 </ul>
+				 </li>
+			</ul>
+			</c:if>
+			 <%--显示第三级菜单结束 --%>
+		</div>
+		<div class="guide">
+			<form id="globalSearchForm" method="post">
+				<ul class="guide-nav" id="guide-nav">
+					<li class="name">
+						<a href="#" onclick="openPopMenu(this,'memenu');"><authz:authentication property="name" /></a>
+						<ul class="sub-nav" id="memenu" style="display: none;">
+							<li>
+								<app:appUser var="appUser"/>
+								<b>${appUser.fullName}</b>
+								<br>
+								&nbsp;&nbsp;${appUser.email}
+								<div class="acount-line"></div>
+								<p>
+									<a href="${ctxPath}/editProfile.html"><fmt:message key="menu.user" /></a>
+								</p>
+		
+								<p>
+									<a href="${ctxPath}/modifyPassword.html"><fmt:message key="button.resetPw" /></a>
+								</p>
+								<p>
+									<fmt:message key="adminInfo.pagingSetting"/>:&nbsp;
+									<select onchange="fnUpdatePagingSetting(this.value);">
+										<option value="10"<c:if test="${10==appUser.adminInfo.pagingSetting}"> selected="selected"</c:if>>10</option>
+										<option value="20"<c:if test="${20==appUser.adminInfo.pagingSetting}"> selected="selected"</c:if>>20</option>
+										<option value="30"<c:if test="${30==appUser.adminInfo.pagingSetting}"> selected="selected"</c:if>>${30}</option>
+										<option value="50"<c:if test="${50==appUser.adminInfo.pagingSetting}"> selected="selected"</c:if>>${50}</option>
+										<option value="100"<c:if test="${100==appUser.adminInfo.pagingSetting}"> selected="selected"</c:if>>${100}</option>
+									</select>
+								</p>
+							</li>
+						</ul>
+					</li>
+					<li class="logout">
+						<a onclick="javascript:return (confirm('<fmt:message key="system.logout.confirm"/>'));" href="<c:url value="/j_acegi_logout"/>" title="<fmt:message key='headerbtn.logout'/>"><fmt:message key="headerbtn.logout" />
+						</a>
+					</li>
+				</ul>
+			</form>
+		</div>
+		<div class="guide-date"><fmt:formatDate value="${now}" pattern="yy-MM-dd HH:mm:ss z"/></div>
+	</div>
+	<div class="clear"></div>
+	<div class="top-layer" id="ajax_loading_BG" style="display: none"></div>
+    <div class="loading" id="ajax_loading" style="display: none"></div>

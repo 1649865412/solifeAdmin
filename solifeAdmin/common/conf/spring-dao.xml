@@ -1,0 +1,1175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+  
+<beans default-lazy-init="true">
+
+	<!-- This is the base definition for all Hibernate based DAOs -->
+	<bean id="genericDAO" class="com.cartmatic.estore.core.dao.old.GenericDAO" abstract="true">
+		<property name="sessionFactory" ref="sessionFactory" />
+		<property name="jdbcTemplate" ref="jdbcTemplate" />
+	</bean>
+
+	<bean id="hibernateGenericDao" class="com.cartmatic.estore.core.dao.impl.HibernateGenericDaoImpl" abstract="true">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<!-- Add new DAOs here -->
+
+	<!-- ========================= Start of Normal DAO DEFINITIONS ========================= -->
+	<!-- Note that all must extend the base definition of genericDAO.-->
+
+<!-- start:  Generated for AppRole From Template: spring-dao.xml.beansvm  -->
+    <bean id="appRoleDao" class="com.cartmatic.estore.system.dao.impl.AppRoleDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from AppRole s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for AppRole From Template: spring-dao.xml.beansvm  -->
+
+<!-- start:  Generated for SystemConfig From Template: spring-dao.xml.beansvm  -->
+    <bean id="systemConfigDao" class="com.cartmatic.estore.system.dao.impl.SystemConfigDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from SystemConfig s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for SystemConfig From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for Category From Template: spring-dao.xml.beansvm  -->
+    <bean id="categoryDao" class="com.cartmatic.estore.catalog.dao.impl.CategoryDaoImpl" parent="hibernateGenericDao" autowire="byName">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from Category s where s.status!=3 and s.categoryId!=1 and s.categoryType=1 order by s.categoryPath;;allow,all</value>
+    			<value>contentCategories;;select s from Category s where s.status!=3 and s.categoryId!=1 and s.categoryType=2 and s.category.categoryId=? order by s.sortOrder;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+<!-- end:  Generated for Category From Template: spring-dao.xml.beansvm  -->
+
+<!-- start:  Generated for ShippingRate From Template: spring-dao.xml.beansvm  -->
+    <bean id="shippingRateDao" class="com.cartmatic.estore.system.dao.impl.ShippingRateDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from ShippingRate s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for ShippingRate From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for ShippingMethod From Template: spring-dao.xml.beansvm  -->
+    <bean id="shippingMethodDao" class="com.cartmatic.estore.system.dao.impl.ShippingMethodDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from ShippingMethod s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for ShippingMethod From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for Carrier From Template: spring-dao.xml.beansvm  -->
+    <bean id="carrierDao" class="com.cartmatic.estore.system.dao.impl.CarrierDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from Carrier s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for Carrier From Template: spring-dao.xml.beansvm  -->
+
+<!-- start:  Generated for Region From Template: spring-dao.xml.beansvm  -->
+    <bean id="regionDao" class="com.cartmatic.estore.system.dao.impl.RegionDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from Region s;;allow,all</value>
+    			<value>selectByType;;select s from Region s where s.regionType=? order by s.regionName asc;;allow,all;;hidden</value>
+    			<value>selectByTypeAndStatus;;select s from Region s where s.regionType=? and s.status=? order by s.regionName asc;;allow,all;;hidden</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for Region From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for RegionItem From Template: spring-dao.xml.beansvm  -->
+    <bean id="regionItemDao" class="com.cartmatic.estore.system.dao.impl.RegionItemDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from RegionItem s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for RegionItem From Template: spring-dao.xml.beansvm  -->
+
+<!-- start:  Generated for Customer From Template: spring-dao.xml.beansvm  -->
+    <bean id="customerDao" class="com.cartmatic.estore.customer.dao.impl.CustomerDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from Customer s where s.deleted=0 and s.appuserId>0 order by s.appuserId desc;;allow,all</value>
+    			<value>sf_default;;select so from SalesOrder so where so.customer.appuserId=? and so.createTime &gt;= ? order by so.salesOrderId desc;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+<!-- end:  Generated for Customer From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for GiftCertificate From Template: spring-dao.xml.beansvm  -->
+    <bean id="giftCertificateDao" class="com.cartmatic.estore.sales.dao.impl.GiftCertificateDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from GiftCertificate s order by s.giftCertificateId desc;;allow,all</value>
+    			<value>defaultState_Past;;select s from GiftCertificate s where (s.expireTime is not null and ? >= expireTime) order by s.giftCertificateId desc;;allow,all</value>
+    			<value><![CDATA[defaultState_NotPast;;select s from GiftCertificate s where (s.expireTime is  null or ? < s.expireTime ) and status = ? order by s.giftCertificateId desc;;allow,all]]></value>
+    		</list>
+    	</property>
+    </bean>
+<!-- end:  Generated for GiftCertificate From Template: spring-dao.xml.beansvm  -->
+
+<!-- start:  Generated for Tax From Template: spring-dao.xml.beansvm  -->
+    <bean id="taxDao" class="com.cartmatic.estore.system.dao.impl.TaxDaoImpl" parent="hibernateGenericDao"/>
+<!-- end:  Generated for Tax From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for TaxRate From Template: spring-dao.xml.beansvm  -->
+    <bean id="taxRateDao" class="com.cartmatic.estore.system.dao.impl.TaxRateDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from TaxRate s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for TaxRate From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for PaymentMethod From Template: spring-dao.xml.beansvm  -->
+    <bean id="paymentMethodDao" class="com.cartmatic.estore.system.dao.impl.PaymentMethodDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from PaymentMethod s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for PaymentMethod From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for Wrap From Template: spring-dao.xml.beansvm  -->
+    <bean id="wrapDao" class="com.cartmatic.estore.system.dao.impl.WrapDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from Wrap s order by s.wrapId desc;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for Wrap From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for Shoppingcart From Template: spring-dao.xml.beansvm  -->
+    <bean id="shoppingcartDao" class="com.cartmatic.estore.cart.dao.impl.ShoppingcartDaoImpl" parent="hibernateGenericDao"/>
+<!-- end:  Generated for Shoppingcart From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for ProductAdvertisement From Template: spring-dao.xml.beansvm  -->
+    <bean id="productAdvertisementDao" class="com.cartmatic.estore.content.dao.impl.ProductAdvertisementDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from ProductAdvertisement s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for ProductAdvertisement From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for AdPositionType From Template: spring-dao.xml.beansvm  -->
+    <bean id="adPositionTypeDao" class="com.cartmatic.estore.content.dao.impl.AdPositionTypeDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from AdPositionType s order by s.adPositionTypeId desc;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for AdPositionType From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for AppAdmin From Template: spring-dao.xml.beansvm  -->
+    <bean id="appAdminDao" class="com.cartmatic.estore.system.dao.impl.AppAdminDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from AppAdmin s where s.deleted=0 order by s.createTime desc;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+<!-- end:  Generated for AppAdmin From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for Advertisement From Template: spring-dao.xml.beansvm  -->
+    <bean id="advertisementDao" class="com.cartmatic.estore.content.dao.impl.AdvertisementDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from Advertisement s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for Advertisement From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for SystemLanguage From Template: spring-dao.xml.beansvm  -->
+    <bean id="systemLanguageDao" class="com.cartmatic.estore.system.dao.impl.SystemLanguageDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from SystemLanguage s order by s.isDefault desc,s.status desc,s.sortOrder asc;;allow,all</value>
+    			<value>active;;select s from SystemLanguage s where s.status=1 order by s.isDefault desc,s.sortOrder asc;;disallow,COL@s.localeCode@String@LIKE</value>
+    		</list>
+    	</property>
+    </bean>
+<!-- end:  Generated for SystemLanguage From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for AppAudit From Template: spring-dao.xml.beansvm  -->
+    <bean id="appAuditDao" class="com.cartmatic.estore.system.dao.impl.AppAuditDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from AppAudit s order by s.appAuditId desc;;allow,all</value>
+    			<value>byUserName;;select s from AppAudit s where s.procUserId in (select a.appuserId from AppUser a where a.firstname like ? or a.lastname like ? or concat( a.firstname,' ',a.lastname) like ?) order by s.appAuditId desc;;allow,all;;hidden</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for AppAudit From Template: spring-dao.xml.beansvm  -->
+
+<!-- start:  Generated for AlsoBuy From Template: spring-dao.xml.beansvm  -->
+    <bean id="alsoBuyDao" class="com.cartmatic.estore.sales.dao.impl.AlsoBuyDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from AlsoBuy s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+<!-- end:  Generated for AlsoBuy From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for RecommendedProduct From Template: spring-dao.xml.beansvm  -->
+    <bean id="recommendedProductDao" class="com.cartmatic.estore.sales.dao.impl.RecommendedProductDaoImpl" parent="hibernateGenericDao">
+	   	<property name="searchFilters">
+	   		<list>
+	   			<value>default;;select s from RecommendedProduct s;;allow,all</value>
+	   		</list>
+	   	</property>
+	</bean>
+	<!-- 
+	<bean id="autoEvalRecommendationDao" class="com.cartmatic.estore.sales.dao.impl.AutoEvalRecommendationDaoImpl" parent="hibernateGenericDao"/>
+	 -->
+	
+	<bean id="autoEvalRecommendationDao" class="com.cartmatic.estore.sales.dao.impl.AutoEvalRecommendationDaoFromSServerImpl" parent="hibernateGenericDao">
+		<property name="solrService" ref="solrService" />
+		<property name="productManager" ref="productManager" />
+	</bean>
+	
+<!-- end:  Generated for RecommendedProduct From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for RecommendedType From Template: spring-dao.xml.beansvm  -->
+    <bean id="recommendedTypeDao" class="com.cartmatic.estore.sales.dao.impl.RecommendedTypeDaoImpl" parent="hibernateGenericDao">
+	   	
+	</bean>
+<!-- end:  Generated for RecommendedType From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for SystemMessage From Template: spring-dao.xml.beansvm  -->
+    <bean id="systemMessageDao" class="com.cartmatic.estore.content.dao.impl.SystemMessageDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from SystemMessage s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for SystemMessage From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for PaymentHistory From Template: spring-dao.xml.beansvm  -->
+    <bean id="paymentHistoryDao" class="com.cartmatic.estore.system.dao.impl.PaymentHistoryDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from PaymentHistory s order by s.paymentHistoryId desc;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for PaymentHistory From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for Resource From Template: spring-dao.xml.beansvm  -->
+    <bean id="appResourceDao" class="com.cartmatic.estore.system.dao.impl.AppResourceDaoImpl" parent="hibernateGenericDao">
+   		<property name="searchFilters">
+	   		<list>
+	   			<value>default;;select s from AppResource s;;allow,all</value>
+	   		</list>
+	   	</property>
+	</bean>
+<!-- end:  Generated for Resource From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for Content From Template: spring-dao.xml.beansvm  -->
+<bean id="contentDao" class="com.cartmatic.estore.content.dao.impl.ContentDaoImpl" parent="hibernateGenericDao">
+   	<property name="searchFilters">
+   		<list>
+   			<value>default;;select s from Content s order by s.contentTitle asc;;allow,all</value>
+   		</list>
+   	</property>
+</bean>
+
+    
+<!-- end:  Generated for Content From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for SystemVersion From Template: spring-dao.xml.beansvm  -->
+    <bean id="systemVersionDao" class="com.cartmatic.estore.system.dao.impl.SystemVersionDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from SystemVersion s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for SystemVersion From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for PatchExecuteHistory From Template: spring-dao.xml.beansvm  -->
+    <bean id="patchExecuteHistoryDao" class="com.cartmatic.estore.other.dao.impl.PatchExecuteHistoryDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from PatchExecuteHistory s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for PatchExecuteHistory From Template: spring-dao.xml.beansvm  -->
+
+
+
+
+	<bean id="simpleReportDao" class="com.cartmatic.estore.report.dao.impl.SimpleReportDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+<!-- start:  Generated for AppEvent From Template: spring-dao.xml.beansvm  -->
+    <bean id="appEventDao" class="com.cartmatic.estore.system.dao.impl.AppEventDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from AppEvent s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for AppEvent From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for CategoryAttrValue From Template: spring-dao.xml.beansvm  -->
+    <bean id="categoryAttrValueDao" class="com.cartmatic.estore.attribute.dao.impl.CategoryAttrValueDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>Category;;select s from CategoryAttrValue s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+    <bean id="contentAttrValueDao" class="com.cartmatic.estore.attribute.dao.impl.ContentAttrValueDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>Content;;select s from ContentAttrValue s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+        <bean id="customerAttrValueDao" class="com.cartmatic.estore.attribute.dao.impl.CustomerAttrValueDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>Customer;;select s from CustomerAttrValue s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+    <bean id="productAttrValueDao" class="com.cartmatic.estore.attribute.dao.impl.ProductAttrValueDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>Product;;select s from ProductAttrValue s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for CategoryAttrValue From Template: spring-dao.xml.beansvm  -->
+
+    <bean id="attributeDao" class="com.cartmatic.estore.attribute.dao.impl.AttributeDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from Attribute s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+<!-- start:  Generated for RoleRes From Template: spring-dao.xml.beansvm  -->
+    <bean id="roleResDao" class="com.cartmatic.estore.system.dao.impl.RoleResDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from RoleRes s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for RoleRes From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for Brand From Template: spring-dao.xml.beansvm  -->
+    <bean id="brandDao" class="com.cartmatic.estore.catalog.dao.impl.BrandDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from Brand s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for Brand From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for Inventory From Template: spring-dao.xml.beansvm  -->
+    <bean id="inventoryDao" class="com.cartmatic.estore.inventory.dao.impl.InventoryDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from Inventory s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for Inventory From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for Product From Template: spring-dao.xml.beansvm  -->
+    <bean id="productDao" class="com.cartmatic.estore.catalog.dao.impl.ProductDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from Product s;;allow,all</value>
+    			<value>front_default;;select s from Product s where s.status=1;;allow,all</value>
+    			<value>productSku;;select s from Product s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+    <bean id="catalogDashboardDao" class="com.cartmatic.estore.catalog.dao.impl.CatalogDashboardDaoImpl" parent="hibernateGenericDao">
+    	
+    </bean>
+    <bean id="inventoryDashboardDao" class="com.cartmatic.estore.inventory.dao.impl.InventoryDashboardDaoImpl" parent="hibernateGenericDao">
+    	
+    </bean>
+<!-- end:  Generated for Product From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for ProductCategory From Template: spring-dao.xml.beansvm  -->
+    <bean id="productCategoryDao" class="com.cartmatic.estore.catalog.dao.impl.ProductCategoryDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from ProductCategory s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for ProductCategory From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for ProductDescription From Template: spring-dao.xml.beansvm  -->
+    <bean id="productDescriptionDao" class="com.cartmatic.estore.catalog.dao.impl.ProductDescriptionDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from ProductDescription s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for ProductDescription From Template: spring-dao.xml.beansvm  -->
+
+<!-- start:  Generated for ProductHandDraw From Template: spring-dao.xml.beansvm  -->
+    <bean id="productHandDrawDao" class="com.cartmatic.estore.catalog.dao.impl.ProductHandDrawDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from ProductHandDraw s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for ProductHandDraw From Template: spring-dao.xml.beansvm  -->
+
+<!-- start:  Generated for ProductMedia From Template: spring-dao.xml.beansvm  -->
+    <bean id="productMediaDao" class="com.cartmatic.estore.catalog.dao.impl.ProductMediaDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from ProductMedia s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for ProductMedia From Template: spring-dao.xml.beansvm  -->
+
+    <bean id="productMediaUpDao" class="com.cartmatic.estore.catalog.dao.impl.ProductMediaUpDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from ProductMediaUp s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+
+<!-- start:  Generated for ProductPackageItem From Template: spring-dao.xml.beansvm  -->
+    <bean id="productPackageItemDao" class="com.cartmatic.estore.catalog.dao.impl.ProductPackageItemDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from ProductPackageItem s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for ProductPackageItem From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for ProductRateItem From Template: spring-dao.xml.beansvm  -->
+    <bean id="productRateItemDao" class="com.cartmatic.estore.catalog.dao.impl.ProductRateItemDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from ProductRateItem s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for ProductRateItem From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for ProductRateValue From Template: spring-dao.xml.beansvm  -->
+    <bean id="productRateValueDao" class="com.cartmatic.estore.catalog.dao.impl.ProductRateValueDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from ProductRateValue s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for ProductRateValue From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for ProductReview From Template: spring-dao.xml.beansvm  -->
+    <bean id="productReviewDao" class="com.cartmatic.estore.catalog.dao.impl.ProductReviewDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from ProductReview s where s.reviewId is null order by s.createTime desc;;allow,all</value>
+                <value>sf_productReviewList;;from ProductReview pr where pr.store.storeId=? and pr.product.productId=? and pr.reviewId is null and pr.status=1 order by pr.createTime desc;;allow,all;;hidden</value>
+                <value>sf_myReviews;;from ProductReview s where s.store.storeId=? and s.reviewUser.appuserId =? order by s.createTime desc;;allow,all;;hidden</value>
+                <value>sf_newReviews;;select s from ProductReview s where s.store.storeId=? and s.reviewId is null and s.status=1 order by s.createTime desc;;allow,all;;hidden</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for ProductReview From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for ProductSku From Template: spring-dao.xml.beansvm  -->
+    <bean id="productSkuDao" class="com.cartmatic.estore.catalog.dao.impl.ProductSkuDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from ProductSku s;;allow,all</value>
+    			<value>default_product_price;;select s from ProductSku s where (s.product.status=1 or s.product.status=2);;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for ProductSku From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for ProductSkuOptionValue From Template: spring-dao.xml.beansvm  -->
+    <bean id="productSkuOptionValueDao" class="com.cartmatic.estore.catalog.dao.impl.ProductSkuOptionValueDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from ProductSkuOptionValue s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for ProductSkuOptionValue From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for ProductType From Template: spring-dao.xml.beansvm  -->
+    <bean id="productTypeDao" class="com.cartmatic.estore.catalog.dao.impl.ProductTypeDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from ProductType s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for ProductType From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for ProductTypeSkuOption From Template: spring-dao.xml.beansvm  -->
+    <bean id="productTypeSkuOptionDao" class="com.cartmatic.estore.catalog.dao.impl.ProductTypeSkuOptionDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from ProductTypeSkuOption s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for ProductTypeSkuOption From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for SkuOption From Template: spring-dao.xml.beansvm  -->
+    <bean id="skuOptionDao" class="com.cartmatic.estore.catalog.dao.impl.SkuOptionDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from SkuOption s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for SkuOption From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for SkuOptionValue From Template: spring-dao.xml.beansvm  -->
+    <bean id="skuOptionValueDao" class="com.cartmatic.estore.catalog.dao.impl.SkuOptionValueDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from SkuOptionValue s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for SkuOptionValue From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for WholesalePrice From Template: spring-dao.xml.beansvm  -->
+    <bean id="wholesalePriceDao" class="com.cartmatic.estore.catalog.dao.impl.WholesalePriceDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from WholesalePrice s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for WholesalePrice From Template: spring-dao.xml.beansvm  -->
+
+<!-- start:  Generated for ProductAttGroupItem From Template: spring-dao.xml.beansvm  -->
+    <bean id="productAttGroupItemDao" class="com.cartmatic.estore.catalog.dao.impl.ProductAttGroupItemDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from ProductAttGroupItem s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for ProductAttGroupItem From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for ProductAttGroup From Template: spring-dao.xml.beansvm  -->
+    <bean id="productAttGroupDao" class="com.cartmatic.estore.catalog.dao.impl.ProductAttGroupDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from ProductAttGroup s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for ProductAttGroup From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for ProductStat From Template: spring-dao.xml.beansvm  -->
+    <bean id="productStatDao" class="com.cartmatic.estore.catalog.dao.impl.ProductStatDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from ProductStat s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for ProductStat From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for ReviewVote From Template: spring-dao.xml.beansvm  -->
+    <bean id="reviewVoteDao" class="com.cartmatic.estore.catalog.dao.impl.ReviewVoteDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from ReviewVote s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for ReviewVote From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for InventoryAudit From Template: spring-dao.xml.beansvm  -->
+    <bean id="inventoryAuditDao" class="com.cartmatic.estore.inventory.dao.impl.InventoryAuditDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from InventoryAudit s order by s.inventoryAuditId desc;;allow,all</value>
+                <value>inventoryInventoryAudit;;select s from InventoryAudit s where s.inventory.inventoryId=? order by s.inventoryAuditId desc;;allow,all;;hidden</value>
+    		</list>
+    	</property>
+    </bean>
+
+
+<!-- end:  Generated for InventoryAudit From Template: spring-dao.xml.beansvm  -->
+	 <bean id="salesDashboardDao" class="com.cartmatic.estore.sales.dao.impl.SalesDashboardDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from PromoRule s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+<!-- start:  Generated for PromoRule From Template: spring-dao.xml.beansvm  -->
+    <bean id="promoRuleDao" class="com.cartmatic.estore.sales.dao.impl.PromoRuleDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from PromoRule s order by s.promoRuleId desc;;allow,all</value>
+    			<value>promoRule_doing;;select s from PromoRule s where startTime  &lt; now() and (now() &lt; endTime or endTime is null) by s.promoRuleId desc;;allow,all</value>
+    			<value>promoRule_future;;select s from PromoRule s where startTime &gt; now() and (endTime &gt; now() or endTime is null) by s.promoRuleId desc;;allow,all</value>
+    			<value>promoRule_past;;select s from PromoRule s where endTime &lt; now() by s.promoRuleId desc;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for PromoRule From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for PromoRuleElement From Template: spring-dao.xml.beansvm  -->
+    <bean id="promoRuleElementDao" class="com.cartmatic.estore.sales.dao.impl.PromoRuleElementDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from PromoRuleElement s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for PromoRuleElement From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for PromoRuleParameter From Template: spring-dao.xml.beansvm  -->
+    <bean id="promoRuleParameterDao" class="com.cartmatic.estore.sales.dao.impl.PromoRuleParameterDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from PromoRuleParameter s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for PromoRuleParameter From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for Coupon From Template: spring-dao.xml.beansvm  -->
+    <bean id="couponDao" class="com.cartmatic.estore.sales.dao.impl.CouponDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from Coupon s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for Coupon From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for ShoppingcartItem From Template: spring-dao.xml.beansvm  -->
+    <bean id="shoppingcartItemDao" class="com.cartmatic.estore.cart.dao.impl.ShoppingcartItemDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from ShoppingcartItem s order by s.addTime desc;;allow,all</value>
+    			<value>statItem;;select s from ShoppingcartItemStat s where s.itemType=1 and s.isSaved=0 order by quantity desc;;allow,all</value>
+    			<value>statSaved;;select s from ShoppingcartItemStat s where s.itemType=1 and s.isSaved=1 order by quantity desc;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for ShoppingcartItem From Template: spring-dao.xml.beansvm  -->
+
+<!-- start:  Generated for shoppingcartPromotionDao From Template: spring-dao.xml.beansvm  -->
+    <bean id="shoppingcartPromotionDao" class="com.cartmatic.estore.cart.dao.impl.ShoppingcartPromotionDaoImpl" parent="hibernateGenericDao">
+    </bean>
+<!-- end:  Generated for shoppingcartPromotionDao From Template: spring-dao.xml.beansvm  -->
+
+<!-- start:  Generated for OrderAddress From Template: spring-dao.xml.beansvm  -->
+    <bean id="orderAddressDao" class="com.cartmatic.estore.order.dao.impl.OrderAddressDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from OrderAddress s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for OrderAddress From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for SalesOrder From Template: spring-dao.xml.beansvm  -->
+    <bean id="salesOrderDao" class="com.cartmatic.estore.order.dao.impl.SalesOrderDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select so from SalesOrder so order by so.salesOrderId desc;;allow,all</value>
+    			<value>awaitingRobotConfirming;;select distinct so from SalesOrder so, OrderShipment os where so.salesOrderId = os.salesOrder.salesOrderId and so.paymentStatus = 30 and os.status = 20 and so.isOnHold = 0 order by so.salesOrderId desc;;allow,all</value>
+    			<value>ask4Cancel;;select so from SalesOrder so where so.isOnHold = 1 and isHoldByCustomer = 1 order by so.salesOrderId desc;;allow,all</value>
+    			<value>awaitingPicking;;select distinct so from SalesOrder so, OrderShipment os where so.salesOrderId = os.salesOrder.salesOrderId and os.status = 40 order by so.salesOrderId desc;;allow,all</value>
+    			<value>hasProblem;;select distinct so from SalesOrder so where so.hasProblem = 1 order by so.salesOrderId desc;;allow,all</value>
+    			<value>picking;;select distinct so from SalesOrder so, OrderShipment os where so.salesOrderId = os.salesOrder.salesOrderId and os.status = 50 order by so.salesOrderId desc;;allow,all</value>
+    			<value>partiallyShipped;;select so from SalesOrder so where so.orderStatus = 20 order by s.salesOrderId desc;;allow,all</value>
+    			<value>partiallyPaid;;select so from SalesOrder so where so.paymentStatus = 20 and so.orderStatus != 80 order by so.salesOrderId desc;;allow,all</value>
+    			<value>finished;;select so from SalesOrder so where so.orderStatus = 30 order by so.salesOrderId desc;;allow,all</value>
+    			<value>confirmedByRobot;;select distinct so from SalesOrder so, OrderShipment os where so.salesOrderId = os.salesOrder.salesOrderId and os.isConfirmedByRobot = 1 order by so.salesOrderId desc;;allow,all</value>
+    			<value>byPaymentType;;select distinct so from SalesOrder so, OrderPayment op where so.salesOrderId = op.salesOrder.salesOrderId and op.transactionType=? order by so.salesOrderId desc;;allow,all</value>
+    			<value>sf_all;;select so from SalesOrder so where so.customer.appuserId=? and so.store.storeId=? order by so.salesOrderId desc;;allow,all</value>
+    			<value>sf_specialNo;;select so from SalesOrder so where so.customer.appuserId=? and orderNo=? and so.store.storeId=? order by so.salesOrderId desc;;allow,all</value>
+    			<value>sf_cancel;;select so from SalesOrder so where so.customer.appuserId=? and so.orderStatus = 80 and so.store.storeId=? order by so.salesOrderId desc;;allow,all</value>
+    			<value>newMessages;;select distinct om.salesOrder from OrderMessage om where om.status = 0 and om.customerId=om.createBy order by om.orderMessageId desc;;allow,all</value>
+    			<value>sf_default;;select so from SalesOrder so where  so.customer.appuserId=? and so.createTime &gt;= ? and so.store.storeId=? order by so.salesOrderId desc;;allow,all</value>
+    			<value>ordreList4CustomerView;;select so from SalesOrder so where  so.customer.appuserId=? order by so.salesOrderId desc;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for SalesOrder From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for OrderShipment From Template: spring-dao.xml.beansvm  -->
+    <bean id="orderShipmentDao" class="com.cartmatic.estore.order.dao.impl.OrderShipmentDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from OrderShipment s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for OrderShipment From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for OrderSku From Template: spring-dao.xml.beansvm  -->
+    <bean id="orderSkuDao" class="com.cartmatic.estore.order.dao.impl.OrderSkuDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from OrderSku s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for OrderSku From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for OrderAudit From Template: spring-dao.xml.beansvm  -->
+    <bean id="orderAuditDao" class="com.cartmatic.estore.order.dao.impl.OrderAuditDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from OrderAudit s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for OrderAudit From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for OrderPayment From Template: spring-dao.xml.beansvm  -->
+    <bean id="orderPaymentDao" class="com.cartmatic.estore.order.dao.impl.OrderPaymentDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from OrderPayment s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for OrderPayment From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for OrderPickList From Template: spring-dao.xml.beansvm  -->
+    <bean id="orderPickListDao" class="com.cartmatic.estore.order.dao.impl.OrderPickListDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from OrderPickList s order by s.orderPickListId desc;;allow,all</value>
+    			<value>selectByUser;;select s from OrderPickList s,AppUser u where s.createBy=u.appuserId;;allow,all;;hidden</value>
+    			<value>orderShipment;;select s from OrderShipment s order by s.orderShipmentId desc;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for OrderPickList From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for OrderPromotion From Template: spring-dao.xml.beansvm  -->
+    <bean id="orderPromotionDao" class="com.cartmatic.estore.order.dao.impl.OrderPromotionDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from OrderPromotion s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for OrderPromotion From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for OrderReturn From Template: spring-dao.xml.beansvm  -->
+    <bean id="orderReturnDao" class="com.cartmatic.estore.order.dao.impl.OrderReturnDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from OrderReturn s order by s.orderReturnId desc;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for OrderReturn From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for OrderReturnSku From Template: spring-dao.xml.beansvm  -->
+    <bean id="orderReturnSkuDao" class="com.cartmatic.estore.order.dao.impl.OrderReturnSkuDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from OrderReturnSku s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for OrderReturnSku From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for OrderSettlement From Template: spring-dao.xml.beansvm  -->
+    <bean id="orderSettlementDao" class="com.cartmatic.estore.order.dao.impl.OrderSettlementDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from OrderSettlement s order by s.orderSettlementId desc;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- start:  Generated for PromoRule From Template: spring-dao.xml.beansvm  -->
+    <bean id="customerDashboardDao" class="com.cartmatic.estore.customer.dao.impl.CustomerDashboardDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select c from Customer c;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for PromoRule From Template: spring-dao.xml.beansvm  -->
+   <bean id="shoppingcartItemGcDao" class="com.cartmatic.estore.cart.dao.impl.ShoppingcartItemGcDaoImpl" parent="hibernateGenericDao"></bean>
+<!-- start:  Generated for OrderMessage From Template: spring-dao.xml.beansvm  -->
+    <bean id="orderMessageDao" class="com.cartmatic.estore.order.dao.impl.OrderMessageDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from OrderMessage s;;allow,all</value>
+    			<value>sf_customerMsg;;select s from OrderMessage s where s.customerId=? order by s.salesOrder.salesOrderId desc, s.orderMessageId asc;;allow,all</value>
+    			<value>sf_allActiveOrders;;select s from SalesOrder s where s.customer.appuserId=? and s.orderStatus != 30 and s.orderStatus != 80 order by s.salesOrderId desc;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for OrderMessage From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for SalesOrderGeoip From Template: spring-dao.xml.beansvm  -->
+    <bean id="salesOrderGeoipDao" class="com.cartmatic.estore.order.dao.impl.SalesOrderGeoipDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from SalesOrderGeoip s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for SalesOrderGeoip From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for SystemQueue From Template: spring-dao.xml.beansvm  -->
+    <bean id="systemQueueDao" class="com.cartmatic.estore.system.dao.impl.SystemQueueDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from SystemQueue s order by systemQueueId desc;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for SystemQueue From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for Address From Template: spring-dao.xml.beansvm  -->
+    <bean id="addressDao" class="com.cartmatic.estore.customer.dao.impl.AddressDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from Address s where s.appUser.appuserId=?;;allow,all</value>
+    			<value>customerAddress_front;;select s from Address s where s.appUser.appuserId=?;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for Address From Template: spring-dao.xml.beansvm  -->
+
+<!-- start:  Generated for Favorite From Template: spring-dao.xml.beansvm  -->
+    <bean id="favoriteDao" class="com.cartmatic.estore.customer.dao.impl.FavoriteDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from Favorite s;;allow,all</value>
+    			<value>sf_myFavorites;;from Favorite s where s.store.storeId=? and s.customer.appuserId =? order by s.createTime desc;;allow,all;;hidden</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for Favorite From Template: spring-dao.xml.beansvm  -->
+
+<!-- start:  Generated for UserRss From Template: spring-dao.xml.beansvm  -->
+    <bean id="userRssDao" class="com.cartmatic.estore.customer.dao.impl.UserRssDaoImpl" parent="hibernateGenericDao">
+    </bean>
+    
+<!-- end:  Generated for UserRss From Template: spring-dao.xml.beansvm  -->
+
+<!-- start:  Generated for Feedback From Template: spring-dao.xml.beansvm  -->
+    <bean id="feedbackDao" class="com.cartmatic.estore.customer.dao.impl.FeedbackDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from Feedback s where s.threadId=0 order by s.feedbackId desc;;allow,all</value>
+    			<value>allReplaysByThreadId;;select s from Feedback s where s.threadId=? order by createTime asc;;allow,all;;hidden</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for Feedback From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for Membership From Template: spring-dao.xml.beansvm  -->
+    <bean id="membershipDao" class="com.cartmatic.estore.customer.dao.impl.MembershipDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from Membership s order by s.membershipLevel;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for Membership From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for ShopPoint From Template: spring-dao.xml.beansvm  -->
+    <bean id="shopPointDao" class="com.cartmatic.estore.customer.dao.impl.ShopPointDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from ShopPoint s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for ShopPoint From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for ShopPointHistory From Template: spring-dao.xml.beansvm  -->
+    <bean id="shopPointHistoryDao" class="com.cartmatic.estore.customer.dao.impl.ShopPointHistoryDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from ShopPointHistory s where s.customer.appuserId=? order by s.createTime desc;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for ShopPointHistory From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for ValidationSession From Template: spring-dao.xml.beansvm  -->
+    <bean id="validationSessionDao" class="com.cartmatic.estore.customer.dao.impl.ValidationSessionDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from ValidationSession s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for ValidationSession From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for Wishlist From Template: spring-dao.xml.beansvm  -->
+    <bean id="wishlistDao" class="com.cartmatic.estore.customer.dao.impl.WishlistDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from Wishlist s where s.customer.appuserId=?;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for Wishlist From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for WishlistItem From Template: spring-dao.xml.beansvm  -->
+    <bean id="wishlistItemDao" class="com.cartmatic.estore.customer.dao.impl.WishlistItemDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from WishlistItem s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for WishlistItem From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for AppUser From Template: spring-dao.xml.beansvm  -->
+    <bean id="appUserDao" class="com.cartmatic.estore.system.dao.impl.AppUserDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from AppUser s;;allow,all</value>
+    			<value>userSelector;;select s from AppUser s where s.status=1 and s.deleted=0 and s.userType=? order by s.username asc;;allow,all;;hidden</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for AppUser From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for AccessoryGroup From Template: spring-dao.xml.beansvm  -->
+    <bean id="accessoryGroupDao" class="com.cartmatic.estore.catalog.dao.impl.AccessoryGroupDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from AccessoryGroup s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for AccessoryGroup From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for Accessory From Template: spring-dao.xml.beansvm  -->
+    <bean id="accessoryDao" class="com.cartmatic.estore.catalog.dao.impl.AccessoryDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from Accessory s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for Accessory From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for Supplier From Template: spring-dao.xml.beansvm  -->
+    <bean id="supplierDao" class="com.cartmatic.estore.supplier.dao.impl.SupplierDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from Supplier s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for Supplier From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for SupplierProduct From Template: spring-dao.xml.beansvm  -->
+    <bean id="supplierProductDao" class="com.cartmatic.estore.supplier.dao.impl.SupplierProductDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from SupplierProduct s order by s.supplierProductId desc;;allow,all</value>
+    			<value>supplierProduct;;select s from SupplierProduct s where s.status!=3 and  s.supplier.supplierId=? order by s.supplierProductId desc;;allow,all;;hidden</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for SupplierProduct From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for PurchaseOrder From Template: spring-dao.xml.beansvm  -->
+    <bean id="purchaseOrderDao" class="com.cartmatic.estore.supplier.dao.impl.PurchaseOrderDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from PurchaseOrder s order by s.purchaseOrderId desc;;allow,all</value>
+    			<value>sf_all;;      select s from PurchaseOrder s where s.supplier.supplierId=? and s.poStatus != 0 order by s.purchaseOrderId desc;;allow,all;;hidden</value>
+    			<value>sf_specialNo;;select s from PurchaseOrder s where s.supplier.supplierId=? and s.poStatus != 0 and purchaseOrderNo=? order by s.purchaseOrderId desc;;allow,all;;hidden</value>
+    			<value>sf_cancel;;   select s from PurchaseOrder s where s.supplier.supplierId=? and s.poStatus = 4 order by s.purchaseOrderId desc;;allow,all;;hidden</value>
+    			<value>sf_default;;  select s from PurchaseOrder s where s.supplier.supplierId=? and s.poStatus != 0 and s.createTime &gt;= ? order by s.purchaseOrderId desc;;allow,all;;hidden</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for PurchaseOrder From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for PurchaseOrderItem From Template: spring-dao.xml.beansvm  -->
+    <bean id="purchaseOrderItemDao" class="com.cartmatic.estore.supplier.dao.impl.PurchaseOrderItemDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from PurchaseOrderItem s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for PurchaseOrderItem From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for AwaitingPurchase From Template: spring-dao.xml.beansvm  -->
+    <bean id="awaitingPurchaseDao" class="com.cartmatic.estore.supplier.dao.impl.AwaitingPurchaseDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from AwaitingPurchase s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for AwaitingPurchase From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for Currency From Template: spring-dao.xml.beansvm  -->
+    <bean id="currencyDao" class="com.cartmatic.estore.system.dao.impl.CurrencyDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from Currency s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for Currency From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for TransferRecord From Template: spring-dao.xml.beansvm  -->
+    <bean id="transferRecordDao" class="com.cartmatic.estore.order.dao.impl.TransferRecordDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from TransferRecord s order by s.transferRecordId desc;;allow,all</value>
+    			<value>unprocessed;;select s from TransferRecord s where s.status=0 order by s.transferRecordId desc;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for TransferRecord From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for TbCategoryRefer From Template: spring-dao.xml.beansvm  -->
+    <bean id="tbCategoryReferDao" class="com.cartmatic.estore.supplier.dao.impl.TbCategoryReferDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from TbCategoryRefer s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for TbCategoryRefer From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for TbCatPropRefer From Template: spring-dao.xml.beansvm  -->
+    <bean id="tbCatPropReferDao" class="com.cartmatic.estore.supplier.dao.impl.TbCatPropReferDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from TbCatPropRefer s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for TbCatPropRefer From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for TbCatPropValueRefer From Template: spring-dao.xml.beansvm  -->
+    <bean id="tbCatPropValueReferDao" class="com.cartmatic.estore.supplier.dao.impl.TbCatPropValueReferDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from TbCatPropValueRefer s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for TbCatPropValueRefer From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for Catalog From Template: spring-dao.xml.beansvm  -->
+    <bean id="catalogDao" class="com.cartmatic.estore.catalog.dao.impl.CatalogDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from Catalog s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for Catalog From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for Store From Template: spring-dao.xml.beansvm  -->
+    <bean id="storeDao" class="com.cartmatic.estore.system.dao.impl.StoreDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from Store s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for Store From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for AdminInfo From Template: spring-dao.xml.beansvm  -->
+    <bean id="adminInfoDao" class="com.cartmatic.estore.system.dao.impl.AdminInfoDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from AdminInfo s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for AdminInfo From Template: spring-dao.xml.beansvm  -->
+<!-- start:  Generated for TextMessage From Template: spring-dao.xml.beansvm  -->
+    <bean id="textMessageDao" class="com.cartmatic.estore.customer.dao.impl.TextMessageDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from TextMessage s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+<!-- end:  Generated for TextMessage From Template: spring-dao.xml.beansvm  -->
+
+    <bean id="awardDao" class="com.cartmatic.estore.activity.dao.impl.AwardDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from Award s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+    
+        <bean id="userAwardDao" class="com.cartmatic.estore.activity.dao.impl.UserAwardDaoImpl" parent="hibernateGenericDao">
+    	<property name="searchFilters">
+    		<list>
+    			<value>default;;select s from UserAward s;;allow,all</value>
+    		</list>
+    	</property>
+    </bean>
+
+</beans>

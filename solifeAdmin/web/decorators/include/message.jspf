@@ -1,0 +1,8 @@
+<%@ include file="/common/taglibs.jsp"%>
+<script type="text/javaScript" defer>
+	//显示操作信息等(如果有)
+	<c:if test="${not empty sessionScope.messages}">
+		$j(document).ready(function(){<c:forEach items="${sessionScope.messages}" var="message">sysMsg4p("${message.information}",${message.status=="ERROR"});</c:forEach>});
+		<c:remove var="messages" scope="session"/>
+	</c:if>
+</script>

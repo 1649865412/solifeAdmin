@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE urlrewrite PUBLIC "-//tuckey.org//DTD UrlRewrite 3.0//EN"
+    "http://tuckey.org/res/dtds/urlrewrite3.0.dtd">
+
+<!-- See the manual for configuring: http://tuckey.org/urlrewrite/manual/   -->
+<!-- For protect the jsp which is inside the pages folder -->
+<urlrewrite>
+	<!-- 所有的选择器都不能带doAction -->
+	<rule match-type="wildcard">
+		<from>/selector/*</from>
+		<condition name="doAction" type="parameter" ></condition>
+		<to type="forward">/error.jsp</to>
+	</rule>
+    <rule match-type="regex">
+        <from>^/pages/(.*).jsp</from>
+        <set name="javax.servlet.error.request_uri">/pages/$1.jsp</set>
+        <to type="forward">/404.jsp</to>
+    </rule>
+</urlrewrite>
+

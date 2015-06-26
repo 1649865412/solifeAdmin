@@ -1,0 +1,397 @@
+
+<form-validation>
+
+   <global>
+        <validator name="code"
+                   classname="com.cartmatic.estore.core.util.ValidationUtil"
+                   method="validateCode"
+                   methodParams="java.lang.Object,
+                       org.apache.commons.validator.ValidatorAction,
+                       org.apache.commons.validator.Field,
+                       org.springframework.validation.Errors"
+                   msg="errors.invalid">
+
+            <javascript><![CDATA[
+            function validateCode(form) {
+                var pattern = /[^\x00-\xff]|[\ \`\~\!\@\$\%\^\&\*\(\)\+\=\|\}\{\"\[\]\:\;\'\<\,\>\.\/\?\\]/;
+                var isValid = true;
+                var focusField = null;
+                var i = 0;
+                var fields = new Array();
+                ocode = new code();
+                for (x in ocode) {
+                    var field = form[ocode[x][0]];
+
+                    if (field && !field.disabled) if (field.type == 'text' ||
+                        field.type == 'textarea' ||
+                        field.type == 'file' ||
+                        field.type == 'select-one' ||
+                        field.type == 'radio' ||
+                        field.type == 'password') {
+
+                        var value = '';
+                        // get field's value
+                        if (field.type == "select-one") {
+                            var si = field.selectedIndex;
+                            if (si >= 0) {
+                                value = field.options[si].value;
+                            }
+                        } else {
+                            value = field.value;
+                        }
+
+                        if (value.length > 0 && pattern.test(value)) 
+                        {
+                            if (i == 0) {
+                                focusField = field;
+                            }
+                            fields[i++] = ocode[x][1];
+                            isValid = false;
+                        }
+                    }
+                }
+                if (fields.length > 0) {
+                   focusField.focus();
+                   alert(fields.join('\n'));
+                }
+                return isValid;
+            }
+            ]]>
+            </javascript>
+
+        </validator>
+      <validator name="equalTo"
+         classname="com.cartmatic.estore.core.util.ValidationUtil"
+         method="validateTwoFields"
+         methodParams="java.lang.Object,
+                       org.apache.commons.validator.ValidatorAction,
+                       org.apache.commons.validator.Field,
+                       org.springframework.validation.Errors"
+         msg="errors.equalTo">
+         <javascript><![CDATA[
+            function validateTqualTo(form) {
+                var bValid = true;
+                var focusField = null;
+                var i = 0;
+                var fields = new Array();
+                oTwoFields = new twofields();
+                for (x in oTwoFields) {
+                	var field = form[oTwoFields[x][0]];
+                    var secondField = form[oTwoFields[x][2]("secondProperty")];
+                	
+                    if (field.type == 'text' ||
+                        field.type == 'textarea' ||
+                        field.type == 'select-one' ||
+                        field.type == 'radio' ||
+                        field.type == 'password') {
+                        
+                        var value;
+                        var secondValue;
+						// get field's value
+						if (field.type == "select-one") {
+							var si = field.selectedIndex;
+							value = field.options[si].value;
+                            secondValue = secondField.options[si].value;
+						} else {
+							value = field.value;
+                            secondValue = secondField.value;
+						}
+                        
+                        if (value != secondValue) {
+                        
+	                        if (i == 0) {
+	                            focusField = field;
+	                        }
+	                        fields[i++] = oTwoFields[x][1];
+	                        bValid = false;
+                        }
+                    }
+                }
+                if (fields.length > 0) {
+                   focusField.focus();
+                   alert(fields.join('\n'));
+                }
+                return bValid;
+            }]]>
+         </javascript>
+       </validator>
+
+        <validator name="price"
+                   classname="com.cartmatic.estore.core.util.ValidationUtil"
+                   method="validatePrice"
+                   methodParams="java.lang.Object,
+                       org.apache.commons.validator.ValidatorAction,
+                       org.apache.commons.validator.Field,
+                       org.springframework.validation.Errors"
+			       depends=""
+                   msg="errors.invalidPrice">
+            <javascript><![CDATA[
+            function validatePrice(form) {
+                var pattern = /^\d{0,10}\.?\d{0,2}$/;
+                //var pattern = /^[0-9]{1,3}(,[0-9]{3})*(\.[0-9]{1,2})?$/;
+                var isValid = true;
+                var focusField = null;
+                var i = 0;
+                var fields = new Array();
+                oPrice = new price();
+                for (x in oPrice) {
+                    var field = form[oPrice[x][0]];
+
+                    if (field && !field.disabled) if (field.type == 'text' ||
+                        field.type == 'textarea' ||
+                        field.type == 'file' ||
+                        field.type == 'select-one' ||
+                        field.type == 'radio' ||
+                        field.type == 'password') {
+
+                        var value = '';
+                        // get field's value
+                        if (field.type == "select-one") {
+                            var si = field.selectedIndex;
+                            if (si >= 0) {
+                                value = field.options[si].value;
+                            }
+                        } else {
+                            value = field.value;
+                        }
+
+                        if (value.length > 0 && !pattern.test(value)) 
+                        {
+                            if (i == 0) {
+                                focusField = field;
+                            }
+                            fields[i++] = oPrice[x][1];
+                            isValid = false;
+                        }
+                    }
+                }
+                if (fields.length > 0) {
+                   focusField.focus();
+                   alert(fields.join('\n'));
+                }
+                return isValid;
+            }
+            ]]>
+            </javascript>
+        </validator>
+
+        <validator name="double4"
+                   classname="com.cartmatic.estore.core.util.ValidationUtil"
+                   method="validateDouble4"
+                   methodParams="java.lang.Object,
+                       org.apache.commons.validator.ValidatorAction,
+                       org.apache.commons.validator.Field,
+                       org.springframework.validation.Errors"
+			       depends=""
+                   msg="errors.invalid">
+            <javascript><![CDATA[
+            function validateDouble4(form) {
+                var pattern = /^\d{0,10}\.?\d{0,4}$/;
+                var isValid = true;
+                var focusField = null;
+                var i = 0;
+                var fields = new Array();
+                oDouble4 = new double4();
+                for (x in oDouble4) {
+                    var field = form[oDouble4[x][0]];
+
+                    if (field && !field.disabled) if (field.type == 'text' ||
+                        field.type == 'textarea' ||
+                        field.type == 'file' ||
+                        field.type == 'select-one' ||
+                        field.type == 'radio' ||
+                        field.type == 'password') {
+
+                        var value = '';
+                        // get field's value
+                        if (field.type == "select-one") {
+                            var si = field.selectedIndex;
+                            if (si >= 0) {
+                                value = field.options[si].value;
+                            }
+                        } else {
+                            value = field.value;
+                        }
+
+                        if (value.length > 0 && !pattern.test(value)) 
+                        {
+                            if (i == 0) {
+                                focusField = field;
+                            }
+                            fields[i++] = oDouble4[x][1];
+                            isValid = false;
+                        }
+                    }
+                }
+                if (fields.length > 0) {
+                   focusField.focus();
+                   alert(fields.join('\n'));
+                }
+                return isValid;
+            }
+            ]]>
+            </javascript>
+        </validator>
+
+        <validator name="noHtml"
+                   classname="com.cartmatic.estore.core.util.ValidationUtil"
+                   method="validateNoHtml"
+                   methodParams="java.lang.Object,
+                       org.apache.commons.validator.ValidatorAction,
+                       org.apache.commons.validator.Field,
+                       org.springframework.validation.Errors"
+                   depends=""
+                   msg="errors.htmlCodeNotAllowed">
+            <javascript><![CDATA[
+            function validateNoHtml(form) {
+                var bValid = true;
+                var focusField = null;
+                var i = 0;
+                var fields = new Array();
+                oText = new noHtml();
+                for (x in oText) {
+                    if (!form[oText[x][0]]) continue;
+                    if ((form[oText[x][0]].type == 'text' ||
+                         form[oText[x][0]].type == 'textarea') &&
+                        (form[oText[x][0]].value.length > 0)) {
+                        if (!checkNoHtml(form[oText[x][0]].value)) {
+                            if (i == 0) {
+                                focusField = form[oText[x][0]];
+                            }
+                            fields[i++] = oText[x][1];
+                            bValid = false;
+                        }
+                    }
+                }
+                if (fields.length > 0) {
+                    focusField.focus();
+                    alert(fields.join('\n'));
+                }
+                return bValid;
+            }
+            
+            function checkNoHtml(textStr) {
+				if (textStr.indexOf("<")!=-1 || textStr.indexOf(">")!=-1) {
+					return false;
+				}
+				
+				//var invalidTextPattern = new RegExp(".*<(\\w+)\\b[^>]*>.*?</\\1>.*|.*<(\\w+)\\b[^>]*/>.*");
+				//if (invalidTextPattern.exec(textStr)) {
+				//	return false;
+				//}
+            	return true;
+            }]]>
+            </javascript>
+
+        </validator>
+
+        <validator name="text"
+                   classname="com.cartmatic.estore.core.util.ValidationUtil"
+                   method="validateText"
+                   methodParams="java.lang.Object,
+                       org.apache.commons.validator.ValidatorAction,
+                       org.apache.commons.validator.Field,
+                       org.springframework.validation.Errors"
+                   depends=""
+                   msg="errors.text">
+            <javascript><![CDATA[
+            function validateText(form) {
+                var bValid = true;
+                var focusField = null;
+                var i = 0;
+                var fields = new Array();
+                oText = new text();
+                for (x in oText) {
+                    if (!form[oText[x][0]]) continue;
+                    if ((form[oText[x][0]].type == 'text' ||
+                         form[oText[x][0]].type == 'textarea') &&
+                        (form[oText[x][0]].value.length > 0)) {
+                        if (!checkText(form[oText[x][0]].value)) {
+                            if (i == 0) {
+                                focusField = form[oText[x][0]];
+                            }
+                            fields[i++] = oText[x][1];
+                            bValid = false;
+                        }
+                    }
+                }
+                if (fields.length > 0) {
+                    focusField.focus();
+                    alert(fields.join('\n'));
+                }
+                return bValid;
+            }
+            
+            function checkText(textStr) {
+				var invalidTextPattern = new RegExp(".*[\"!#$%&'()*+,-./:;<=>?@[\\]^_`{|}~]+.*");
+				if (invalidTextPattern.exec(textStr)) {
+					return false;
+				}
+            	return true;
+            }]]>
+            </javascript>
+
+        </validator>
+        
+        
+        <validator name="positiveInteger"
+                   classname="com.cartmatic.estore.core.util.ValidationUtil"
+                   method="validatePositiveInteger"
+                   methodParams="java.lang.Object,
+                       org.apache.commons.validator.ValidatorAction,
+                       org.apache.commons.validator.Field,
+                       org.springframework.validation.Errors"
+			       depends="" 
+                   msg="errors.invalidPositiveInteger">
+            <javascript><![CDATA[
+            function validatePositiveInteger(form) {
+                var pattern = /^\+?[1-9]\d*$/;
+                var isValid = true;
+                var focusField = null;
+                var i = 0;
+                var fields = new Array();
+                oPositiveInteger = new positiveInteger();
+                for (x in oPositiveInteger) {
+                    var field = form[oPositiveInteger[x][0]];
+
+                    if (field && !field.disabled) if (field.type == 'text' ||
+                        field.type == 'textarea' ||
+                        field.type == 'file' ||
+                        field.type == 'select-one' ||
+                        field.type == 'radio' ||
+                        field.type == 'password') {
+
+                        var value = '';
+                        // get field's value
+                        if (field.type == "select-one") {
+                            var si = field.selectedIndex;
+                            if (si >= 0) {
+                                value = field.options[si].value;
+                            }
+                        } else {
+                            value = field.value;
+                        }
+
+                        if (value.length > 0 && !pattern.test(value)) 
+                        {
+                            if (i == 0) {
+                                focusField = field;
+                            }
+                            fields[i++] = oPositiveInteger[x][1];
+                            isValid = false;
+                        }
+                    }
+                }
+                if (fields.length > 0) {
+                   focusField.focus();
+                   alert(fields.join('\n'));
+                }
+                return isValid;
+            }
+            ]]>
+            </javascript>
+        </validator>
+        
+   </global>
+
+</form-validation>

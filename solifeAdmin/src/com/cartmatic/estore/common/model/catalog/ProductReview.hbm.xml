@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.catalog.ProductReview"
+        table="PRODUCT_REVIEW"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="productReviewId"
+            column="productReviewId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+        <property
+            name="customerName"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="customerName"
+            length="64"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="subject"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="subject"
+            length="128"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="message"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="message"
+            length="2048"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="remoteIp"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="remoteIp"
+            length="32"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="givenPoint"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="givenPoint"
+            length="10"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="givenTime"
+            type="java.util.Date"
+            update="true"
+            insert="true"
+            access="property"
+            column="givenTime"
+            length="0"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="rate"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="rate"
+            length="10"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="usefulCount"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="usefulCount"
+            length="10"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="unusefulCount"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="unusefulCount"
+            length="10"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="reviewId"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="reviewId"
+            length="10"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="hasReply"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="hasReply"
+            length="5"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="createTime"
+            type="java.util.Date"
+            update="true"
+            insert="true"
+            access="property"
+            column="createTime"
+            length="0"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="updateTime"
+            type="java.util.Date"
+            update="true"
+            insert="true"
+            access="property"
+            column="updateTime"
+            length="0"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="status"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="status"
+            length="5"
+            not-null="true"
+            unique="false"
+        />
+     <!-- imported bi-directional many-to-one association to Product -->
+		<many-to-one
+			name="product"
+			class="com.cartmatic.estore.common.model.catalog.Product"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="productId" />
+		</many-to-one>
+    <!-- imported bi-directional many-to-one association to AppUser -->
+		<many-to-one
+			name="reviewUser"
+			class="com.cartmatic.estore.common.model.system.AppUser"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="appuserId" />
+		</many-to-one>
+	
+    <many-to-one
+       name="grantor"
+       class="com.cartmatic.estore.common.model.system.AppUser"
+                not-null="false"
+       fetch="select"
+      > 
+       <column name="givenBy" />
+      </many-to-one>
+      
+    <!-- imported bi-directional many-to-one association to Store -->
+	<many-to-one name="store" class="com.cartmatic.estore.common.model.system.Store" not-null="false" fetch="select">
+		<column name="storeId" />
+	</many-to-one>
+      
+ <!-- exported bi-directional one-to-many association to ProductRateValue -->
+	<set name="productRateValues"
+	     table="product_rate_value"
+	     lazy="true"
+	     inverse="true"
+	     cascade="save-update"
+	     sort="unsorted"
+	>
+		<key>
+			<column name="productReviewId"/>
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.catalog.ProductRateValue"
+		/>
+	</set>     
+ <!-- exported bi-directional one-to-many association to ReviewVote -->
+	<set name="reviewVotes"
+	     table="review_vote"
+	     lazy="true"
+	     inverse="true"
+	     cascade="save-update"
+	     sort="unsorted"
+	>
+		<key>
+			<column name="productReviewId"/>
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.catalog.ReviewVote"
+		/>
+	</set>     
+    </class>
+</hibernate-mapping>

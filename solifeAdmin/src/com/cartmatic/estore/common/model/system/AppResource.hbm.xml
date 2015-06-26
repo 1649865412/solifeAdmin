@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.system.AppResource"
+        table="app_resource"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="appResourceId"
+            column="appResourceId"
+            type="java.lang.Integer"
+            length="11"
+        >
+            <generator class="native"/>
+        </id>
+         <property
+            name="resourceName"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="resourceName"
+            length="32"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="resourceType"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="resourceType"
+            length="6"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="resourceString"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="resourceString"
+            length="255"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="resourceDesc"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="resourceDesc"
+            length="512"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="resPermission"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="resPermission"
+            length="255"
+            not-null="false"
+            unique="false"
+        /> 
+  		<!-- exported bi-directional one-to-many association to RoleRes -->
+  		<set name="roleRess"
+	     table="role_res"
+	     lazy="true"
+	     inverse="true"
+	     cascade="save-update"
+	     sort="unsorted">
+			<key>
+				<column name="appResourceId"/>
+			</key>
+			<one-to-many class="com.cartmatic.estore.common.model.system.RoleRes"/>
+		</set>  
+		<!-- 得到父级资源 -->
+		<many-to-one
+			name="parentAppResource"
+			class="com.cartmatic.estore.common.model.system.AppResource"
+            not-null="false"
+			outer-join="auto">
+			<column name="parentId" />
+		</many-to-one>
+ 		<!-- 得到子级资源 -->
+		<set name="appResources"
+	     	table="app_resource"
+	     	lazy="false"
+	     	inverse="true"
+	     	cascade="all"
+	     	sort="unsorted">
+			<key>
+			<column name="parentId"/>
+			</key>
+			<one-to-many class="com.cartmatic.estore.common.model.system.AppResource"/>
+		</set>
+    </class>
+</hibernate-mapping>

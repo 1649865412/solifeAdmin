@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="solife-dev" basedir="." default="copy-to-front-search">
+
+	<target name="copy-to-front-search">
+		<property file="../conf/dev.properties" />
+		<ant antfile="../scripts/webapps-sync.xml" target="copy-to-front-search"/>
+		
+	</target>
+</project>

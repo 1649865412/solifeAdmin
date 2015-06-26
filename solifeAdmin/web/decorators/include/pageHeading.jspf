@@ -1,0 +1,16 @@
+<%@ page pageEncoding="UTF-8"%>
+<div class="btn-space">
+	<div class="left">
+		<ul>
+			<li>
+				<decorator:getProperty property="page.buttons" />
+			</li>
+		</ul>
+	</div>
+	<div id="hpbuttonGroup" class="right">
+		<%--
+		<input id="showMsgHistoryButton" type="button" value="<i18n:msg key='button.showMsgHistory'/> " class="btn-back" onclick="fnShowMsgHistory('<i18n:msg key='button.showMsgHistory'/>','<B><i18n:msg key='button.showMsgHistory'/></B>')"/>
+		<input id="showViewHistoryButton" type="button" value="<i18n:msg key='button.showViewHistory'/>" class="btn-back" onclick="fnShowViewHistory('<i18n:msg key='button.showViewHistory'/>','<B><i18n:msg key='button.showViewHistory'/></B>')"/>
+		--%>
+	</div>
+</div>

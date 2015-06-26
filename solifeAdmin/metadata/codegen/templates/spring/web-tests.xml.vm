@@ -1,0 +1,139 @@
+## This is a velocity template
+## to generate a Canoo Web Test xml file from an sql table input
+#set ($table = $sqlTable.Table)
+#set ($class = $utility.makeClassName($sqlTable.EntityName))
+#set ($classVar = $utility.makeFirstLetterLowerCase($class))
+#set ($busClass = $utility.makeBusName($utility.replaceString($sqlTable.EntityName,"_"," ")))
+#set ($packagePrefix  = $prop.getProperty("packagePrefix"))
+#set ($keyfield = $sqlTable.getPrimaryKey(0).getColname())
+#set ($keytype  = $sqlTable.getPrimaryKey(0).getAttType())
+#set ($keyVar= $utility.makeVarName($keyfield))
+#set ($keyVarUC = $utility.makeFirstLetterUpperCase($keyVar))
+#set ($keyColumn = $sqlTable.getPrimaryKey(0))
+#set ($newTestCase = "9")
+#set ($testKeyVal1   = $utility.makeSampleData($keyColumn.attType,$keyColumn.colname,$keyColumn.colsize,$keyColumn.coltype,"1", "n"))
+#set ($testKeyVal2   = $utility.makeSampleData($keyColumn.attType,$keyColumn.colname,$keyColumn.colsize,$keyColumn.coltype,"2", "n"))
+#set ($testKeyValNew = $utility.makeSampleData($keyColumn.attType,$keyColumn.colname,$keyColumn.colsize,$keyColumn.coltype,$newTestCase, "n"))
+#set ($hasTestableColumn = $sqlTable.hasTestableColumn)
+#if  ($hasTestableColumn)
+#set ($testableColumn    = $sqlTable.getTestableColumn())
+#set ($testCol = $utility.makeFirstLetterUpperCase($utility.makeVarName($testableColumn.colname)))
+#set ($testColLC = $utility.makeFirstLetterLowerCase($utility.makeVarName($testableColumn.colname)))
+#set ($testVal = $utility.makeSampleData($testableColumn.attType,$testableColumn.colname,$testableColumn.colsize,$testableColumn.coltype,$newTestCase, "n"))
+#end
+#set ($amp = "&amp;")
+#set ($equal = "=")
+#macro( genkeys $testcase )
+#set ($firstOne = "Y")
+#foreach ($kycol in $sqlTable.primaryKeys )
+#set ($colname = $kycol.getColname())
+#set ($kyvar = $utility.makeVarName($colname))
+#set ($kyval = $utility.makeSampleData("MM/dd/yyyy",$kycol.attType,$kycol.colname,$kycol.colsize,$kycol.coltype,$testcase, "n"))
+#if  ($firstOne.equals("Y"))${kyvar}${equal}${kyval}#set ($firstOne = "N")#else${amp}${kyvar}${equal}${kyval}#end#end#end
+    <!-- ${busClass} Tests) -->
+    <target name="${class}Tests"
+		depends="Search${class},Edit${class},Save${class},Add${class},Delete${class}"
+		description="Call and executes all ${class} test cases(targets)">
+		<echo>Scucessfully ran all ${busClass} JSP tests</echo>
+	</target>
+	
+	<target name="Edit${class}"
+		description="Tests editing an existing ${busClass}">
+		<canoo name="edit${class}">
+			&config;
+			<steps>
+				&login;
+				<invoke stepid="click Edit ${busClass} Link" url="/edit${class}.html?#genkeys("1")"/>
+				<verifytitle stepid="We should see the ${busClass} Detail title"
+					text="${webapp.prefix}${${classVar}Detail.title}"/>
+			</steps>
+		</canoo>
+	</target>
+	
+	<!-- Edit a ${class} and then save -->
+	<target name="Save${class}"
+	description="Tests editing and saving a ${classVar}">
+		<canoo name="save${class}">
+		&config;
+			<steps>
+				&login;
+				<invoke stepid="click Edit ${class} link" url="/edit${class}.html?#genkeys("1")"/>
+				<verifytitle stepid="we should see the ${class}Detail title"
+				text="${webapp.prefix}${${classVar}Detail.title}"/>
+#if ($hasTestableColumn)
+				<setinputfield stepid="set${testCol}" name="${testColLC}" value="$testVal"/>
+#end
+				<clickbutton label="Save" stepid="Click Save"/>
+				<verifytitle stepid="List Page re-appears if save successful"
+				text="${webapp.prefix}${${classVar}List.title}"/>
+			</steps>
+		</canoo>
+	</target>
+	
+	<!-- Add a new ${class} -->
+	<target name="Add${class}"
+	description="Adds a new ${class}">
+		<canoo name="add${class}">
+		&config;
+			<steps>
+			&login;
+			<invoke stepid="click Add Button" url="/edit${class}.html?method=Add&amp;from=list"/>
+			<verifytitle stepid="we should see the ${classVar}Detail title"
+			text="${webapp.prefix}${${classVar}Detail.title}"/>
+
+#if (!$sqlTable.hasGeneratedKey)
+#foreach( $kycol in $sqlTable.primaryKeys )
+#set ($kyvar = $utility.makeVarName($kycol.colname))
+#set ($kyval = $utility.makeSampleData("MM/dd/yyyy",$kycol.attType,$kycol.colname,$kycol.colsize,$kycol.coltype,$newTestCase, "n"))
+			<setinputfield stepid="set ${kyVar}" name="${kyvar}" value="${kyval}"/>
+#end
+#end
+#foreach( $column in $sqlTable.sqlColumns)
+#if (!$column.isKey())
+#set ($nonKeyColumn=$column)
+#set ($nonKeyVal = $utility.makeSampleData("MM/dd/yyyy",$column.attType,$column.colname,$column.colsize,$column.coltype,$newTestCase, "n"))
+#set ($nonKeyCol= $utility.makeFirstLetterLowerCase($utility.makeVarName($column.colname)))
+#if  (!$nonKeyCol.equalsIgnoreCase("version"))
+			<setinputfield stepid="set ${nonKeyCol}" name="${nonKeyCol}" value="${nonKeyVal}"/>
+#end
+#end
+#end   
+			<clickbutton label="${button.save}" stepid="Click button 'Save'"/>
+			<verifytitle stepid="List page appears if save successful"
+			text="${webapp.prefix}${${classVar}List.title}"/>
+#if ($keyColumn.isStringColumn())
+			<verifytext stepid="verify success message"
+			text="${busClass} for &lt;strong&gt;${testKeyValNew}&lt;/strong&gt; has been added successfully."/>
+#end
+			</steps>
+		</canoo>
+	</target>
+	
+	<!-- Delete existing ${class} -->
+	<target name="Delete${class}"
+	description="Deletes existing ${class}">
+		<canoo name="delete${class}">
+		&config;
+			<steps>
+			&login;
+			<invoke stepid="click Edit ${class} link" url="/edit${class}.html?#genkeys("2")"/>
+			<clickbutton label="${button.delete}" stepid="Click button 'Delete'"/>
+			<verifytitle stepid="display ${busClass} List" text="${webapp.prefix}${${classVar}List.title}"/>
+			<verifytext stepid="verify success message"
+			text="${busClass} for &lt;strong&gt;${testKeyVal2}&lt;/strong&gt; has been deleted successfully."/>
+			</steps>
+		</canoo>
+	</target>
+	<!-- Verify the ${class} list screen displays without errors -->
+	<target name="Search${class}"
+	description="Tests search for and displaying all ${class}">
+		<canoo name="search${class}">
+		&config;
+			<steps>
+			&login;
+			<invoke stepid="click View ${class} link" url="/${classVar}s.html"/>
+			<verifytitle stepid="we should see the ${classVar}List title"
+			text="${webapp.prefix}${${classVar}List.title}"/>
+			</steps>
+		</canoo>
+	</target>

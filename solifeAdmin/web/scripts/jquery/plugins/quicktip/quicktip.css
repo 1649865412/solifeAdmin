@@ -1,0 +1,12 @@
+
+.PTips{
+}
+
+
+.cRed{color:#f00;}
+.admin-window{min-height:30px; position:absolute;z-index:9999;}
+#icon{float:left;width:21px; padding-top:10px;}
+.admin-window .content{border:1px solid #ACACAC; background-color:#FEFBD8;padding:10px; float:left; width:236px; display:inline; text-align:center;}
+.admin-window .photo-left{position:absolute; background:url(images/icon_left.png) no-repeat;width:22px; height:16px;}
+.admin-window .photo-right{position:absolute; background:url(images/icon_right.png) no-repeat;width:22px; height:16px; margin-left:-1px;}
+.admin-window .loader{background:url(images/loader.gif) no-repeat center;width:100%;height:12px;}

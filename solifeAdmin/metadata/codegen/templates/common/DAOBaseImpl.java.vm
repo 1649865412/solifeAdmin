@@ -1,0 +1,115 @@
+## This is a velocity template
+## to generate a model class from an sql table input
+#set ($table = $sqlTable.Table)
+#set ($class = $utility.makeClassName($sqlTable.EntityName))
+#set ($classVar = $utility.makeFirstLetterLowerCase($class))
+#set ($packagePrefix  = $prop.getProperty("packagePrefix"))
+#set ($packageModot  = $prop.getProperty("packageModot"))
+#set ($keyfield = $sqlTable.getPrimaryKey(0).getColname())
+#set ($keytype  = $sqlTable.getPrimaryKey(0).getAttType())
+#set ($keyVar= $utility.makeVarName($keyfield))
+#set ($keyVarUC = $utility.makeFirstLetterUpperCase($keyVar))
+package ${packagePrefix}${packageModot}.dao.impl;
+
+import java.util.List;
+import java.util.Date;
+
+import ${packagePrefix}${packageModot}.dao.${class}DAOBase;
+import ${packagePrefix}.common.model${packageModot}.${class};
+import ${packagePrefix}.common.PagingBean;
+#if ($sqlTable.hasCompositeKey)
+import ${packagePrefix}.common.model${packageModot}.base.${class}PK;
+#end
+import org.springframework.orm.ObjectRetrievalFailureException;
+import com.cartmatic.estore.webapp.util.RequestContext;
+
+import java.util.*;
+
+/**
+ * ${class} Base Data Access Object (DAO) implementation.
+ * Generated and maintained by tools (AppfuseGenerator).
+ * Avoid changing in this file, because it will be overwritten.
+ *
+ * This class interacts with Spring's HibernateTemplate to save/delete and
+ * retrieve MenuItem objects.
+ */
+public abstract class ${class}DAOBaseImpl extends ${packagePrefix}.dao.impl.GenericDAO implements ${class}DAOBase {
+
+
+    /**
+     * @see ${packagePrefix}${packageModot}.dao.${class}DAOBase#get${class}($keytype)
+     */
+#if ($sqlTable.hasCompositeKey)
+	public ${class} get${class}(${class}PK pkey) {
+#else
+    public ${class} get${class}($keytype pkey) {
+#end
+        ${class} $classVar = (${class}) getHibernateTemplate().get(${class}.class, pkey);
+        
+        ##remove by Faith.Yan 2006-09-19
+        ##if ($classVar == null) {
+        ##    logger.warn("uh oh, $classVar '" + pkey.toString() + "' not found...");
+        ##    throw new ObjectRetrievalFailureException(${class}.class, pkey);
+        ##}
+		
+        return $classVar;
+    }
+
+    /**
+     * @see ${packagePrefix}${packageModot}.dao.${class}DAOBase#get${class}s()
+     */
+    public List get${class}s(){
+    	return super.loadAll(this.getReferenceClass());
+    }
+
+    /**
+     * @see ${packagePrefix}${packageModot}.dao.${class}DAOBase#save${class}($class)
+     */
+    public void save${class}(${class} $classVar) {
+#foreach($column in $sqlTable.sqlColumns)
+#if ("createTime"==${column.attName})
+		if (${classVar}.getCreateTime()==null) {
+			${classVar}.setCreateTime(new Date());
+		}
+#end
+#if ("createBy"==${column.attName})
+		if (${classVar}.getCreateBy()==null) {
+			${classVar}.setCreateBy(RequestContext.getCurrentUserId());
+		}
+#end
+#if ("updateTime"==${column.attName})
+		${classVar}.setUpdateTime(new Date());
+#end
+#if ("updateBy"==${column.attName})
+		${classVar}.setUpdateBy(RequestContext.getCurrentUserId());
+#end
+#end        
+        super.saveOrUpdate($classVar);
+    }
+
+    /**
+     * @see ${packagePrefix}${packageModot}.dao.${class}DAOBase#remove${class}($keytype)
+     */
+#if ($sqlTable.hasCompositeKey)
+	public void remove${class}(${class}PK pkey) {
+#else
+    public void remove${class}($keytype pkey) {
+#end
+        ${class} $classVar = get${class}(pkey);
+		super.delete($classVar);
+    }
+    
+    /**
+     * Define the referenced model class.
+     */
+    public Class getReferenceClass () {
+		return ${class}.class;
+	}  
+
+    /**
+     * @see ${packagePrefix}${packageModot}.dao.${class}DAOBase#get${class}sByExample(${class},String,boolean,PagingBean)
+     */
+    public List get${class}sByExample(final ${class} $classVar,final String orderProperty,final boolean useDesc, PagingBean pb){
+    	return findByCriteriaUsingExample($classVar, orderProperty, useDesc, pb);
+    }
+}

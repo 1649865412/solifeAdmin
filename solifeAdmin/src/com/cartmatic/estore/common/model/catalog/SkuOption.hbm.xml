@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.catalog.SkuOption"
+        table="SKU_OPTION"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="skuOptionId"
+            column="skuOptionId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+ 		<version
+            name="version"
+            type="java.lang.Integer"
+            column="version"
+            access="property"
+            unsaved-value="undefined"
+        />
+        <property
+            name="skuOptionName"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="skuOptionName"
+            length="64"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="skuOptionCode"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="skuOptionCode"
+            length="32"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="status"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="status"
+            length="5"
+            not-null="true"
+            unique="false"
+        />
+  <!-- exported bi-directional one-to-many association to ProductTypeSkuOption -->
+	<set name="productTypeSkuOptions"
+	     table="product_type_sku_option"
+	     lazy="true"
+	     inverse="true"
+	     cascade="save-update"
+	     sort="unsorted"
+	>
+		<key>
+			<column name="skuOptionId"/>
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.catalog.ProductTypeSkuOption"
+		/>
+	</set>     
+ <!-- exported bi-directional one-to-many association to SkuOptionValue -->
+	<set name="skuOptionValues"
+	     table="sku_option_value"
+	     lazy="true"
+	     order-by="sortOrder"
+	>
+		<key>
+			<column name="skuOptionId"/>
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.catalog.SkuOptionValue"
+		/>
+	</set>     
+    </class>
+</hibernate-mapping>

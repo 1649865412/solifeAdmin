@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.cartmatic.estore.common.model.catalog.ProductHandDraw"
+		table="PRODUCT_HAND_DRAW" select-before-update="false" dynamic-update="false"
+		dynamic-insert="false" optimistic-lock="version">
+		
+		<id name="productHandDrawId" column="productHandDrawId" type="java.lang.Integer"
+			length="10">
+			<generator class="native" />
+		</id>
+		
+		<property name="mediaUrl" type="java.lang.String" update="true"
+			insert="true" access="property" column="mediaUrl" length="255"
+			not-null="true" unique="false" />
+			
+	</class>
+</hibernate-mapping>

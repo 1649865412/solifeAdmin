@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.cartmatic.estore.common.model.customer.Address"
+		table="ADDRESS" select-before-update="false" dynamic-update="false"
+		dynamic-insert="false" optimistic-lock="version">
+		
+		<id name="addressId" column="addressId" type="java.lang.Integer"
+			length="10">
+			<generator class="native" />
+		</id>
+		
+		<property name="addressType" type="java.lang.Short" update="true"
+			insert="true" access="property" column="addressType" length="5"
+			not-null="true" unique="false" />
+			
+		<property name="title" type="java.lang.String" update="true"
+			insert="true" access="property" column="title" length="8" not-null="true"
+			unique="false" />
+			
+		<property name="firstname" type="java.lang.String" update="true"
+			insert="true" access="property" column="firstname" length="32"
+			not-null="true" unique="false" />
+			
+		<property name="lastname" type="java.lang.String" update="true"
+			insert="true" access="property" column="lastname" length="32"
+			not-null="false" unique="false" />
+			
+		<property name="telephone" type="java.lang.String" update="true"
+			insert="true" access="property" column="telephone" length="32"
+			not-null="true" unique="false" />
+			
+		<property name="zip" type="java.lang.String" update="true"
+			insert="true" access="property" column="zip" length="12" not-null="false"
+			unique="false" />
+			
+		<property name="fax" type="java.lang.String" update="true"
+			insert="true" access="property" column="fax" length="32" not-null="false"
+			unique="false" />
+			
+		<property name="companyName" type="java.lang.String" update="true"
+			insert="true" access="property" column="companyName" length="128"
+			not-null="false" unique="false" />
+			
+		<property name="isDefaultShippingAddress" type="java.lang.Short"
+			update="true" insert="true" access="property" column="isDefaultShippingAddress"
+			length="5" not-null="false" unique="false" />
+			
+		<property name="isDefaultBillingAddress" type="java.lang.Short"
+			update="true" insert="true" access="property" column="isDefaultBillingAddress"
+			length="5" not-null="false" unique="false" />
+			
+		<property name="address" type="java.lang.String" update="true"
+			insert="true" access="property" column="address" length="128"
+			not-null="true" unique="false" />
+			
+		<property name="address2" type="java.lang.String" update="true"
+			insert="true" access="property" column="address2" length="128"
+			not-null="false" unique="false" />
+			
+		<property name="countryName" type="java.lang.String" update="true"
+			insert="true" access="property" column="countryName" length="64"
+			not-null="false" unique="false" />
+			
+		<property name="stateName" type="java.lang.String" update="true"
+			insert="true" access="property" column="stateName" length="64"
+			not-null="false" unique="false" />
+			
+		<property name="cityName" type="java.lang.String" update="true"
+			insert="true" access="property" column="cityName" length="64"
+			not-null="false" unique="false" />
+			
+		<property name="sectionName" type="java.lang.String" update="true"
+			insert="true" access="property" column="sectionName" length="64"
+			not-null="false" unique="false" />
+			
+		<property name="countryId" type="java.lang.Integer" update="true"
+			insert="true" access="property" column="countryId" length="10"
+			not-null="false" unique="false" />
+			
+		<property name="stateId" type="java.lang.Integer" update="true"
+			insert="true" access="property" column="stateId" length="10"
+			not-null="false" unique="false" />
+			
+		<property name="cityId" type="java.lang.Integer" update="true"
+			insert="true" access="property" column="cityId" length="10" not-null="false"
+			unique="false" />
+			
+		<property name="userDefinedId" type="java.lang.Integer"
+			update="true" insert="true" access="property" column="userDefinedId"
+			length="10" not-null="false" unique="false" />
+			
+		<property name="email" type="java.lang.String" update="true"
+			insert="true" access="property" column="email" length="64" not-null="false"
+			unique="false" />
+			
+		<!-- imported bi-directional many-to-one association to AppUser -->
+		<many-to-one name="appUser"
+			class="com.cartmatic.estore.common.model.system.AppUser" not-null="false"
+			fetch="select">
+			<column name="appuserId" />
+		</many-to-one>
+		
+		<!-- exported bi-directional one-to-many association to Wishlist -->
+		<set name="wishlists" table="wishlist" lazy="true" inverse="true"
+			cascade="save-update" sort="unsorted">
+			<key>
+				<column name="shippingAddressId" />
+			</key>
+			<one-to-many class="com.cartmatic.estore.common.model.customer.Wishlist" />
+		</set>
+	</class>
+</hibernate-mapping>

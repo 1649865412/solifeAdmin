@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.cartmatic.estore.common.model.catalog.ProductMediaUp"
+		table="PRODUCT_MEDIA_UP" select-before-update="false" dynamic-update="false"
+		dynamic-insert="false" optimistic-lock="version">
+		
+		<id name="productMediaUpId" column="productMediaUpId" type="java.lang.Integer"
+			length="10">
+			<generator class="native" />
+		</id>
+		
+		<property name="mediaType" type="java.lang.Short" update="true"
+			insert="true" access="property" column="mediaType" length="5"
+			not-null="true" unique="false" />
+			
+		<property name="mediaUrl" type="java.lang.String" update="true"
+			insert="true" access="property" column="mediaUrl" length="255"
+			not-null="true" unique="false" />
+			
+		<property name="mediaDescription" type="java.lang.String"
+			update="true" insert="true" access="property" column="mediaDescription"
+			length="256" not-null="false" unique="false" />
+			
+		<property name="sortOrder" type="java.lang.Integer" update="true"
+			insert="true" access="property" column="sortOrder" length="10"
+			not-null="false" unique="false" />
+			
+		<!-- imported bi-directional many-to-one association to Product -->
+		<many-to-one name="product"
+			class="com.cartmatic.estore.common.model.catalog.Product" not-null="false"
+			fetch="select">
+			<column name="productId" />
+		</many-to-one>
+		
+	</class>
+</hibernate-mapping>

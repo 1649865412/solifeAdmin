@@ -1,0 +1,12 @@
+## This is a velocity template
+## to generate additional properties from an sql table input
+#set ($table = $sqlTable.Table)
+#set ($class = $utility.makeClassName($sqlTable.EntityName))
+#set ($tableClass = $utility.makeClassName($sqlTable.Table))
+#set ($classVarLC    = $utility.makeFirstLetterLowerCase($class))
+#set ($classVarUC    = $utility.makeFirstLetterUpperCase($class))
+#set ($packagePrefix = $prop.getProperty("packagePrefix"))
+#set ($packageModot = $prop.getProperty("packageModot"))
+#set ($packageDir  = $utility.replaceString($packagePrefix,".","/"))
+#set ($packageModir  = $utility.replaceString($packageModot,".","/"))
+    <value>${packageDir}/common/vo${packageModir}/${tableClass}.hbm.xml</value>

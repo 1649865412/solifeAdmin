@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.cartmatic.estore.common.model.inventory.Inventory" table="INVENTORY" select-before-update="false" dynamic-update="false" dynamic-insert="false" optimistic-lock="version">
+		<id name="inventoryId" column="inventoryId" type="java.lang.Integer" length="10">
+			<generator class="native" />
+		</id>
+		<version name="version" type="java.lang.Integer" column="version" access="property" unsaved-value="undefined" />
+		<property name="quantityOnHand" type="java.lang.Integer" update="true" insert="true" access="property" column="quantityOnHand" length="10" not-null="true" unique="false" />
+		<property name="allocatedQuantity" type="java.lang.Integer" update="true" insert="true" access="property" column="allocatedQuantity" length="10" not-null="true" unique="false" />
+		<property name="reservedQuantity" type="java.lang.Integer" update="true" insert="true" access="property" column="reservedQuantity" length="10" not-null="true" unique="false" />
+		<property name="expectedRestockDate" type="java.util.Date" update="true" insert="true" access="property" column="expectedRestockDate" length="0" not-null="false" unique="false" />
+		<property name="reorderQuantity" type="java.lang.Integer" update="true" insert="true" access="property" column="reorderQuantity" length="10" not-null="false" unique="false" />
+		<property name="preOrBackOrderedQty" type="java.lang.Integer" update="true" insert="true" access="property" column="preOrBackOrderedQty" length="10" not-null="true" unique="false" />
+		<property name="reorderMinimnm" type="java.lang.Integer" update="true" insert="true" access="property" column="reorderMinimnm" length="10" not-null="true" unique="false" />
+		<property name="createTime" type="java.util.Date" update="true" insert="true" access="property" column="createTime" length="0" not-null="true" unique="false" />
+		<property name="updateTime" type="java.util.Date" update="true" insert="true" access="property" column="updateTime" length="0" not-null="true" unique="false" />
+		<!-- imported bi-directional many-to-one association to ProductSku -->
+		<many-to-one name="productSku" class="com.cartmatic.estore.common.model.catalog.ProductSku" not-null="false" fetch="select">
+			<column name="productSkuId" />
+		</many-to-one>
+		<!-- exported bi-directional one-to-many association to InventoryAudit -->
+		<set name="inventoryAudits" table="inventory_audit" lazy="true" inverse="true" cascade="save-update" sort="unsorted">
+			<key>
+				<column name="inventoryId" />
+			</key>
+			<one-to-many class="com.cartmatic.estore.common.model.inventory.InventoryAudit" />
+		</set>
+	</class>
+</hibernate-mapping>

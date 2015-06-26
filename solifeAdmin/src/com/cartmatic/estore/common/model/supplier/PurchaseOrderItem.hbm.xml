@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.supplier.PurchaseOrderItem"
+        table="purchase_order_item"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="purchaseOrderItemId"
+            column="purchaseOrderItemId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+         <property
+            name="productName"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="productName"
+            length="128"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="supplierProductName"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="supplierProductName"
+            length="256"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="skuDisplay"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="skuDisplay"
+            length="128"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="accessories"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="accessories"
+            length="512"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="purchaseQuantity"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="purchaseQuantity"
+            length="10"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="passedQuantity"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="passedQuantity"
+            length="10"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="purchasePrice"
+            type="java.math.BigDecimal"
+            update="true"
+            insert="true"
+            access="property"
+            column="purchasePrice"
+            precision="12"
+            scale="2"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="status"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="status"
+            length="5"
+            not-null="true"
+            unique="false"
+        />
+     <!-- imported bi-directional many-to-one association to Inventory -->
+     	<many-to-one
+			name="orderSku"
+			class="com.cartmatic.estore.common.model.order.OrderSku"
+            not-null="false"
+			fetch="select"
+		>
+			<column name="orderSkuId" />
+		</many-to-one>		
+    <!-- imported bi-directional many-to-one association to PurchaseOrder -->
+		<many-to-one
+			name="purchaseOrder"
+			class="com.cartmatic.estore.common.model.supplier.PurchaseOrder"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="purchaseOrderId" />
+		</many-to-one>
+    </class>
+</hibernate-mapping>

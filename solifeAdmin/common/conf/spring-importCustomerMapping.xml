@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+	<!--
+	必须配置一下属性productName,productCode,price,stockQty,buyCount
+-->
+<beans default-lazy-init="true">
+	<!-- 产品导入映射配置 -->
+	<bean id="customerImportConfig" class="com.cartmatic.estore.imports.model.ImportMappingConfig" scope="prototype">
+		<property name="target" value="com.cartmatic.estore.common.model.customer.Customer" />
+		<property name="persistenceHandler" ref="customerPersistenceHandler" />
+		<!--初始化属性(不在导入文件列头内)-->
+		<property name="initData">
+			<list>
+
+			</list>
+		</property>
+		<!--导入属性(与导入文件列头对应)-->
+		<property name="columns">
+			<list>
+				<ref bean="ips_username" />
+				<ref bean="ips_firstName" />
+				<ref bean="ips_lastName" />
+				<ref bean="ips_regeditTime" />
+				<ref bean="ips_creator" />
+				<ref bean="ips_membership" />
+				<ref bean="ips_email" />
+			</list>
+		</property>
+	</bean>
+
+
+	<bean id="ips_username" class="com.cartmatic.estore.imports.model.Column" scope="prototype">
+		<property name="attrName" value="username" />
+		<property name="columnHeader" value="帐号" />
+		<property name="handler" ref="basicHandler" />
+	</bean>
+
+	<bean id="ips_email" class="com.cartmatic.estore.imports.model.Column" scope="prototype">
+		<property name="attrName" value="email" />
+		<property name="columnHeader" value="电子邮箱" />
+		<property name="handler" ref="basicHandler" />
+		<property name="required" value="true"/>
+	</bean>
+
+	<bean id="ips_firstName" class="com.cartmatic.estore.imports.model.Column" scope="prototype">
+		<property name="attrName" value="firstname" />
+		<property name="columnHeader" value="姓名" />
+		<property name="handler" ref="firstNameHandler" />
+	</bean>
+	
+    <bean id="ips_lastName" class="com.cartmatic.estore.imports.model.Column" scope="prototype">
+		<property name="attrName" value="lastname" />
+		<property name="columnHeader" value="姓名" />
+		<property name="handler" ref="lastNameHandler" />
+	</bean>
+
+    <bean id="ips_regeditTime" class="com.cartmatic.estore.imports.model.Column" scope="prototype">
+		<property name="attrName" value="createTime" />
+		<property name="columnHeader" value="注册时间" />
+		<property name="handler" ref="regeditTimeHandler" />
+	</bean>
+	
+    <bean id="ips_creator" class="com.cartmatic.estore.imports.model.Column" scope="prototype">
+		<property name="attrName" value="createBy" />
+		<property name="columnHeader" value="创建者" />
+		<property name="handler" ref="basicHandler" />
+	</bean>	
+
+    <bean id="ips_membership" class="com.cartmatic.estore.imports.model.Column" scope="prototype">
+		<property name="attrName" value="membership" />
+		<property name="columnHeader" value="会员资格" />
+		<property name="handler" ref="membershipHandler" />
+	</bean>
+	
+
+
+	<bean id="membershipHandler" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.imports.handler.customer.MembershipHandler" autowire="byName">
+				
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="firstNameHandler" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.imports.handler.customer.FirstNameHandler" autowire="byName">
+				
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="lastNameHandler" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.imports.handler.customer.LastNameHandler" autowire="byName">
+				
+			</bean>
+		</property>
+	</bean>		
+
+	<bean id="regeditTimeHandler" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.imports.handler.customer.RegeditTimeHandler" autowire="byName">
+				
+			</bean>
+		</property>
+	</bean>	
+
+	<bean id="customerPersistenceHandler" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.imports.handler.customer.CustomerPersistenceHandlerImpl" autowire="byName" />
+		</property>
+		<property name="transactionAttributes">
+			<props merge="true">
+				<prop key="validate">PROPAGATION_NOT_SUPPORTED,readOnly</prop>
+				<prop key="saveOrUpdate">PROPAGATION_REQUIRES_NEW,ISOLATION_READ_COMMITTED</prop>
+			</props>
+		</property>
+	</bean>
+
+</beans>

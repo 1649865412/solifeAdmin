@@ -1,0 +1,61 @@
+## This is a velocity template
+## to generate additional properties from an sql table input
+#set ($table = $sqlTable.Table)
+#set ($class = $utility.makeClassName($sqlTable.EntityName))
+#set ($classVar = $utility.makeFirstLetterLowerCase($class))
+#set ($packagePrefix = $prop.getProperty("packagePrefix"))
+#set ($packageMo = $prop.getProperty("packageMo"))
+#set ($varmaxlength="{var:maxlength}")
+#set ($varmaxlength="$$varmaxlength")
+		<form name="$classVar">
+#foreach( $column in $sqlTable.sqlColumns)
+#if (!("version"==${column.attName} || "createBy"==${column.attName} || "updateBy"==${column.attName} || "createTime"==${column.attName} || "updateTime"==${column.attName} || "deleted"==${column.attName}))##if5
+#if ($column.isKey())##if1
+##
+#else
+#if ($sqlTable.getHasImportedKeyParentColumn($column.colname))##if2
+##
+#else
+##
+#set ($depends = "")
+#set ($colsize = 0)
+#set ($isDate = 0)
+#if ("true"==${column.notNullable})##if3
+#set ($depends = "required,")
+#end##end of if3
+#if ("String"==${column.attType})##if4
+#set ($depends = "${depends}maxlength")
+#set ($colsize = $column.colsize)
+#else
+#if ("Integer"==${column.attType} || "Short"==${column.attType} || "Long"==${column.attType} || "Double"==${column.attType} || "Float"==${column.attType})##if6
+#set ($depends = "$depends$utility.makeFirstLetterLowerCase(${column.attType})")
+#else
+#if ("java.sql.Timestamp"==${column.attType} || "java.util.Date"==${column.attType})##if7
+#set ($depends = "${depends}date")
+#set ($isDate = 1)
+#end##end of if7
+#end##end of if6
+#end##end of if4
+#if (!($depends==""))##if8
+			<field property="${column.attName}" depends="$depends">
+				<arg position="0" key="${classVar}.${column.attName}" />
+#if ($colsize > 0)##if9
+				<arg position="1" name="maxlength" key="$varmaxlength" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>${colsize}</var-value>
+				</var>
+#end##end of if9
+##if ($isDate > 0)##if10
+##				<var>
+##					<var-name>datePatternStrict</var-name>
+##					<var-value>MM/dd/yyyy</var-value>
+##				</var>
+##end##end of if10
+			</field>
+#end##end of if8
+#end##end of if2
+#end##end of if1
+#end##end of if5
+#end##end of foreach
+		</form>

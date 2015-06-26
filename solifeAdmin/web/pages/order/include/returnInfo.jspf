@@ -1,0 +1,313 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page pageEncoding="UTF-8" %>
+<%@ taglib prefix="order" tagdir="/WEB-INF/tags/order"%>
+<fmt:message key="orderReturnSku.reasonType.faulty" var="MSG_FUALTY"/>
+<fmt:message key="orderReturnSku.reasonType.unwantedGift" var="MSG_UNWANTED_GIFT"/>
+<fmt:message key="orderReturnSku.reasonType.incorrectItem" var="MSG_INCORRECT_ITEM"/>
+<fmt:message key="orderReturnSku.reasonType.others" var="MSG_OTHERS"/>
+
+<fmt:message key="orderReturn.editReturn" var="buttonEditReturn"/>
+<fmt:message key="orderReturn.cancelReturn" var="buttonCancelReturn"/>
+<fmt:message key="orderReturn.completeReturn" var="buttonCompleteReturn"/>
+<fmt:message key="orderReturn.editExchange" var="buttonEditExchange"/>
+<fmt:message key="orderReturn.cancelExchange" var="buttonCancelExchange"/>
+<fmt:message key="orderReturn.completeExchange" var="buttonCompleteExchange"/>
+<fmt:message key="orderReturn.openOriginalOrder" var="buttonOpenOriginalOrder"/>
+<c:if test="${empty salesOrder.orderReturns}">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table-content">
+	<tr>
+		<td class="FieldLabel">
+			没有退换货!
+		</td>
+		<td>
+			&nbsp;
+		</td>
+	</tr>
+</table>
+</c:if>
+<c:forEach var="orderReturn" items="${salesOrder.orderReturns}">
+<c:set var="orderReturnId" value="${orderReturn.orderReturnId}"></c:set>
+<c:set var="EDIT_RETURN_BTN_HIDDEN" value="${orderReturn.status ne 10}"></c:set>
+<c:set var="CANCEL_RETURN_BTN_HIDDEN" value="${orderReturn.status ne 10}"></c:set>
+<c:set var="COMPLETE_RETURN_BTN_HIDDEN" value="${orderReturn.status ne 20}"></c:set>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table-content">
+	<tr>
+		<th colspan="2">
+			<a onclick="$j(this).closest('tr').nextAll().toggle();" href="javascript:void(false)">
+			<img src="${ctxPath}/images/plus.gif"/>
+			<img width="8" height="8" src="../images/poin_up.gif"/>
+			<c:choose>
+				<c:when test="${orderReturn.returnType eq 0}"><fmt:message key="orderReturn.return"/></c:when>
+				<c:otherwise><fmt:message key="orderReturn.exchange"/></c:otherwise>
+			</c:choose>
+			 &nbsp;&nbsp;#${orderReturn.rmaNo}
+			 &nbsp;&nbsp;
+			 <c:choose>
+				<c:when test="${orderReturn.status eq 10}"><span style="color:green"><fmt:message key="return.status.awaiting.return"/></span></c:when>
+				<c:when test="${orderReturn.status eq 20}"><span style="color:green"><fmt:message key="return.status.awaiting.completion"/></span></c:when>
+				<c:when test="${orderReturn.status eq 30}"><span style="color:green"><fmt:message key="return.status.complete"/></span></c:when>
+				<c:when test="${orderReturn.status eq 40}"><span style="color:red;text-decoration:line-through;"><fmt:message key="return.status.cancelled"/></span></c:when>
+			</c:choose>
+			</a>
+		</th>
+	</tr>
+	<tr>
+		<td class="FieldLabel">
+			<fmt:message key="common.message.createTime"/>:
+		</td>
+		<td>
+			<fmt:formatDate value="${orderReturn.createTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
+		</td>
+	</tr>
+	<tr>
+		<td class="FieldLabel">
+			<fmt:message key="common.message.createBy"/>:
+		</td>
+		<td>
+			<app:userName userId="${orderReturn.createBy}"/>
+		</td>
+	</tr>
+	<tr>
+		<td class="FieldLabel">
+			<fmt:message key="orderReturn.receivedBy"/>:
+		</td>
+		<td>
+			<app:userName userId="${orderReturn.receivedBy}"/>
+		</td>
+	</tr>
+	<tr>
+		<td class="FieldLabel">
+			<fmt:message key="orderReturn.note" />:
+		</td>
+		<td>
+			${orderReturn.note}<c:if test="${empty orderReturn.note}">- <fmt:message key="common.message.none"/></c:if>
+		</td>
+	</tr>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table-content">
+    <tr>
+		<th>
+			商品项
+		</th>
+    </tr>
+    <tr>
+		<td>
+			<c:choose>
+				<c:when test="${orderReturn.returnType eq 0}">
+					<cartmatic:iconBtn icon="pen" text="${buttonEditReturn}" onclick="fnEditReturn('${orderReturnId}');" isDisabled="${EDIT_RETURN_BTN_HIDDEN}"/>
+					<cartmatic:iconBtn icon="check" text="${buttonCompleteReturn}" onclick="fnOpenCompleteReturn('${orderReturnId}');" isDisabled="${COMPLETE_RETURN_BTN_HIDDEN}"/>
+					<cartmatic:iconBtn icon="cross" text="${buttonCancelReturn}" onclick="fnCancelReturn('${orderReturnId}');" isDisabled="${CANCEL_RETURN_BTN_HIDDEN}"/>
+				</c:when>
+				<c:otherwise>
+					<cartmatic:iconBtn icon="pen" text="${buttonEditExchange}" onclick="fnEditReturn('${orderReturnId}');" isDisabled="${EDIT_RETURN_BTN_HIDDEN}"/>
+					<cartmatic:iconBtn icon="check" text="${buttonCompleteExchange}" onclick="fnOpenCompleteReturn('${orderReturnId}');" isDisabled="${COMPLETE_RETURN_BTN_HIDDEN}"/>
+					<cartmatic:iconBtn icon="cross" text="${buttonCancelExchange}" onclick="fnCancelReturn('${orderReturnId}');" isDisabled="${CANCEL_RETURN_BTN_HIDDEN}"/>
+					<cartmatic:iconBtn icon="pen" text="${buttonOpenOriginalOrder}" onclick="fnOpenOriginalOrder('${orderReturn.exchangeOrderId}');"/>
+				</c:otherwise>
+			</c:choose>
+			<table cellspacing="0" cellpadding="0" >
+				<tr>
+					<th width="40%"><fmt:message key="orderSku.product" /></th>
+					<th width="8%"><fmt:message key="orderReturnSku.quantity" /></th>
+					<th width="8%"><fmt:message key="orderReturnSku.returnAmount" /></th>
+					<th width="12%"><fmt:message key="orderReturnSku.reasonType" /></th>
+					<th width="10%"><fmt:message key="orderReturnSku.receivedQuantity" /></th>
+					<th><fmt:message key="orderReturnSku.receivedStatus" /></th>
+				</tr>
+				<c:forEach var="orderReturnSku" items="${orderReturn.orderReturnSkus}">
+				<tr>
+					<td style="text-align:center">
+						<order:productLeadingInfo orderSku="${orderReturnSku.orderSku}"></order:productLeadingInfo>
+					</td>
+					<td>${orderReturnSku.quantity}</td>
+					<td>${orderReturnSku.returnAmount}</td>
+					<td>
+						<c:choose>
+							<c:when test="${orderReturnSku.reasonType eq 10}">${MSG_FUALTY}</c:when>
+							<c:when test="${orderReturnSku.reasonType eq 20}">${MSG_UNWANTED_GIFT}</c:when>
+							<c:when test="${orderReturnSku.reasonType eq 30}">${MSG_INCORRECT_ITEM}</c:when>
+							<c:when test="${orderReturnSku.reasonType eq 40}">${MSG_OTHERS}</c:when>
+						</c:choose>
+					</td>
+					<td>${orderReturnSku.receivedQuantity}</td>
+					<td>
+						<c:choose>
+							<c:when test="${orderReturnSku.receivedStatus eq 0}"><span style="color:green"><fmt:message key="return.received.status.perfect"/></span></c:when>
+							<c:when test="${orderReturnSku.receivedStatus eq 1}"><span style="color:red"><fmt:message key="return.received.status.defective"/></span></c:when>
+						</c:choose>
+					</td>
+				</tr>
+				</c:forEach>
+			</table>
+		</td>
+    </tr>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table-content">
+    <tr>
+		<td colspan="2">
+			款项汇总
+		</td>
+    </tr>
+    <tr>
+		<td class="FieldLabel">
+			<fmt:message key="orderShipment.itemSubTotal" />
+		</td>
+		<td>
+			${orderReturn.itemSubTotal}
+		</td>
+	</tr>
+	<tr>
+		<td class="FieldLabel">
+			<fmt:message key="orderShipment.shippingCost" />
+		</td>
+		<td>
+			${orderReturn.shippingCost}
+		</td>
+	</tr>
+	<tr>
+		<td class="FieldLabel">
+			<fmt:message key="salesOrder.hyphen.full.shape" /><fmt:message key="orderShipment.discountAmount" />
+		</td>
+		<td>
+			${orderReturn.discountAmount}
+		</td>
+	</tr>
+	<tr height="2px">
+ 		<td colspan="2"><hr style="color: #ccc; height: 1px; border: 0; background:#ccc;"></td>
+	</tr>
+	<tr>
+		<td class="FieldLabel">
+			<fmt:message key="orderShipment.totalBeforeTax" />
+		</td>
+		<td>
+			<c:set var="totalBeforeTax" value="${orderReturn.itemSubTotal+orderReturn.shippingCost-orderReturn.discountAmount}"></c:set>
+			${totalBeforeTax}
+		</td>
+	</tr>
+	<tr>
+		<td class="FieldLabel">
+			<fmt:message key="orderShipment.itemTax" />
+		</td>
+		<td>
+			${orderReturn.itemTax}
+		</td>
+	</tr>
+	<c:if test="${orderReturn.shippingTax gt 0}">
+	<tr>
+		<td class="FieldLabel">
+			<fmt:message key="orderShipment.shippingTax" />
+		</td>
+		<td>
+			${orderReturn.shippingTax}
+		</td>
+	</tr>
+	</c:if>
+	<tr>
+		<td class="FieldLabel">
+			<fmt:message key="salesOrder.hyphen.full.shape" /><fmt:message key="orderReturn.lessRestockAmount" />
+		</td>
+		<td>
+			${orderReturn.lessRestockAmount}
+		</td>
+	</tr>
+	<tr>
+		<td class="FieldLabel">
+			<fmt:message key="salesOrder.hyphen.full.shape" /><fmt:message key="orderReturn.lessRestockAmount" />
+		</td>
+		<td>
+			${orderReturn.lessRestockAmount}
+		</td>
+	</tr>
+	<tr height="2px">
+		<td colspan="2"><hr style="color: #ccc; height: 1px; border: 0; background:#ccc;"></td>
+	</tr>
+	<tr>
+		<td class="FieldLabel">
+			<fmt:message key="orderReturn.returnTotalAmount" />
+		</td>
+		<td>
+			${totalBeforeTax+orderReturn.itemTax+orderReturn.shippingTax-orderReturn.lessRestockAmount}
+		</td>
+	</tr>
+</table>
+</c:forEach>
+<fmt:message key="common.message.complete" var="buttonComplete"/>
+<fmt:message key="common.message.cancel" var="buttonCancel"/>
+<app:ui_dialog id="EditReturnDlg" title="${buttonEditReturn}" width="650" height="600" buttons="'${buttonComplete}':fnCompleteEditReturn, '${buttonCancel}':dlgEditReturnDlg_close">
+</app:ui_dialog>
+<app:ui_dialog id="OpenCompleteReturnDlg" title="${buttonCompleteReturn}" width="650" height="600" buttons="'${buttonComplete}':fnCompleteReturn, '${buttonCancel}':dlgOpenCompleteReturnDlg_close">
+</app:ui_dialog>
+
+<script type="text/javascript">
+	function fnEditReturn(orderReturnId){
+		dlgEditReturnDlg_show();
+		fillDivWithPage("divDlgEditReturnDlg","${ctxPath}/order/return/dialog.html?doAction=editReturn&orderReturnId="+orderReturnId, null,"POST");
+	}
+	
+	function fnCompleteEditReturn(){
+		if(!validateForm( document.getElementById("editReturnForm") )){
+			alert(__vaMsg.notPass);
+			return;
+		}
+		if(!fnValidateNote()){ alert(); return};
+		var parameters = $j("#editReturnForm").serialize();
+    	$j.post('${ctxPath}/order/orderReturn.html?doAction=completeEditReturn', parameters, fnCompleteEditReturnCallbackHandler,"json");
+	}
+	
+	function fnCompleteEditReturnCallbackHandler(result){
+		dlgEditReturnDlg_close();
+		if(result.status=="1") view(3);
+		else if(result.status=="-2"){
+			alert('<fmt:message key="order.edit.dirtyData"/>');
+		}else{
+			alert(result.msg);
+		}
+	}
+	
+	function fnValidateNote(){
+    	var reasonTypes = $j("select [id^=reasonType]");
+    	for(var i=0; i<reasonTypes.length; i++){
+	    	if(reasonTypes[i].val()==40 && !validateRequired($j("#note").val())){
+				$j("#returnMsgDiv").html("<br/><span style='padding:20px;color:red'><fmt:message key="orderReturn.prompt"/></span>");
+				reasonTypes[i].focus();
+				return false;
+			}
+		}
+		return true;
+    }
+    function fnCancelReturn(orderReturnId){
+    	var parameters={"orderReturnId":orderReturnId};
+    	$j.post('${ctxPath}/order/orderReturn.html?doAction=cancelReturn', parameters, fnCancelReturnCallbackHandler,"json");
+    }
+    function fnCancelReturnCallbackHandler(result){
+		if(result.status=="1"){
+			 view(3);
+		}else{
+			alert(result.msg);
+		}
+    }
+    
+    function fnOpenCompleteReturn(orderReturnId){
+		dlgOpenCompleteReturnDlg_show();
+		fillDivWithPage("divDlgOpenCompleteReturnDlg","${ctxPath}/order/return/dialog.html?doAction=openCompleteReturn&orderReturnId="+orderReturnId, null,"POST");
+	}
+	
+    function fnCompleteReturn(orderReturnId){
+    	var parameters = $j("#editReturnForm").serialize();
+    	$j.post('${ctxPath}/order/orderReturn.html?doAction=completeReturn', parameters, fnCompleteReturnCallbackHandler,"json");
+    }
+    function fnCompleteReturnCallbackHandler(result){
+		dlgOpenCompleteReturnDlg_close();
+		if(result.status=="1") view(3);
+		else if(result.status=="-2"){
+			alert('<fmt:message key="order.edit.dirtyData"/>');
+		}else{
+			log(result.msg);
+		}
+    }
+    
+    function fnOpenOriginalOrder(salesOrderId){
+    	window.location.href=__ctxPath+'/order/window.html?doAction=edit&salesOrderId='+salesOrderId+"&tid=${param.tid}";
+    }
+	
+</script>

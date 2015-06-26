@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.cartmatic.estore.common.model.catalog.Category" table="category" select-before-update="false" dynamic-update="false" dynamic-insert="false" optimistic-lock="version">
+		<id name="categoryId" column="categoryId" type="java.lang.Integer">
+			<generator class="native" />
+		</id>
+		<version name="version" type="java.lang.Integer" column="version" access="property" unsaved-value="undefined" />
+		<property name="categoryName" type="java.lang.String" update="true" insert="true" access="property" column="categoryName" length="128" not-null="true" unique="false" />
+		<property name="categoryDescription" type="java.lang.String" update="true" insert="true" access="property" column="categoryDescription" not-null="false" unique="false" />
+		<property name="categoryCode" type="java.lang.String" update="true" insert="true" access="property" column="categoryCode" length="32" not-null="true" unique="false" />
+		<property name="metaKeyword" type="java.lang.String" update="true" insert="true" access="property" column="metaKeyword" length="256" not-null="false" unique="false" />
+		<property name="metaDescription" type="java.lang.String" update="true" insert="true" access="property" column="metaDescription" length="256" not-null="false" unique="false" />
+		<property name="status" type="java.lang.Short" update="true" insert="true" access="property" column="status" length="5" not-null="false" unique="false" />
+		<property name="createBy" type="java.lang.Integer" update="true" insert="true" access="property" column="createBy" length="10" not-null="false" unique="false" />
+		<property name="updateBy" type="java.lang.Integer" update="true" insert="true" access="property" column="updateBy" length="10" not-null="false" unique="false" />
+		<property name="createTime" type="java.util.Date" update="true" insert="true" access="property" column="createTime" length="0" not-null="false" unique="false" />
+		<property name="updateTime" type="java.util.Date" update="true" insert="true" access="property" column="updateTime" length="0" not-null="false" unique="false" />
+		<property name="templatePath" type="java.lang.String" update="true" insert="true" access="property" column="templatePath" length="128" not-null="false" unique="false" />
+		<property name="categoryPath" type="java.lang.String" update="true" insert="true" access="property" column="categoryPath" length="32" not-null="false" unique="false" />
+		<property name="imageUrl" type="java.lang.String" update="true" insert="true" access="property" column="imageUrl" length="255" not-null="false" unique="false" />
+		<property name="linkUrl" type="java.lang.String" update="true" insert="true" access="property" column="linkUrl" length="255" not-null="false" unique="false" />
+		<property name="categoryType" type="java.lang.Short" update="true" insert="true" access="property" column="categoryType" length="5" not-null="true" unique="false" />
+		<property name="isLinkCategory" type="java.lang.Short" update="true" insert="true" access="property" column="isLinkCategory" length="5" not-null="false" unique="false" />
+		<property name="sortOrder" type="java.lang.Integer" update="true" insert="true" access="property" column="sortOrder" length="10" not-null="false" unique="false" />
+		<!-- imported bi-directional many-to-one association to Category -->
+		<many-to-one name="category" class="com.cartmatic.estore.common.model.catalog.Category" not-null="false" fetch="select">
+			<column name="parentId" />
+		</many-to-one>
+		<!-- imported bi-directional many-to-one association to Catalog -->
+		<many-to-one name="catalog" class="com.cartmatic.estore.common.model.catalog.Catalog" not-null="false" fetch="select">
+			<column name="catalogId" />
+		</many-to-one>
+		<!-- imported bi-directional many-to-one association to Store -->
+		<many-to-one name="store" class="com.cartmatic.estore.common.model.system.Store" not-null="false" fetch="select">
+			<column name="storeId" />
+		</many-to-one>
+		<!-- imported bi-directional many-to-one association to Store -->
+		<many-to-one name="linkedCategory" class="com.cartmatic.estore.common.model.catalog.Category" not-null="false" fetch="select">
+			<column name="linkedCategoryId" />
+		</many-to-one>
+		<set name="categorys" table="category" lazy="true" inverse="true" cascade="save-update" sort="unsorted">
+			<key>
+				<column name="parentId" />
+			</key>
+			<one-to-many class="com.cartmatic.estore.common.model.catalog.Category" />
+		</set>
+		<!-- exported bi-directional one-to-many association to ProductCategory -->
+		<set name="productCategorys" table="product_category" lazy="true" inverse="true" sort="unsorted">
+			<key>
+				<column name="categoryId" />
+			</key>
+			<one-to-many class="com.cartmatic.estore.common.model.catalog.ProductCategory" />
+		</set>
+		<!-- exported bi-directional one-to-many association to TaxRate -->
+		<set name="taxRates" table="tax_rate" lazy="true" inverse="true" cascade="save-update" sort="unsorted">
+			<key>
+				<column name="categoryId" />
+			</key>
+			<one-to-many class="com.cartmatic.estore.common.model.system.TaxRate" />
+		</set>
+
+		<set name="contents" table="content" lazy="true" inverse="true" cascade="all" sort="unsorted">
+			<key>
+				<column name="categoryId"></column>
+			</key>
+			<one-to-many class="com.cartmatic.estore.common.model.content.Content" />
+		</set>
+
+		<set name="categoryAttrValues" table="category_attr_value" lazy="true" inverse="true" sort="unsorted">
+			<key>
+				<column name="categoryId" />
+			</key>
+			<one-to-many class="com.cartmatic.estore.common.model.attribute.CategoryAttrValue" />
+		</set>
+
+	</class>
+</hibernate-mapping>

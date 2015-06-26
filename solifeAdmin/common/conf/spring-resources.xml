@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<beans>
+    <!-- JNDI DataSource, you must configure in your JEE container first -->
+    <!-- <bean id="jndiDataSource" class="org.springframework.jndi.JndiObjectFactoryBean" lazy-init="true">
+        <property name="jndiName" value="java:comp/env/jdbc/cartmatic"/>
+    </bean> -->
+    
+    <!-- Datasource using C3P0 -->
+    <!-- <bean id="c3p0DataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close" lazy-init="true">
+        <property name="driverClass" value="${jdbc.driverClassName}"/>
+        <property name="jdbcUrl" value="${jdbc.url}"/>
+        <property name="user" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <property name="minPoolSize" value="${jdbc.minConnections}"/>
+        <property name="maxPoolSize" value="${jdbc.maxConnections}"/>
+        <property name="initialPoolSize" value="${jdbc.minConnections}"/>
+        <property name="acquireIncrement" value="10"/>
+        <property name="maxIdleTime" value="300"/>
+        <property name="maxStatementsPerConnection" value="200"/>
+    </bean> -->
+
+    <!-- Default DBCP datasource -->
+    <bean id="dbcpDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" lazy-init="false">
+        <property name="driverClassName" value="${jdbc.driverClassName}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <property name="initialSize" value="${jdbc.minConnections}"/>
+        <property name="maxActive" value="${jdbc.maxConnections}"/>
+        <property name="maxIdle" value="100"/>
+        <property name="minIdle" value="${jdbc.minConnections}"/>
+        <property name="maxWait" value="5000"/>
+        <property name="defaultAutoCommit" value="true"/>
+        <property name="removeAbandoned" value="true"/>
+        <property name="removeAbandonedTimeout" value="300"/>
+        <property name="logAbandoned" value="false"/>
+        <property name="poolPreparedStatements" value="false"/>
+        <property name="testWhileIdle" value="true"/>
+        <property name="testOnBorrow" value="false"/>
+        <property name="validationQuery" value="select count(*) from app_role where 1=0"/>
+    </bean>
+
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy" lazy-init="false">
+		<property name="targetDataSource" ref="dbcpDataSource" />
+	</bean>
+
+	<!-- You can use Hibernate for 90% to 95% or so of database access.
+		The JdbcTemplate is for when you can't use Hibernate. 
+		Don't use JDBC directly! Use the JdbcTemplate as it handles JDBC cleanup.-->
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate" scope="prototype">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!-- User messages (e.g. for product), spring will integrate them into JSTL -->
+	<!-- <bean id="messageSource" class="com.cartmatic.estore.core.others.DatabaseMessageSource">
+		<property name="parentMessageSource" ref="bundleMessageSource"/>
+		<property name="cacheMessages" value="${system.cacheMessages}"/>
+	</bean> -->
+
+	<!-- Configure Velocity for view and e-mail. -->
+	<bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+		<!-- Set to file:E:/workspace/StoreAdmin/web/ when unit testing -->
+		<property name="resourceLoaderPath" value="file:${system.assetsPath}/templates/" />
+		<property name="velocityProperties">
+			<props>
+				<prop key="input.encoding">UTF-8</prop>
+				<prop key="output.encoding">UTF-8</prop>
+				<prop key="runtime.log.error.stacktrace">true</prop>
+				<prop key="runtime.log.invalid.reference">true</prop>
+				<prop key="velocimacro.library">VM_global_library.vm,spring.vm</prop>				
+			</props>
+		</property>
+	</bean>
+
+	<bean id="velocityUtil" class="com.cartmatic.estore.core.util.VelocityUtil">
+		<property name="velocityEngine" ref="velocityEngine" />
+		<property name="messageContext" ref="messageContext" />
+	</bean>
+
+	<bean id="messageContext" class="com.cartmatic.estore.core.view.MessageContext">
+		<property name="messageSource" ref="messageSource" />
+	</bean>
+
+	<bean id="mailEngine" class="com.cartmatic.estore.core.view.MailEngine" autowire="byName">
+		<property name="velocityUtil" ref="velocityUtil" />
+		<property name="systemQueueManager" ref="systemQueueManager" />
+		<property name="queueDisabled" value="${mail.disableQueue}" />
+	</bean>
+
+	<!-- <bean id="mailSender"
+		class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="${mail.host}" />
+		<property name="protocol" value="${mail.protocol}" />
+		<property name="port" value="${mail.port}" />
+		
+		<property name="username" value="${mail.username}" />
+		<property name="password" value="${mail.password}" />
+		<property name="defaultEncoding"
+			value="${mail.defaultEncoding}" />
+		<property name="javaMailProperties">
+			<props>
+				<prop key="mail.smtp.auth">${mail.auth}</prop>
+				<prop key="mail.smtp.timeout">${mail.timeout}</prop>
+				<prop key="mail.debug">${mail.debug}</prop>
+				
+				<prop key="mail.smtp.starttls.enable">true</prop>
+				<prop key="mail.smtp.socketFactory.port">${mail.port}</prop>
+				<prop key="mail.smtp.socketFactory.class">javax.net.ssl.SSLSocketFactory</prop>
+				<prop key="mail.smtp.socketFactory.fallback">false</prop>
+			</props>
+		</property>
+	</bean>
+	<bean id="mailSender_test"
+		class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="${mail.host}" />
+		<property name="protocol" value="${mail.protocol}" />
+		<property name="port" value="${mail.port}" />
+		
+		<property name="username" value="${mail.username}" />
+		<property name="password" value="${mail.password}" />
+		<property name="defaultEncoding"
+			value="${mail.defaultEncoding}" />
+		<property name="javaMailProperties">
+			<props>
+				<prop key="mail.smtp.auth">${mail.auth}</prop>
+				<prop key="mail.smtp.timeout">${mail.timeout}</prop>
+				<prop key="mail.debug">${mail.debug}</prop>
+			</props>
+		</property>
+	</bean>-->
+
+	<!-- <bean id="ftpUtil" class="com.cartmatic.estore.core.util.FtpUtil">
+		<property name="ftpHost" value="${ftp.host}" />
+		<property name="ftpUserName" value="${ftp.username}" />
+		<property name="ftpPassword" value="${ftp.password}" />
+	</bean> -->
+
+</beans>

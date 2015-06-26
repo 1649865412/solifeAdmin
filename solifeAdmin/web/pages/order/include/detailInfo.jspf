@@ -1,0 +1,707 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="cartmatic" tagdir="/WEB-INF/tags/cartmatic"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@ taglib prefix="product" tagdir="/WEB-INF/tags/catalog"%>
+<%@ taglib prefix="order" tagdir="/WEB-INF/tags/order"%>
+<%@page pageEncoding="UTF-8" %>
+<fmt:message key="common.message.complete" var="buttonComplete"/>
+<fmt:message key="common.message.cancel" var="buttonCancel"/>
+<fmt:message key="order.shipment.action.createReturn" var="buttonCreateReturn"/>
+<fmt:message key="order.shipment.action.createExchange" var="buttonCreateExchange"/>
+<c:forEach var="orderShipment" items="${salesOrder.orderShipments}" varStatus="orderShipment_varStatus">
+
+<c:set var="isEditInvalid" value="${(not salesOrder.lockedByMyself) or salesOrder.isOnHold eq 1 or orderShipment.status gt applicationScope.SHIPMENT_STATUS_INVENTORY_ASSIGNED }"></c:set>
+
+<c:set var="CONFIRM_BTN_HIDDEN" value="${(not (salesOrder.lockedByMyself and orderShipment.status eq applicationScope.SHIPMENT_STATUS_INVENTORY_ASSIGNED) or salesOrder.orderStatus eq applicationScope.ORDER_STATUS_AWAITING_RETURN) }"></c:set>
+ 
+<c:set var="CANCEL_SHIPMENT_BTN_HIDDEN" value="${not (salesOrder.lockedByMyself and orderShipment.status le applicationScope.SHIPMENT_STATUS_PICKING_AVAILABLE) or salesOrder.orderStatus eq applicationScope.ORDER_STATUS_AWAITING_RETURN}"></c:set>
+<c:set var="CREATE_RETURN_BTN_HIDDEN" value="${orderShipment.status ne applicationScope.SHIPMENT_STATUS_SHIPPED}"></c:set>
+<c:set var="CREATE_EXCHANGE_BTN_HIDDEN" value="${orderShipment.status ne applicationScope.SHIPMENT_STATUS_SHIPPED}"></c:set>
+
+<c:set var="orderShipmentId" value="${orderShipment.orderShipmentId}"></c:set>
+<input type="hidden" id="skuAmount${orderShipmentId}" value="${fn:length(orderShipment.orderSkus)}"/>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table-content">
+	<tr>
+		<th colspan="2">
+			<a onclick="$j(this).closest('tr').nextAll().toggle();$j(this).children('img').toggle();" href="javascript:void(false)">
+			<img src="${ctxPath}/images/minus.gif" style="display: none"/><img src="${ctxPath}/images/plus.gif"/> 
+			&nbsp;&nbsp;<fmt:message key="order.shipment.title" /> ${orderShipment.shipmentNo}</a>
+			&nbsp;&nbsp;
+			<c:choose>
+				<c:when test="${salesOrder.isOnHold eq 1}"><span style="color:blue"><fmt:message key="order.status.onHold"/></span></c:when>
+				<c:when test="${orderShipment.status eq applicationScope.SHIPMENT_STATUS_AWAITING_INVENTORY}"><span style="color:blue"><fmt:message key="shipment.status.awaiting.inventory"/></span></c:when>
+				<c:when test="${orderShipment.status eq applicationScope.SHIPMENT_STATUS_INVENTORY_ASSIGNED}"><span style="color:green"><fmt:message key="shipment.status.inventory.assigned"/></span></c:when>
+				<c:when test="${orderShipment.status eq applicationScope.SHIPMENT_STATUS_AWAITING_PAYMENT}"><span style="color:blue"><fmt:message key="shipment.status.awaiting.payment"/></span></c:when>
+				<c:when test="${orderShipment.status eq applicationScope.SHIPMENT_STATUS_PICKING_AVAILABLE}"><span style="color:green"><fmt:message key="shipment.status.picking.available"/></span></c:when>
+				<c:when test="${orderShipment.status eq applicationScope.SHIPMENT_STATUS_PICKING}"><span style="color:green"><fmt:message key="shipment.status.picking"/></span></c:when>
+				<c:when test="${orderShipment.status eq applicationScope.SHIPMENT_STATUS_SHIPPED}"><span style="color:green"><fmt:message key="shipment.status.shipped"/></span></c:when>
+				<c:when test="${orderShipment.status eq applicationScope.STATUS_CANCELLED}"><span style="color: red; text-decoration: line-through;"><fmt:message key="order.status.80"/></span></c:when>
+			</c:choose>
+		</th>
+	</tr>
+	<tr>
+		<td colspan="2">
+			&nbsp;&nbsp;<cartmatic:iconBtn icon="check" textKey="order.shipment.action.confirm" onclick="fnConfirmShipment('${orderShipmentId}');" isDisabled="${CONFIRM_BTN_HIDDEN}"/>&nbsp;
+			<cartmatic:iconBtn icon="trash" textKey="order.shipment.action.cancel" onclick="fnCancelShipment('${orderShipmentId}');" isDisabled="${CANCEL_SHIPMENT_BTN_HIDDEN}"/>&nbsp;
+			<cartmatic:iconBtn icon="plus" textKey="order.shipment.action.addItem" onclick="fnAddItem('${orderShipmentId}');" isDisabled="${isEditInvalid or salesOrder.paymentStatus eq PAYMENT_STATUS_PAID}" />&nbsp;
+			<c:choose>
+				<c:when test="${not orderShipment.isAllDigitalItem}">
+					<cartmatic:iconBtn icon="tag" text="${buttonCreateReturn}" onclick="fnCreateReturn('${orderShipmentId}');" isDisabled="${CREATE_RETURN_BTN_HIDDEN}"/>&nbsp;
+					<cartmatic:iconBtn icon="loop" onclick="fnCreateExchange('${orderShipmentId}');" isDisabled="${CREATE_EXCHANGE_BTN_HIDDEN}" text="${buttonCreateExchange}" />
+				</c:when>
+			</c:choose>
+		</td>
+    </tr>
+    <tr>
+		<td colspan="2">
+			&nbsp;&nbsp;<b><fmt:message key="order.detailInfo.items" /></b>
+		</td>
+    </tr>
+    <tr>
+		<td colspan="2">
+			<table cellspacing="0" cellpadding="0">
+				<tr>
+					<th width="60px"><fmt:message key="common.action"/></th>
+					<th width="80px"><fmt:message key="orderSku.image"/></th>
+					<th width="60px"><fmt:message key="orderSku.allocatedStatus"/></th>
+					<th ><fmt:message key="orderSku.product"/></th>
+					<th width="80px"><fmt:message key="orderSku.price"/></th>
+					<th width="60px"><fmt:message key="orderSku.quantity"/></th>
+					<th width="80px"><fmt:message key="orderSku.discountPrice"/></th>
+					<th width="80px"><fmt:message key="orderSku.itemDiscountAmount"/></th>
+					<th width="60px"><fmt:message key="orderSku.allocatedQuantity"/></th>
+					<th width="60px"><fmt:message key="orderSku.subTotalAmount"/></th>
+				</tr>
+				<c:forEach var="orderSku" items="${orderShipment.orderSkus}">
+				<c:set var="sku_isEditInvalid" value="${isEditInvalid or !orderSku.canEdit}"/>
+				<tr>
+					<td>
+						<c:if test="${not sku_isEditInvalid}">
+						<c:if test="${orderSku.isNotPurchase and salesOrder.paymentStatus eq PAYMENT_STATUS_PAID}">
+						<cartmatic:iconBtn id="repurchaseItem${orderShipmentId}" icon="cog" textKey="order.shipment.action.rePurchase" onclick="fnRepurchaseItem(${orderSku.orderSkuId});" />
+						<br/>
+						</c:if>
+						<c:if test="${orderSku.quantity > 1 || fn:length(orderShipment.orderSkus) > 1}">
+						<cartmatic:iconBtn id="moveItem${orderShipmentId}" icon="move" textKey="order.shipment.action.moveItem" onclick="fnMoveItem(${orderShipmentId}, ${orderSku.orderSkuId});" />
+						<br/>
+						</c:if>
+						<c:if test="${fn:length(orderShipment.orderSkus) > 1}">
+						<cartmatic:iconBtn id="removeItem${orderShipmentId}" icon="cross" textKey="order.shipment.action.removeItem" onclick="fnRemoveItem(${orderSku.orderSkuId},'${orderSku.productSkuCode}');" />
+						</c:if>
+						</c:if>					
+						<%-- <input <c:if test="${sku_isEditInvalid}">disabled="true"</c:if> id="orderSkuId${orderShipmentId}" name="orderSkuId${orderShipmentId}" type="radio" onclick="fnSelectSku('${orderShipmentId}', '${orderSku.orderSkuId}');" value="${orderSku.orderSkuId}" class="form-input"/>
+						<span style="display:none" id="productId${orderShipmentId}${orderSku.orderSkuId}">${orderSku.productId}</span>--%>
+					</td>
+					<td>
+						<cartmatic:img url="${orderSku.productSku.image}" id="productImage" mediaType="product" size="b" width="72" height="72"></cartmatic:img>
+					</td>
+					<td>
+						<c:choose>
+							<c:when test="${(orderSku.quantity-orderSku.allocatedQuantity)>0}">
+								<fmt:message key="shipment.status.awaiting.inventory"/>
+							</c:when>
+							<c:otherwise>
+								<fmt:message key="shipment.status.inventory.assigned1"/>
+							</c:otherwise>
+						</c:choose>
+					</td>
+					<td >
+						<order:productLeadingInfo orderSku="${orderSku}"></order:productLeadingInfo>
+					</td>
+					<td>${orderSku.price}<br/>
+						<c:if test="${orderSku.isOnSale eq 1}">[<fmt:message key="productSku.salePrice" />]</c:if>
+						<c:if test="${orderSku.isWholesale eq 1}">[<fmt:message key="productSku.wholeSalePrice" />]</c:if>
+					</td>
+					<td>
+						<span id="originalQty${orderShipmentId}${orderSku.orderSkuId}" style="display:none">${orderSku.quantity}</span>
+						<input type="text" validconf="required,integer,minValue=1" <c:if test="${sku_isEditInvalid}">disabled="true"</c:if> onchange="fnCalculateTotal('${orderShipmentId}');" id="quantity${orderShipmentId}${orderSku.orderSkuId}" name="quantity${orderShipmentId}${orderSku.orderSkuId}" class="form-input" size="3" value="${orderSku.quantity}">
+					</td>
+					<td><input type="text" validconf="required,price" <c:if test="${sku_isEditInvalid}">disabled="true"</c:if> onchange="fnCalculateTotal('${orderShipmentId}');" id="discountPrice${orderShipmentId}${orderSku.orderSkuId}" name="discountPrice${orderShipmentId}${orderSku.orderSkuId}" class="form-input" size="8" value="${orderSku.discountPrice}"></td>
+					<td><input type="text" validconf="price" <c:if test="${sku_isEditInvalid}">disabled="true"</c:if> onchange="fnCalculateTotal('${orderShipmentId}');" id="itemDiscountAmount${orderShipmentId}${orderSku.orderSkuId}" name="itemDiscountAmount${orderShipmentId}${orderSku.orderSkuId}" class="form-input" size="8" value="${orderSku.itemDiscountAmount}"></td>
+					<td>${orderSku.allocatedQuantity}<c:if test="${orderSku.isNotPurchase}">[未采购]</c:if></td>
+					<td>${orderSku.subTotalAmount}</td>
+				</tr>
+				</c:forEach>
+			</table>
+		</td>
+    </tr>
+    <tr>
+		<td>
+			&nbsp;&nbsp;<b><fmt:message key="order.detailInfo.shippingInfo" /></b>
+		</td>
+		<td>
+			<b><fmt:message key="order.detailInfo.money" /></b>
+		</td>
+    </tr>
+    <tr>
+		<td valign="top">
+			<%-- 包装运输 --%>
+			<c:if test="${not orderShipment.isAllDigitalItem}"> <%-- 如果全部是虚拟产品，则不需要显示运输相关信息 --%>
+			<table cellspacing="0" cellpadding="0" width="100%" class="no-border">
+				<tr>
+					<td>
+						<fmt:message key="orderShipment.shippingAddress" /></td>
+					<td>
+						<select onchange="fnCalculateTotal('${orderShipmentId}');" style="width:350px" name="shippingAddressId${orderShipmentId}" id="shippingAddressId${orderShipmentId}" <c:if test="${isEditInvalid}">disabled="true"</c:if>>
+							<option value="0">${orderShipment.orderAddress.country}${emptySpace}${orderShipment.orderAddress.state}${emptySpace}${orderShipment.orderAddress.city}${emptySpace}${orderShipment.orderAddress.address1} <c:if test="${not empty orderShipment.orderAddress.address2}">${orderShipment.orderAddress.address2}</c:if></option>
+							<c:forEach var="address" items="${shippingAddresses}">
+								<c:if test="${orderShipment.orderAddressString ne address.addressString}">
+									<option value="${address.addressId}">${address.countryName}${emptySpace}${address.stateName}${emptySpace}${address.cityName}${emptySpace}${address.sectionName}${emptySpace}${address.address} <c:if test="${not empty address.address2}">${address.address2}</c:if></option>
+								</c:if>
+							</c:forEach>
+						</select>
+						<span style="padding:6px"></span>
+						<cartmatic:iconBtn id="editShippingAddressBtn" icon="pen" textKey="order.shipment.action.editAddress" onclick="fnEditShippingAddress(${orderShipmentId});" isDisabled="${isEditInvalid}"/>
+					</td>
+				</tr>
+				<tr>
+					<td>	
+						<fmt:message key="orderShipment.carrierName" />
+					</td>
+					<td>
+						<select style="width:150px" onchange="fnCalculateTotal('${orderShipmentId}');" name="shippingRateId${orderShipmentId}" id="shippingRateId${orderShipmentId}" <c:if test="${isEditInvalid}">disabled="true"</c:if>>
+							<c:forEach var="shippingMethod" items="${orderShipment.shippingMethods}">
+								<option value="${shippingMethod.key}" <c:if test="${orderShipment.shippingRateId eq shippingMethod.key}">selected="true"</c:if>>${shippingMethod.value}</option>
+							</c:forEach>
+						</select>
+						<span id="shippingAddressChangedTipSpan" style="color:red"></span>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<fmt:message key="orderShipment.wrapName" />
+					</td>
+					<td>
+						<select style="width:150px" name="wrapId${orderShipmentId}" id="wrapId${orderShipmentId}" onchange="fnCalculateTotal('${orderShipmentId}');" <c:if test="${isEditInvalid}">disabled="true"</c:if>>
+							<c:choose>
+								<c:when test="${empty orderShipment.wrapName}">
+									<option value="0"><fmt:message key="order.wrap.unneeded"/></option>
+								</c:when>
+								<c:otherwise>
+									<option value="0">${orderShipment.wrapName}${emptySpace}${orderShipment.wrapUnitPrice}</option>
+									<option value="-1"><fmt:message key="order.wrap.unneeded"/></option>
+								</c:otherwise>
+							</c:choose>
+							<c:forEach var="wrap" items="${wraps}">
+								<c:if test="${wrap.wrapName ne orderShipment.wrapName}">
+									<option value="${wrap.wrapId}">${wrap.wrapName}${emptySpace}${wrap.defaultPrice}</option>
+								</c:if>
+							</c:forEach>
+						</select>
+						<span style="padding:8px"></span>(<fmt:message key="shoppingcartItem.wrapNote"/> - ${orderShipment.wrapNote}<c:if test="${empty orderShipment.wrapNote}"><fmt:message key="common.message.none"/></c:if>)
+					</td>
+				</tr>
+				<c:if test="${orderShipment.status eq applicationScope.SHIPMENT_STATUS_SHIPPED}">
+				<tr>
+					<td><fmt:message key="orderShipment.trackingNo"/></td>
+					<td><span id="trackingNo${orderShipment.orderShipmentId}">${orderShipment.trackingNo}</span>
+						<input type="text" id="trackingNo_input${orderShipment.orderShipmentId}" class="form-input" size="20" value="${orderShipment.trackingNo}" style="display:none">
+						<cartmatic:iconBtn id="update_edit${orderShipment.orderShipmentId}" icon="pen" text="编辑" onclick="fnShowOrderShipmentInput('${orderShipment.orderShipmentId}');"/>
+						<cartmatic:iconBtn id="update_save${orderShipment.orderShipmentId}" icon="check" text="保存" onclick="fnUpdateOrderShipment('${orderShipment.orderShipmentId}');" extraStyle="display:none"/>
+						<cartmatic:iconBtn id="update_cancel${orderShipment.orderShipmentId}" icon="cross" text="取消" onclick="fnHideOrderShipmentInput('${orderShipment.orderShipmentId}');" extraStyle="display:none"/>
+					</td>
+				</tr>
+				<tr>
+					<td><fmt:message key="orderShipment.shippingCostPaid"/></td>
+					<td><span id="shippingCostPaid${orderShipment.orderShipmentId}">${orderShipment.shippingCostPaid}</span>
+						<input type="text" id="shippingCostPaid_input${orderShipment.orderShipmentId}" class="form-input" size="20" value="${orderShipment.shippingCostPaid}" style="display:none">
+					</td>
+				</tr>
+				<tr>
+					<td><fmt:message key="orderShipment.deliverTime"/></td>
+					<td>${orderShipment.deliverTime}</td>
+				</tr>
+				</c:if>					
+			</table>
+			</c:if>
+		</td>
+		<td>
+			<%-- 款项汇总 --%>
+		 	<table cellspacing="0" cellpadding="0" width="100%" class="no-border">
+				 <tr>
+					<td><fmt:message key="orderShipment.itemSubTotal" /></td>
+					<td id="itemSubTotal${orderShipmentId}">${orderShipment.itemSubTotal}</td>
+					<td>&nbsp;</td>
+				 </tr>
+				 <tr>
+					<td><fmt:message key="orderShipment.shippingCost" /></td>
+					<td id="shippingCost${orderShipmentId}">${orderShipment.shippingCost}</td>
+					<td>&nbsp;</td>
+				 </tr>
+				 <tr>
+				 	<c:set var="wrapTotal" value="${orderShipment.wrapTotal}"></c:set>
+					<td><fmt:message key="orderShipment.wrapTotal" /></td>
+					<td id="wrapTotal${orderShipmentId}">${wrapTotal}</td>
+					<td>&nbsp;</td>
+				 </tr>
+				 <tr>
+					<td><fmt:message key="salesOrder.hyphen.full.shape" /><fmt:message key="orderShipment.discountAmount" /></td>
+					<td >
+						<input type="text" validconf="money" <c:if test="${isEditInvalid}">disabled="true"</c:if> onchange="fnCalculateTotal('${orderShipmentId}');" id="discountAmount${orderShipmentId}" name="discountAmount${orderShipmentId}" class="form-input" size="8" value="${orderShipment.discountAmount}">
+					</td>
+					<td>&nbsp;</td>
+				 </tr>
+				 <tr height="4px">
+				 	<td colspan="2"><hr width="100%" style="color: #ccc; height: 1px; border: 0; background:#ccc;"></td>
+				 	<td>&nbsp;</td>
+				 </tr>
+				 <tr>
+					<c:set var="totalBeforeTax" value="${orderShipment.itemSubTotal+orderShipment.shippingCost+wrapTotal-orderShipment.discountAmount}"></c:set>
+					<td><fmt:message key="orderShipment.totalBeforeTax" /></td>
+					<td id="totalBeforeTax${orderShipmentId}">${totalBeforeTax}</td>
+					<td>&nbsp;</td>
+				 </tr>
+				 <tr>
+					<td><fmt:message key="orderShipment.itemTax" /></td>
+					<td id="itemTax${orderShipmentId}">${orderShipment.itemTax}</td>
+					<td>&nbsp;</td>
+				 </tr>
+					 <c:if test="${orderShipment.shippingTax gt 0}">
+					 <tr>
+						<td><fmt:message key="orderShipment.shippingTax" /></td>
+						<td >${orderShipment.shippingTax}</td>
+						<td>&nbsp;</td>
+					 </tr>
+					</c:if>
+				<tr>
+					<td><fmt:message key="orderShipment.totalAfterTax" /></td>
+					<td id="totalAfterTax${orderShipmentId}">${orderShipment.totalBeforeTax+orderShipment.itemTax+orderShipment.shippingTax}</td>
+					<td>&nbsp;</td>
+				</tr>
+			 </table>
+		</td>
+    </tr>       
+</table>
+<fmt:message key="orderAddress.editShippingAddress" var="title"><fmt:param value="${orderShipment.shipmentNo}"/></fmt:message>
+<app:ui_dialog id="EditShippingAddress${orderShipmentId}Dlg" title="${title}" width="460" height="400" 
+	url="${ctxPath}/order/dialog.html?doAction=editOrderAddress&salesOrderId=${salesOrder.salesOrderId}&orderShipmentId=${orderShipmentId}" buttons="'${buttonComplete}':fnCompleteEditShippingAddress, '${buttonCancel}':dlgEditShippingAddress${orderShipmentId}Dlg_close">
+</app:ui_dialog>
+</c:forEach>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table-content">
+	<tr>
+		<th>
+			<fmt:message key="orderPromotionList.heading" />
+		</th>
+	</tr>
+	<tr>
+		<td>
+			<table cellspacing="0" cellpadding="0">
+				<tr>
+					<th><fmt:message key="orderPromotion.promotionName"/></th>
+					<th><fmt:message key="orderPromotion.couponNo"/></th>
+				</tr>
+				<c:choose>
+					<c:when test="${empty salesOrder.orderPromotions}">
+						<tr>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+						</tr>
+					</c:when>
+					<c:otherwise>
+						<c:forEach var="orderPromotion" items="${salesOrder.orderPromotions}">
+						<tr>
+							<td>${orderPromotion.promotionName}</td>
+							<td>${orderPromotion.couponNo}</td>
+						</tr>
+						</c:forEach>
+					</c:otherwise>
+				</c:choose>
+			</table>
+		</td>
+	</tr>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table-content">
+	<tr>
+		<th>
+			赠送信息
+		</th>
+	</tr>
+	<tr>
+		<td>
+			<table cellspacing="0" cellpadding="0">
+				<tr>
+					<th>赠送的优惠券号</th>
+					<th>赠送的积分数量</th>
+				</tr>
+				<tr>
+					<td>${empty gainedCoupon.couponNo ? '无' : gainedCoupon.couponNo}</td>
+					<td>${empty salesOrder.gainedPoint ? 0 : salesOrder.gainedPoint}</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+<fmt:message key="order.shipment.action.moveItem" var="moveItemTitle"/>
+<app:ui_dialog id="MoveItemDlg" title="${moveItemTitle}" width="450" height="350"
+	url="${ctxPath}/order/dialog.html?doAction=moveItem&salesOrderId=${salesOrder.salesOrderId}" buttons="'${buttonComplete}':fnCompleteMoveItem, '${buttonCancel}':fnCloseDlg">
+</app:ui_dialog>
+
+<fmt:message key="orderReturn.completeCreateExchange" var="buttonCompleteCreateExchange"/>
+<app:ui_dialog id="CreateReturnDlg" title="${buttonCreateReturn}" width="650" height="600" buttons="'${buttonCreateReturn}':fnCompleteCreateReturn, '${buttonCancel}':p_closeCreateReturnDlg">
+</app:ui_dialog>
+<app:ui_dialog id="CreateExchangeDlg" title="${buttonCreateExchange}" width="650" height="600" buttons="'${buttonCompleteCreateExchange}':fnCompleteCreateExchange, '${buttonCancel}':p_closeCreateExchangeDlg">
+</app:ui_dialog>
+
+<product:productSkuSelector id="productSkuSelector" ondblclick="fnCompleteAddItem"></product:productSkuSelector>
+<c:if test="${not empty param['showShipmentId']}">
+<script type="text/javascript">
+	var jId = "shipment${param['showShipmentId']}";
+	var orderShipmentDivs = $j("div[id^=shipment]");
+	for(var i=0; i<orderShipmentDivs.length; i++){
+		if(orderShipmentDivs[i].id==jId)
+			orderShipmentDivs[i].style.display="block";
+		else
+			orderShipmentDivs[i].style.display="none";
+	}
+</script>
+</c:if>
+<script type="text/javascript">
+	//var _productId = "";
+	var _orderShipmentId = "";
+	var _orderSkuId = "";
+    function fnOpenProductSelectWindow(){
+		window.open("url","widowName","height=650, width=1100,resizable=yes,scrollbars=yes,location=no");
+	}
+	//control buttons
+	//function fnSelectSku(orderShipmentId, orderSkuId){
+		//open button
+		//var openButtonId="#openItem"+orderShipmentId;
+		//if($j(openButtonId).attr("disabled"))
+		//	$j(openButtonId).removeAttr("disabled");
+		//var productIdSpan = document.getElementById("productId"+orderShipmentId+orderSkuId);
+		//if(productIdSpan){
+		//	_productId = productIdSpan.innerHTML;
+		//}
+		
+		//_orderShipmentId = orderShipmentId;
+		//_orderSkuId = orderSkuId;
+		
+		//var skuAmount = $j("#skuAmount"+orderShipmentId).val();
+		//move button
+		//var moveButtonId = "#moveItem"+orderShipmentId;
+		//if($j("#originalQty"+orderShipmentId+orderSkuId).text()>1 || skuAmount>1){
+		//	if($j(moveButtonId).attr("disabled"))
+		//		$j(moveButtonId).removeAttr("disabled");
+		//}else{
+		//	$j(moveButtonId).attr("disabled", "true");
+		//}
+		//remove button
+		//var removeButtonId = "#removeItem"+orderShipmentId;
+		//if(skuAmount>1){
+		//	if($j(removeButtonId).attr("disabled"))
+		//		$j(removeButtonId).removeAttr("disabled");
+		//}else{
+		//	$j(removeButtonId).attr("disabled", "true");
+		//}			
+	//}
+
+	function fnMoveItem(orderShipmentId, orderSkuId){
+		var params = {orderShipmentId:orderShipmentId, orderSkuId:orderSkuId};
+		dlgMoveItemDlg_show(params);
+	}
+	
+	function fnRemoveItem(orderSkuId,name){
+		if(confirm("确认要移除产品#"+name+"?")){
+			window.location.href=__ctxPath+'/order/window.html?doAction=removeItem&salesOrderId='+_salesOrderId+'&orderSkuId='+orderSkuId+'&tabIndex=1&tid=${param.tid}';
+		}
+	}
+
+	function fnRepurchaseItem(orderSkuId)
+	{
+		window.location.href=__ctxPath+'/order/window.html?doAction=repurchaseItem&salesOrderId='+_salesOrderId+'&orderSkuId='+orderSkuId+'&tabIndex=1&tid=${param.tid}';
+	}
+	
+	function fnCalculateTotal(orderShipmentId){
+		_orderShipmentId = orderShipmentId;
+		var quantityInputs = $j("input[id^=quantity"+orderShipmentId+"]");
+		var discountPriceInputs = $j("input[id^=discountPrice"+orderShipmentId+"]");
+		var itemDiscountAmountInputs = $j("input[id^=itemDiscountAmount"+orderShipmentId+"]");
+		var parameters = {orderShipmentId:orderShipmentId,shippingAddressId:$j("#shippingAddressId"+orderShipmentId).val(), shippingRateId:$j("#shippingRateId"+orderShipmentId).val(), wrapId:$j("#wrapId"+orderShipmentId).val(), discountAmount:$j("#discountAmount"+orderShipmentId).val()};
+		for(var i=0; i<quantityInputs.length; i++){
+			parameters[quantityInputs[i].id] = quantityInputs[i].value;
+			parameters[discountPriceInputs[i].id]= discountPriceInputs[i].value;
+			parameters[itemDiscountAmountInputs[i].id] = itemDiscountAmountInputs[i].value;
+		}
+		$j.post(__ctxPath+'/order/salesOrder.html?doAction=calculateShipmentTotal', parameters, fnFillTotal, "json")
+	}
+	
+	function fnFillTotal(result){
+		if(result.status==1){
+			var data=result.data;
+			$j("#itemSubTotal"+data.orderShipmentId).text(data.itemSubTotal);
+			$j("#shippingCost"+data.orderShipmentId).text(data.shippingCost);
+			$j("#totalBeforeTax"+data.orderShipmentId).text(data.totalBeforeTax);
+			$j("#itemTax"+data.orderShipmentId).text(data.itemTax);
+			$j("#totalAfterTax"+data.orderShipmentId).text(data.totalAfterTax);
+			$j("#wrapTotal"+data.orderShipmentId).text(data.wrapTotal);
+			if(data.shippingMethods){
+				p_refreshShippingMethods(data);
+			}
+		}else{
+			sysMsg(result.msg,true);
+		}
+	}
+	
+	function fnAddItem(orderShipmentId){
+		_orderShipmentId = orderShipmentId;
+		productSkuSelector_show('');
+	}
+	
+	var _addedProductSkuCode = "";
+	var tip_outOfStock = '<fmt:message key="order.shipment.tip.outOfStock"/>';
+	var tip_noQty4PreOrder = '<fmt:message key="order.shipment.tip.noQty4PreOrder"/>';
+	function fnCompleteAddItem(productSku){
+		//alert(productSku.productSkuId);
+		_addedProductSkuCode = productSku.productSkuCode;
+		$j.post(__ctxPath+"/order/salesOrder.html?doAction=addItem&orderNo=${salesOrder.orderNo}&orderShipmentId="+_orderShipmentId+"&productSkuId="+(productSku.productSkuId)+"&tabIndex=1", null, fnAddItemCallbackHandler, "json");
+	}
+	function fnAddItemCallbackHandler(result){
+		sysMsg4p(result.msg,result.status!=1);
+		if(result.status==1){
+		 	view(1);
+		}
+	}
+	
+	<%-- 编辑运输地址 --%>
+	function fnEditShippingAddress(orderShipmentId){
+		_orderShipmentId = orderShipmentId;
+		var dlgMethod = "dlgEditShippingAddress"+orderShipmentId+"Dlg_show";
+		var params={orderAddressId:$j("#shippingAddressId"+orderShipmentId).val()};
+		eval(dlgMethod).call(this, params);
+	}
+	
+	function fnCompleteEditShippingAddress(){
+		if(!validateForm( document.getElementById("orderAddress"+_orderShipmentId) )){
+			alert(__vaMsg.notPass);
+			return;
+		}
+		var parameters = $j("#orderAddress"+_orderShipmentId).serialize();
+		
+    	$j.post(__ctxPath+'/order/salesOrder.html?doAction=saveOrderAddress', parameters, fnCompleteEditShippingAddressCallbackHandler, "json");
+	}
+	
+    function fnCompleteEditShippingAddressCallbackHandler(result){
+    	sysMsg4p(result.msg,result.status!=1);
+    	if(result.status==1){
+        	var data=result.data;
+    		var address = $j("#country"+_orderShipmentId).val() +" "+ $j("#state"+_orderShipmentId).val() +" "+$j("#city"+_orderShipmentId).val()+" " + $j("#address1"+_orderShipmentId).val()+" "+$j("#address2"+_orderShipmentId).val();
+        	$j("select[id=shippingAddressId"+_orderShipmentId+"] option[value=0]").text(address);
+        	$j("select[id=shippingAddressId"+_orderShipmentId+"] option[value=0]").attr("selected",true);
+        	var dlgMethod = "dlgEditShippingAddress"+_orderShipmentId+"Dlg_close";
+    		eval(dlgMethod).call(this, null);
+    		
+    		p_refreshShippingMethods(data);
+        	//delete the same address
+        	var values = new Array();
+        	var i=0;
+        	$j("select[id=shippingAddressId"+_orderShipmentId+"] option").each(
+    			function(){
+    				if(this.value!='0' && $j(this).text()==address){
+    					values[i++]=(this.value);
+    				}
+    			}
+    		);
+    		for(var j=0; j<values.length; j++){
+    			$j("select[id=shippingAddressId"+_orderShipmentId+"] option[value="+values[j]+"]").remove();
+    		}
+        }
+    }
+    
+    function p_refreshShippingMethods(data){
+    	var shippingMethods = data.shippingMethods;
+    	var selId = "shippingRateId"+data.orderShipmentId;
+		$j("select[id="+selId+"]").empty();
+		var oneMatch = false;
+    	
+    	for(var i=0; i<shippingMethods.length; i=i+2){
+    		if(data.shippingRateId==shippingMethods[i]){
+    			oneMatch = true;
+    			$j("select[id="+selId+"]").append("<option value='"+shippingMethods[i]+"' selected='true'>"+shippingMethods[i+1]+"</option>");
+    		}else{
+    			$j("select[id="+selId+"]").append("<option value='"+shippingMethods[i]+"'>"+shippingMethods[i+1]+"</option>");
+    		}
+    	}
+    	if(!oneMatch){
+    		$j("select[id="+selId+"]").append("<option value='' selected='true'>"+'<fmt:message key="common.message.pleaseSelect"/>'+"</option>");
+    		$j("#shippingAddressChangedTipSpan").html('<fmt:message key="order.shipment.tip.shippingAddressChanged"/>');
+    	}else{
+    		$j("#shippingAddressChangedTipSpan").html('');
+    	}
+    	
+    }
+    <%-- end 编辑运输地址 --%>
+	
+	function fnCloseDlg(){
+		dlgMoveItemDlg_close();
+	}
+	
+	 function fnCompleteMoveItem(){
+	 	var formObj = document.getElementById("moveItemForm");
+    	if(!validateForm(formObj)){
+			alert(__vaMsg.notPass);
+			return;
+		}
+    	var parameters = $j("#moveItemForm").serialize();
+    	$j.post(__ctxPath+'/order/salesOrder.html?doAction=completeMoveItem', parameters, fnCompleteMoveItemCallbackHandler,"json");
+    }
+    
+    function fnCompleteMoveItemCallbackHandler(result){
+    	sysMsg4p(result.msg,result.status!=1);
+        if(result.status==1){
+        	dlgMoveItemDlg_close();
+        	view(1);
+        }
+    }
+    
+    function fnConfirmShipment(orderShipmentId){
+   		$j.post(__ctxPath+"/order/salesOrder.html?doAction=confirmShipment&salesOrderId="+_salesOrderId+"&orderShipmentId="+orderShipmentId+"&tabIndex=1", null, fnConfirmShipmentCallbackHandler, "json");
+    }
+    
+    function fnConfirmShipmentCallbackHandler(result){
+        if(result.status==1){
+        	view(1);
+        }else{
+			alert(result.msg);
+        }
+    }
+    
+    function fnCancelShipment(orderShipmentId){
+        if (confirm("<fmt:message key="salesOrder.fn.cancelShipment"/>"))
+   	 	$j.post(__ctxPath+"/order/salesOrder.html?doAction=cancelShipment&salesOrderId="+_salesOrderId+"&orderShipmentId="+orderShipmentId+"&tabIndex=1", null, fnCancelShipmentCallbackHandler, "json");
+    }
+    function fnCancelShipmentCallbackHandler(result){
+    	sysMsg4p(result.msg,result.status!=1);
+        if(result.status==1){
+        	view(1);
+        }
+    }
+    
+    <%-- 退换货 --%>
+    function fnCreateReturn(orderShipmentId){
+    	$j("#divDlgCreateReturnDlg").html("");
+    	dlgCreateReturnDlg_show();
+    	fillDivWithPage("divDlgCreateReturnDlg","${ctxPath}/order/return/dialog.html?doAction=createReturn&orderShipmentId="+orderShipmentId, null,"POST");
+    }
+    
+    function fnCreateExchange(orderShipmentId){
+    	$j("#divDlgCreateExchangeDlg").html("");
+    	dlgCreateExchangeDlg_show();
+    	fillDivWithPage("divDlgCreateExchangeDlg","${ctxPath}/order/return/dialog.html?doAction=createExchange&orderShipmentId="+orderShipmentId, null,"POST");
+    }
+    
+    function fnCompleteCreateReturn(){
+    	if(!validateForm( document.getElementById("createReturnForm") )){
+			alert(__vaMsg.notPass);
+			return;
+		}
+		if(!fnValidateHasOneReturn()) return;
+		if(!fnValidateNote()) return;
+		var parameters = $j("#createReturnForm").serialize();
+    	$j.post(__ctxPath+'/order/orderReturn.html?doAction=completeCreateReturn', parameters, fnCompleteCreateReturnCallbackHandler,"json");
+    }
+    
+    function fnCompleteCreateReturnCallbackHandler(result){
+        if(result.status==1){
+        	dlgCreateReturnDlg_close();
+        	view(3);
+        }else{
+			alert(result.msg);
+        }
+    }
+    
+    function fnCompleteCreateExchange(){
+    	if(!validateForm( document.getElementById("createReturnForm") )){
+			alert(__vaMsg.notPass);
+			return;
+		}
+		if(!fnValidateHasOneReturn()) return;
+		if(!fnValidateNote()) return;
+		var parameters = $j("#createReturnForm").serialize();
+    	$j.post(__ctxPath+'/order/orderReturn.html?doAction=completeCreateExchange', parameters, fnCompleteCreateExchangeCallbackHandler,"json");
+    }
+    
+    function fnCompleteCreateExchangeCallbackHandler(result){
+    	if(result.status==1) {
+    		dlgCreateExchangeDlg_close();
+        	view(3);
+    	}else if(result.status==-2){
+    		dlgCreateExchangeDlg_close();
+    		sysMsg("<fmt:message key="orderReturn.exchange.outOfMemory"/>","true");
+    	}else{
+        	alert (result.msg);
+    	}
+    }
+    
+    function fnValidateHasOneReturn(){
+    	var quantityInputs = $j("input[id^=returnQuantity]");
+    	var hasOneReturn = false;
+    	for(var i=0; i<quantityInputs.length; i++){
+	    	if(quantityInputs[i].value>'0'){
+				hasOneReturn = true;
+				break;
+			}
+		}
+		if(!hasOneReturn)
+			$j("#returnMsgDiv").html("<br/><span style='padding:20px;color:red'><fmt:message key="orderReturn.prompt.mustHaveOneReturn"/></span>");
+		return hasOneReturn;
+    }
+    
+    function fnValidateNote(){
+    	var reasonTypes = $j("select[id^=reasonType]");
+    	for(var i=0; i<reasonTypes.length; i++){
+	    	if(reasonTypes[i].val()==40 && !validateRequired($j("#note").val())){
+				$j("#returnMsgDiv").html("<br/><span style='padding:20px;color:red'><fmt:message key="orderReturn.prompt"/></span>");
+				reasonTypes[i].focus();
+				return false;
+			}
+		}
+		return true;
+    }
+    
+    function p_closeCreateReturnDlg(){
+    	dlgCreateReturnDlg_close();
+    	$j("#divDlgCreateReturnDlg").html("");
+    }
+    
+    function p_closeCreateExchangeDlg(){
+    	dlgCreateExchangeDlg_close();
+    	$j("#divDlgCreateExchangeDlg").html("");
+    }
+   <%-- end 退换货 --%>
+   <%--更新跟踪号--%>
+   function fnShowOrderShipmentInput(orderShipmentId){
+		$j("#trackingNo"+orderShipmentId).hide();
+		$j("#shippingCostPaid"+orderShipmentId).hide();
+		$j("#update_edit"+orderShipmentId).hide();
+		$j("#trackingNo_input"+orderShipmentId).show();
+		$j("#shippingCostPaid_input"+orderShipmentId).show();
+		$j("#update_save"+orderShipmentId).show();
+		$j("#update_cancel"+orderShipmentId).show();
+   }
+   function fnHideOrderShipmentInput(orderShipmentId){
+	    $j("#trackingNo"+orderShipmentId).show();
+		$j("#shippingCostPaid"+orderShipmentId).show();
+		$j("#update_edit"+orderShipmentId).show();
+		$j("#trackingNo_input"+orderShipmentId).hide();
+		$j("#shippingCostPaid_input"+orderShipmentId).hide();
+		$j("#update_save"+orderShipmentId).hide();
+		$j("#update_cancel"+orderShipmentId).hide();
+   }
+   function fnUpdateOrderShipment(orderShipmentId){
+	   var trackingNo=$j("#trackingNo_input"+orderShipmentId).val();
+	   var shippingCostPaid=$j("#shippingCostPaid_input"+orderShipmentId).val();
+	   var data={orderShipmentId:orderShipmentId,trackingNo:trackingNo,shippingCostPaid:shippingCostPaid,doAction:'updateTrackingNoAndCostPaid'};
+	   var url=__ctxPath+"/order/salesOrder.html";
+	   $j.post(url,data,function(result){
+			if(result.status==1){
+				$j("#trackingNo"+orderShipmentId).html(result.data.trackingNo);
+				$j("#shippingCostPaid"+orderShipmentId).html(result.data.shippingCostPaid);
+				fnHideOrderShipmentInput(orderShipmentId);
+				alert("保存更新\"物流跟踪号,运输成本\"成功!");
+			}else{
+				alert("保存更新\"物流跟踪号,运输成本\"失败!");
+			}
+		},'json');
+   }
+</script>

@@ -1,0 +1,29 @@
+<%-- 
+This jspf is a common jsp used to store ui resource, for example the jquery ui moudle.
+所有的ui组件都是通过tag file来定义的,当有UI的tag被定义时,request就会有一个相对应的变量被设置了'true'值.
+这时本jspf就会加载相应的js文件和css文件. 
+--%>
+<c:if test="${not empty ui_tree}"
+><c:set var="ui_jquery_simple_tree_js" value="true"
+/><c:set var="ui_sampleTree_css" value="true"
+/>
+<c:set var="ui_zTree_js" value="true"/>
+<c:set var="ui_zTree_css" value="true"/>
+</c:if>
+<c:if test="${not empty swf_upload}">
+<c:set var="swf_upload_js" value="true"/>
+</c:if>
+<c:if test="${ui_tree}">
+<link rel="stylesheet" href="${ctxPath}/scripts/jquery/plugins/simpleTree/simpleTree.css" type="text/css" />
+<script type="text/javascript" src="${ctxPath}/scripts/jquery/plugins/simpleTree/jquery.simple.tree.js"></script>
+</c:if>
+<c:if test="${ui_tree}">
+<link rel="stylesheet" href="${ctxPath}/scripts/jquery/plugins/ztree/zTreeStyle.css" type="text/css" />
+<script type="text/javascript" src="${ctxPath}/scripts/jquery/plugins/ztree/jquery.ztree.all-3.2.js"></script>
+</c:if>
+<link rel="stylesheet" href="${ctxPath}/scripts/jquery/plugins/quicktip/quicktip.css" type="text/css" />
+<script type="text/javascript" src="${ctxPath}/scripts/jquery/plugins/quicktip/quicktip.js"></script>
+<c:if test="${swf_upload_js}">
+<script type="text/javascript" src="${ctxPath}/scripts/swfupload/swfupload.js"></script>
+<script type="text/javascript" src="${ctxPath}/scripts/swfupload/handlers.js"></script>
+</c:if>

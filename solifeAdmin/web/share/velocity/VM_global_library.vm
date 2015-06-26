@@ -1,0 +1,32 @@
+#macro( quietnull $a)
+#if($a)$a#end
+#end
+
+#macro( testbool $b )
+ #if($b)
+  arg true
+ #end
+ #if( ! $b )
+  arg false
+ #end
+#end
+
+#**
+ * springMessage
+ *
+ * Macro to translate a message code into a message.
+ *#
+#macro( springMessageArg $code $arg)
+$springMacroRequestContext.getMessage($code,$arg)
+#end
+
+#**
+ * springMessageExt
+ *
+ * Macro to translate a message code into a message.
+ *#
+#macro( springMessageExt $code $arg)
+#set ($argText = $springMacroRequestContext.getMessage($arg))
+#set( $msgArgs = [$argText] )
+$springMacroRequestContext.getMessage($code,$msgArgs)
+#end

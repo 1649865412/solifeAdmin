@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.cartmatic.estore.common.model.catalog.Product" table="PRODUCT" select-before-update="false" dynamic-update="false" dynamic-insert="false" optimistic-lock="version">
+		<id name="productId" column="productId" type="java.lang.Integer" length="10">
+			<generator class="native" />
+		</id>
+		<version name="version" type="java.lang.Integer" column="version" access="property" unsaved-value="undefined" />
+		<property name="defaultSupplierProductId" type="java.lang.Integer" update="true" insert="true" access="property" column="defaultSupplierProductId" length="10" not-null="false" unique="false" />
+		<property name="productName" type="java.lang.String" update="true" insert="true" access="property" column="productName" length="128" not-null="true" unique="false" />
+		<property name="productCode" type="java.lang.String" update="true" insert="true" access="property" column="productCode" length="32" not-null="true" unique="false" />
+		<property name="planStartTime" type="java.util.Date" update="true" insert="true" access="property" column="planStartTime" length="0" not-null="false" unique="false" />
+		<property name="planEndTime" type="java.util.Date" update="true" insert="true" access="property" column="planEndTime" length="0" not-null="false" unique="false" />
+		<property name="publishTime" type="java.util.Date" update="true" insert="true" access="property" column="publishTime" length="0" not-null="false" unique="false" />
+		<property name="url" type="java.lang.String" update="true" insert="true" access="property" column="url" length="255" not-null="false" unique="false" />
+		<property name="title" type="java.lang.String" update="true" insert="true" access="property" column="title" length="128" not-null="false" unique="false" />
+		<property name="metaKeyword" type="java.lang.String" update="true" insert="true" access="property" column="metaKeyword" length="256" not-null="false" unique="false" />
+		<property name="metaDescription" type="java.lang.String" update="true" insert="true" access="property" column="metaDescription" length="256" not-null="false" unique="false" />
+		<property name="isAllowReview" type="java.lang.Short" update="true" insert="true" access="property" column="isAllowReview" length="5" not-null="false" unique="false" />
+		<property name="expectedReleaseDate" type="java.util.Date" update="true" insert="true" access="property" column="expectedReleaseDate" length="0" not-null="false" unique="false" />
+		<property name="availabilityRule" type="java.lang.Short" update="true" insert="true" access="property" column="availabilityRule" length="5" not-null="true" unique="false" />
+		<property name="preOrBackOrderLimit" type="java.lang.Integer" update="true" insert="true" access="property" column="preOrBackOrderLimit" length="10" not-null="false" unique="false" />
+		<property name="minOrderQuantity" type="java.lang.Integer" update="true" insert="true" access="property" column="minOrderQuantity" length="10" not-null="true" unique="false" />
+		<property name="membershipId" type="java.lang.Integer" update="true" insert="true" access="property" column="membershipId" length="10" not-null="false" unique="false" />
+		<property name="productKind" type="java.lang.Short" update="true" insert="true" access="property" column="productKind" length="5" not-null="true" unique="false" />
+		<property name="createBy" type="java.lang.Integer" update="true" insert="true" access="property" column="createBy" length="10" not-null="false" unique="false" />
+		<property name="updateBy" type="java.lang.Integer" update="true" insert="true" access="property" column="updateBy" length="10" not-null="false" unique="false" />
+		<property name="createTime" type="java.util.Date" update="true" insert="true" access="property" column="createTime" length="0" not-null="true" unique="false" />
+		<property name="updateTime" type="java.util.Date" update="true" insert="true" access="property" column="updateTime" length="0" not-null="true" unique="false" />
+		<property name="templatePath" type="java.lang.String" update="true" insert="true" access="property" column="templatePath" length="128" not-null="false" unique="false" />
+		<property name="status" type="java.lang.Short" update="true" insert="true" access="property" column="status" length="5" not-null="true" unique="false" />
+		<property name="extra1" type="java.lang.String" update="true" insert="true" access="property" column="extra1" length="255" not-null="false" unique="false" />
+		<!-- imported bi-directional many-to-one association to Supplier -->
+		<many-to-one name="supplier" class="com.cartmatic.estore.common.model.supplier.Supplier" not-null="false" fetch="select">
+			<column name="supplierId" />
+		</many-to-one>
+		<!-- imported bi-directional many-to-one association to Brand -->
+		<many-to-one name="brand" class="com.cartmatic.estore.common.model.catalog.Brand" not-null="false" fetch="select">
+			<column name="brandId" />
+		</many-to-one>
+		<!-- imported bi-directional many-to-one association to ProductType -->
+		<many-to-one name="productType" class="com.cartmatic.estore.common.model.catalog.ProductType" not-null="false" fetch="select">
+			<column name="productTypeId" />
+		</many-to-one>
+		<!-- imported bi-directional many-to-one association to ProductDescription -->
+		<many-to-one name="productDescription" class="com.cartmatic.estore.common.model.catalog.ProductDescription" not-null="false" fetch="select">
+			<column name="productDescriptionId" />
+		</many-to-one>
+		<!-- imported bi-directional many-to-one association to ProductDescription -->
+		<many-to-one name="productHandDraw" class="com.cartmatic.estore.common.model.catalog.ProductHandDraw" not-null="true" fetch="select">
+			<column name="productHandDrawId" />
+		</many-to-one>
+		<!-- imported bi-directional many-to-one association to ProductSku -->
+		<many-to-one name="defaultProductSku" class="com.cartmatic.estore.common.model.catalog.ProductSku" not-null="false" fetch="select">
+			<column name="defaultProductSkuId" />
+		</many-to-one>
+		<!-- exported bi-directional one-to-many association to ProductAttrValue -->
+		<set name="productAttrValues" table="product_attr_value" lazy="true" inverse="true" cascade="save-update" sort="unsorted">
+			<key>
+				<column name="productId" />
+			</key>
+			<one-to-many class="com.cartmatic.estore.common.model.attribute.ProductAttrValue" />
+		</set>
+		<!-- exported bi-directional one-to-many association to ProductStat -->
+		<set name="productStats" table="product_audit" lazy="true" inverse="true" cascade="save-update" sort="unsorted">
+			<key>
+				<column name="productId" />
+			</key>
+			<one-to-many class="com.cartmatic.estore.common.model.catalog.ProductStat" />
+		</set>
+		<!-- exported bi-directional one-to-many association to ProductCategory -->
+		<set name="productCategorys" table="product_category" lazy="true" sort="unsorted" inverse="true">
+			<key>
+				<column name="productId" />
+			</key>
+			<one-to-many class="com.cartmatic.estore.common.model.catalog.ProductCategory" />
+		</set>
+		<!-- exported bi-directional one-to-many association to ProductMedia -->
+		<set name="productMedias" table="product_media" lazy="true" inverse="true" order-by="sortOrder">
+			<key>
+				<column name="productId" />
+			</key>
+			<one-to-many class="com.cartmatic.estore.common.model.catalog.ProductMedia" />
+		</set>
+		<!-- exported bi-directional one-to-many association to ProductReview -->
+		<set name="productReviews" table="product_review" lazy="true" inverse="true" cascade="save-update" sort="unsorted">
+			<key>
+				<column name="productId" />
+			</key>
+			<one-to-many class="com.cartmatic.estore.common.model.catalog.ProductReview" />
+		</set>
+		<!-- exported bi-directional one-to-many association to ProductSku -->
+		<set name="productSkus" table="product_sku" lazy="true" inverse="true" cascade="save-update" order-by="productSkuId">
+			<key>
+				<column name="productId" />
+			</key>
+			<one-to-many class="com.cartmatic.estore.common.model.catalog.ProductSku" />
+		</set>
+		<!-- exported bi-directional many-to-many association to accessory -->
+		<set name="accessories" table="product_accessory" lazy="true" cascade="save-update" inverse="false">
+		<key>
+			<column name="productId" />
+		</key>
+		<many-to-many class="com.cartmatic.estore.common.model.catalog.Accessory" column="accessoryId"/>
+	</set>
+	
+		<set name="productMediasUp" table="product_media_up" lazy="true" inverse="true" order-by="sortOrder">
+			<key>
+				<column name="productId" />
+			</key>
+			<one-to-many class="com.cartmatic.estore.common.model.catalog.ProductMediaUp" />
+		</set>
+	
+	</class>
+</hibernate-mapping>

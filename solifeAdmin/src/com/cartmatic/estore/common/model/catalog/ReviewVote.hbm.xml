@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.catalog.ReviewVote"
+        table="REVIEW_VOTE"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="reviewVoteId"
+            column="reviewVoteId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+      <!-- imported bi-directional many-to-one association to ProductReview -->
+		<many-to-one
+			name="productReview"
+			class="com.cartmatic.estore.common.model.catalog.ProductReview"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="productReviewId" />
+		</many-to-one>
+    <!-- imported bi-directional many-to-one association to AppUser -->
+		<many-to-one
+			name="appUser"
+			class="com.cartmatic.estore.common.model.system.AppUser"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="customerId" />
+		</many-to-one>
+    </class>
+</hibernate-mapping>

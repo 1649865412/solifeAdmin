@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.catalog.ProductRateItem"
+        table="PRODUCT_RATE_ITEM"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="productRateItemId"
+            column="productRateItemId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+         <property
+            name="rateName"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="rateName"
+            length="64"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="sortOrder"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="sortOrder"
+            length="10"
+            not-null="false"
+            unique="false"
+        />
+     <!-- imported bi-directional many-to-one association to ProductType -->
+		<many-to-one
+			name="productType"
+			class="com.cartmatic.estore.common.model.catalog.ProductType"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="productTypeId" />
+		</many-to-one>
+ <!-- exported bi-directional one-to-many association to ProductRateValue -->
+	<set name="productRateValues"
+	     table="product_rate_value"
+	     lazy="true"
+	     inverse="true"
+	     cascade="save-update"
+	     sort="unsorted"
+	>
+		<key>
+			<column name="productRateItemId"/>
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.catalog.ProductRateValue"
+		/>
+	</set>     
+    </class>
+</hibernate-mapping>

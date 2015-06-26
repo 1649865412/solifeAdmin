@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.cart.ShoppingcartItem"
+        table="shoppingcart_item"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="shoppingcartItemId"
+            column="shoppingcartItemId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+		<property
+            name="accessories"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="accessories"
+            length="512"
+            not-null="false"
+            unique="false"
+            
+        />
+		<set name="shoppingcartItems"
+		     table="shoppingcart_item"
+		     lazy="false"
+		     inverse="true"
+		     sort="unsorted"
+		>
+			<key>
+				<column name="parentId"/>
+			</key>
+			<one-to-many
+				class="com.cartmatic.estore.common.model.cart.ShoppingcartItem"
+			/>
+		</set>
+
+		<one-to-one name="shoppingcartItemGc" property-ref="shoppingcartItem"/>	
+
+        <many-to-one name="parent" 
+          class="com.cartmatic.estore.common.model.cart.ShoppingcartItem" 
+          not-null="false"
+          fetch="select"
+          >
+            <column name="parentId"></column>
+        </many-to-one>
+        
+        <many-to-one name="shoppingcart" 
+          class="com.cartmatic.estore.common.model.cart.Shoppingcart" 
+          not-null="false"
+          fetch="select"
+          >
+          <column name="shoppingcartId"></column>
+        </many-to-one>
+          
+        <many-to-one name="productSku" 
+          class="com.cartmatic.estore.common.model.catalog.ProductSku" 
+          not-null="true"
+          fetch="select"
+          lazy="false"
+          >
+          <column name="productSkuId"/>
+        </many-to-one>     
+           
+        <property
+            name="skuType"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="skuType"
+            length="5"
+            not-null="true"
+            unique="false"
+        />
+        
+        <property
+            name="itemType"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="itemType"
+            length="5"
+            not-null="true"
+            unique="false"
+        />
+        
+        <property
+            name="price"
+            type="java.math.BigDecimal"
+            update="true"
+            insert="true"
+            access="property"
+            column="price"
+            precision="12"
+            scale="2"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="discountPrice"
+            type="java.math.BigDecimal"
+            update="true"
+            insert="true"
+            access="property"
+            column="discountPrice"
+            precision="12"
+            scale="2"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="quantity"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="quantity"
+            length="10"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="itemDiscountAmount"
+            type="java.math.BigDecimal"
+            update="true"
+            insert="true"
+            access="property"
+            column="itemDiscountAmount"
+            precision="12"
+            scale="2"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="isWholesale"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="isWholesale"
+            length="5"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="isOnSale"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="isOnSale"
+            length="5"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="isSaved"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="isSaved"
+            length="5"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="addTime"
+            type="java.util.Date"
+            update="true"
+            insert="true"
+            access="property"
+            column="addTime"
+            length="0"
+            not-null="true"
+            unique="false"
+        />
+     </class>
+</hibernate-mapping>

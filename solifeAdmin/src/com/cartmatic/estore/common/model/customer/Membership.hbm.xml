@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.customer.Membership"
+        table="MEMBERSHIP"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+		where="deleted=0"
+    >
+		<id
+            name="membershipId"
+            column="membershipId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+ 		<version
+            name="version"
+            type="java.lang.Integer"
+            column="version"
+            access="property"
+            unsaved-value="undefined"
+        />
+        <property
+            name="membershipName"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="membershipName"
+            length="64"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="membershipDetail"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="membershipDetail"
+            length="1024"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="membershipLevel"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="membershipLevel"
+            length="10"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="upgradeShopPoint"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="upgradeShopPoint"
+            length="10"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="status"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="status"
+            length="5"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="deleted"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="deleted"
+            length="5"
+            not-null="true"
+            unique="false"
+        />
+  <!-- exported bi-directional one-to-many association to AppUser -->
+	<set name="appUsers"
+	     table="app_user"
+	     lazy="true"
+	     inverse="true"
+	     cascade="save-update"
+	     sort="unsorted"
+	>
+		<key>
+			<column name="membershipId"/>
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.system.AppUser"
+		/>
+	</set>     
+		<sql-delete>UPDATE MEMBERSHIP SET deleted=1 WHERE membershipId=? and version=?</sql-delete>
+    </class>
+</hibernate-mapping>

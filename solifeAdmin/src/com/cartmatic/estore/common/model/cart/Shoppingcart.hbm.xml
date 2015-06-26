@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.cartmatic.estore.common.model.cart.Shoppingcart"
+		table="shoppingcart" select-before-update="false" dynamic-update="false"
+		dynamic-insert="false" optimistic-lock="version">
+		<id name="shoppingcartId" column="shoppingcartId" type="java.lang.Integer"
+			length="10">
+			<generator class="native" />
+		</id>
+		<property name="uuid" type="java.lang.String" update="true"
+			insert="true" access="property" column="Uuid" length="40" not-null="true"
+			unique="false" />
+
+		<property name="usedCouponNo" type="java.lang.String" update="true"
+			insert="true" access="property" column="usedCouponNo" length="16"
+			not-null="false" unique="false" />
+		<property name="isUsedCoupon" type="java.lang.Short" update="true"
+			insert="true" access="property" column="isUsedCoupon" length="5"
+			not-null="true" unique="false" />
+		<property name="cartDiscountAmount" type="java.math.BigDecimal"
+			update="true" insert="true" access="property" column="cartDiscountAmount"
+			precision="12" scale="2" not-null="false" unique="false" />
+		<property name="shippingDiscountInfo" type="java.lang.String"
+			update="true" insert="true" access="property" column="shippingDiscountInfo"
+			length="256" not-null="false" unique="false" />
+		<property name="gainedPoint" type="java.lang.Integer" update="true"
+			insert="true" access="property" column="gainedPoint" length="10"
+			not-null="false" unique="false" />
+		<property name="gainedCouponTypeId" type="java.lang.Integer"
+			update="true" insert="true" access="property" column="gainedCouponTypeId"
+			length="10" not-null="false" unique="false" />
+		<property name="subtotal" type="java.math.BigDecimal" update="true"
+			insert="true" access="property" column="subtotal" precision="12"
+			scale="2" not-null="true" unique="false" />
+		<property name="total" type="java.math.BigDecimal" update="true"
+			insert="true" access="property" column="total" precision="12" scale="2"
+			not-null="true" unique="false" />
+		<property name="itemsCount" type="java.lang.Integer" update="true"
+			insert="true" access="property" column="itemsCount" length="10"
+			not-null="false" unique="false" />
+		<property name="buyNowItemsCount" type="java.lang.Integer"
+			update="true" insert="true" access="property" column="buyNowItemsCount"
+			length="10" not-null="false" unique="false" />
+		<property name="buyLaterItemsCount" type="java.lang.Integer"
+			update="true" insert="true" access="property" column="buyLaterItemsCount"
+			length="10" not-null="false" unique="false" />
+		<property name="createTime" type="java.util.Date" update="true"
+			insert="true" access="property" column="createTime" length="0"
+			not-null="true" unique="false" />
+		<property name="updateTime" type="java.util.Date" update="true"
+			insert="true" access="property" column="updateTime" length="0"
+			not-null="true" unique="false" />
+
+		<property name="customerId" type="java.lang.Integer" update="true"
+			insert="true" access="property" column="customerId" length="10"
+			not-null="false" unique="true" />
+
+		<!-- imported bi-directional many-to-one association to Store -->
+		<many-to-one name="store"
+			class="com.cartmatic.estore.common.model.system.Store" not-null="false"
+			fetch="select">
+			<column name="storeId" />
+		</many-to-one>
+
+		<set name="shoppingCartItems" table="shoppingcart_item" lazy="false"
+			inverse="true" order-by="addTime">
+			<key>
+				<column name="shoppingcartId" />
+			</key>
+			<one-to-many
+				class="com.cartmatic.estore.common.model.cart.ShoppingcartItem" />
+		</set>
+		
+		<set name="shoppingCartPromotions" table="shoppingcart_promotion" lazy="false" cascade="delete">
+			<key>
+				<column name="shoppingcartId" />
+			</key>
+			<one-to-many
+				class="com.cartmatic.estore.common.model.cart.ShoppingcartPromotion" />
+		</set>
+
+		<property name="giftCertificateNos" type="java.lang.String" update="true"
+			insert="true" access="property" column="giftCertificateNos" length="50"
+			not-null="false" unique="false" />
+			
+		<property name="shopPoint" type="java.lang.Integer" update="true"
+			insert="true" access="property" column="shopPoint" length="10"
+			not-null="false" unique="true" />
+
+	</class>
+</hibernate-mapping>

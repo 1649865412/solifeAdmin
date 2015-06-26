@@ -1,0 +1,131 @@
+## This is a velocity template
+## to generate a Spring controller class from an sql table input
+#set ($table = $sqlTable.Table)
+#set ($class = $utility.makeClassName($sqlTable.EntityName))
+#set ($classVar = $utility.makeFirstLetterLowerCase($class))
+#set ($packagePrefix  = $prop.getProperty("packagePrefix"))
+#set ($packageModot  = $prop.getProperty("packageModot"))
+#set ($keyColumn = $sqlTable.getPrimaryKey(0))
+#set ($keyfield = $sqlTable.getPrimaryKey(0).getColname())
+#set ($keytype  = $sqlTable.getPrimaryKey(0).getAttType())
+#set ($keyVar= $utility.makeVarName($keyfield))
+#set ($keyVarUC = $utility.makeFirstLetterUpperCase($keyVar))
+#set ($skipManager = $prop.isExcludedProperty("Manager"))
+#if  ($skipManager)
+#set ($classManager    = "Manager")
+#set ($classVarManager = "manager")
+#else
+#set ($classManager    = "${class}Manager")
+#set ($classVarManager = "${classVar}Manager")
+#end
+package ${packagePrefix}${packageModot}.web.action;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import ${packagePrefix}.Constants;
+import ${packagePrefix}.common.model${packageModot}.${class};
+#if ($skipManager)
+import ${packagePrefix}.service.${classManager};
+#else
+import ${packagePrefix}${packageModot}.service.${classManager};
+#end
+#if ($sqlTable.hasCompositeKey)
+import ${packagePrefix}.common.model${packageModot}.base.${class}PK;
+#end
+import org.springframework.validation.BindException;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
+
+public class ${class}FormController extends ${packagePrefix}.webapp.action.BaseFormController {
+    
+    private ${classManager} mgr = null;
+    
+    public void set${classManager}(${classManager} inMgr) {
+        this.mgr = inMgr;
+    }
+    
+    public ModelAndView onSubmit(HttpServletRequest request,
+                                 HttpServletResponse response, Object command,
+                                 BindException errors)
+    throws Exception {
+        if (logger.isDebugEnabled()) {
+        	logger.debug("entering 'onSubmit' method...");
+        }
+        
+        ${class} ${classVar} = (${class}) command;
+       
+#if ($sqlTable.hasVersion)
+		boolean isNew = (${classVar}.getVersion() == null);
+#else
+     	boolean isNew = (${classVar}.get${keyVarUC}() == null);
+#end
+        
+        if (request.getParameter("delete") != null) {
+#if ($sqlTable.hasCompositeKey)
+			${class}PK pkey = ${classVar}.get${class}PK();
+#else
+			${keytype} pkey = ${classVar}.get${keyVarUC}();
+#end
+#if ($skipManager)
+	        mgr.removeObject(${class}.class, pkey);
+#else
+        	mgr.remove${class}(pkey);
+#end
+            String message =
+                getText("${classVar}.deleted", 
+                        new Object[] {${classVar}.get${keyVarUC}()}); 
+            saveMessage(request, message);        
+        } else {
+##########################################
+##  Foreign Imported Keys generation -- removed
+##########################################
+		// -----------------------------------------------------
+		// do save operation - for ${class}
+		// -----------------------------------------------------
+#if ($skipManager)
+		    mgr.saveObject(${classVar});
+#else
+        	mgr.save${class}(${classVar});
+#end
+            String key = (isNew) ? "${classVar}.added" : "${classVar}.updated";
+            String message = getText(key, 
+                                new Object[] {${classVar}.get${keyVarUC}()});  
+            saveMessage(request, message);   
+        }
+    
+        return getAutoNextView(request);
+    }
+    
+    protected Object formBackingObject(HttpServletRequest request)
+            throws Exception {
+#foreach( $kycol in $sqlTable.primaryKeys )
+#set ($kyVar = $utility.makeVarName($kycol.colname))
+        String ${kyVar} = request.getParameter("${kyVar}");
+#end
+        ${class} ${classVar} = null;
+        String actionType = Constants.ACTION_TYPE_ADD;
+
+        if (!"".equals(request.getParameter("version")) && !StringUtils.isEmpty(${keyVar})) {
+          try {
+            ${keytype}   pkey =  new Integer(${keyVar});
+            ${classVar} = mgr.get${class}(pkey);
+            actionType = Constants.ACTION_TYPE_EDIT;
+		  } catch (Exception ex) {
+			// Error retrieving value - so assume it is new
+	   		logger.error(ex);
+	   		${classVar} = new ${class}();
+		  }
+        } else {
+            ${classVar} = new ${class}();
+        }
+
+        request.setAttribute(Constants.PRM_ACTION_TYPE, actionType);
+        // for unit tests - so we can grab an object to save
+        //request.setAttribute(Constants.${class}_EDIT_KEY, ${classVar});
+        return ${classVar};
+    }
+}

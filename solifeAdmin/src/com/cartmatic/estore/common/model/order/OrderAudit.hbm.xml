@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.order.OrderAudit"
+        table="order_audit"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="orderAuditId"
+            column="orderAuditId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+         <property
+            name="addedBy"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="addedBy"
+            length="64"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="createTime"
+            type="java.util.Date"
+            update="true"
+            insert="true"
+            access="property"
+            column="createTime"
+            length="0"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="transactionType"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="transactionType"
+            length="32"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="detail"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="detail"
+            length="1024"
+            not-null="false"
+            unique="false"
+        />
+     <!-- imported bi-directional many-to-one association to SalesOrder -->
+		<many-to-one
+			name="salesOrder"
+			class="com.cartmatic.estore.common.model.order.SalesOrder"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="salesOrderId" />
+		</many-to-one>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.order.OrderReturnSku"
+        table="order_return_sku"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="orderReturnSkuId"
+            column="orderReturnSkuId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+         <property
+            name="quantity"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="quantity"
+            length="10"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="returnAmount"
+            type="java.math.BigDecimal"
+            update="true"
+            insert="true"
+            access="property"
+            column="returnAmount"
+            precision="12"
+            scale="2"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="receivedQuantity"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="receivedQuantity"
+            length="10"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="receivedStatus"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="receivedStatus"
+            length="5"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="reasonType"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="reasonType"
+            length="5"
+            not-null="true"
+            unique="false"
+        />
+     <!-- imported bi-directional many-to-one association to OrderSku -->
+		<many-to-one
+			name="orderSku"
+			class="com.cartmatic.estore.common.model.order.OrderSku"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="orderSkuId" />
+		</many-to-one>
+    <!-- imported bi-directional many-to-one association to OrderReturn -->
+		<many-to-one
+			name="orderReturn"
+			class="com.cartmatic.estore.common.model.order.OrderReturn"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="orderReturnId" />
+		</many-to-one>
+    </class>
+</hibernate-mapping>

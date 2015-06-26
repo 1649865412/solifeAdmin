@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+	<!--
+	- Scheduler context for Quartz.
+	- Note that Quartz Jobs are throwaway objects, in contrast to shared TimerTasks.
+-->
+<beans default-lazy-init="true">
+	<!-- 产品导入映射配置 -->
+	<bean id="categoryImportConfig" class="com.cartmatic.estore.imports.model.ImportMappingConfig" scope="prototype">
+		<property name="target" value="com.cartmatic.estore.common.model.catalog.Category" />
+		<property name="persistenceHandler" ref="productCategoryPersistenceHandler" />
+		<!-- <property name="importClause" ref="ic_importClause" /> -->
+		<!--初始化属性(不在导入文件列头内)-->
+		<property name="initData">
+			<list>
+				<ref bean="ipc_status" />
+				<!-- <ref bean="ipc_parentCategory" /> -->
+			</list>
+		</property>
+		<property name="columns">
+			<!--产品导入映射配置涉及的的具体字段-->
+			<list>
+				<ref bean="ipc_categoryCode" />
+				 <ref bean="ipc_categoryName" />
+				<!--
+                ipc_parentCategory 父目录必须是完整的目录名，父目录与子目录直接用">"分隔；例如：服装>男装
+                ipc_parentCategory_name 父目录只要求是所在父目录的名称；如：男装
+                ipc_parentCategory_code 父目录只要求是所在父目录的目录编码；如：man
+                  	以上必须是三选一
+                -->
+                
+				<ref bean="ipc_parentCategory" />
+				<ref bean="ipc_imageUrl" />
+				<ref bean="ipc_sortOrder" />
+				<ref bean="ipc_templatePath" />
+				<ref bean="ipc_metaKeyword" />
+				<ref bean="ipc_metaDescription" />
+				<ref bean="ipc_categoryDescription" />
+			
+				<ref bean="ipc_title_attribure" />
+			</list>
+		</property>
+	</bean>
+	<bean id="ic_importClause" class="com.cartmatic.estore.imports.handler.ImportClause" scope="prototype">
+		<!-- = equals -->
+		<property name="clauses">
+			<map>
+				<entry key="目录编码" value="String@!=@"/>
+			</map>
+		</property>
+	</bean>
+
+	<bean id="ipc_categoryCode" class="com.cartmatic.estore.imports.model.Column" scope="prototype">
+		<property name="attrName" value="categoryCode" />
+		<property name="columnHeader" value="目录编码" />
+		<property name="handler" ref="categoryCategoryCodeHandler" />
+		<property name="required" value="true" />
+		<property name="maxLength" value="32" />
+		<property name="index" value="1" />
+		<property name="replaces">
+			<map>
+				<!-- <entry key="[^\\w]" value="-" /> -->
+				<entry key="CoNtInUe| " value="" />
+				<!-- key是 CoNtInUe|开始的，表示递归连续替换（continue）-->
+				<entry key="CoNtInUe|--" value="-" />
+			</map>
+		</property>
+	</bean>
+
+	<bean id="ipc_categoryName" class="com.cartmatic.estore.imports.model.Column" scope="prototype">
+		<property name="attrName" value="categoryName" />
+		<property name="columnHeader" value="目录名称" />
+		<property name="handler" ref="basicHandler" />
+		<property name="maxLength" value="128" />
+		<property name="required" value="true" />
+		<property name="index" value="2" />
+	</bean>
+
+	<bean id="ipc_parentCategory" class="com.cartmatic.estore.imports.model.Column" scope="prototype">
+		<property name="attrName" value="parentCategory" />
+		<property name="columnHeader" value="父目录" />
+		<property name="split" value=">" />
+		<property name="handler" ref="categoryParentCategoryHandler" />
+		<property name="index" value="3" />
+	</bean>
+
+	<bean id="ipc_parentCategory_name" class="com.cartmatic.estore.imports.model.Column" scope="prototype">
+		<property name="attrName" value="parentCategory" />
+		<property name="columnHeader" value="父目录" />
+		<property name="handler" ref="categoryParentCategoryHandler_name" />
+		<property name="index" value="3" />
+		<property name="defaultValue" value="" />
+	</bean>
+
+	<bean id="ipc_parentCategory_code" class="com.cartmatic.estore.imports.model.Column" scope="prototype">
+		<property name="attrName" value="parentCategory" />
+		<property name="columnHeader" value="父目录" />
+		<property name="handler" ref="categoryParentCategoryHandler_code" />
+		<property name="index" value="3" />
+	</bean>
+
+	<bean id="ipc_status" class="com.cartmatic.estore.imports.model.Column" scope="prototype">
+		<property name="attrName" value="status" />
+		<property name="columnHeader" value="状态" />
+		<property name="handler" ref="basicHandler" />
+		<property name="required" value="true" />
+		<property name="index" value="4" />
+		<property name="selects">
+			<map>
+				<entry key="激活" value="1" />
+				<entry key="未激活" value="2" />
+				<entry key="非激活" value="2" />
+			</map>
+		</property>
+		<property name="defaultValue" value="1"/>
+	</bean>
+
+	<bean id="ipc_imageUrl" class="com.cartmatic.estore.imports.model.Column" scope="prototype">
+		<property name="attrName" value="imageUrl" />
+		<property name="columnHeader" value="目录图片" />
+		<property name="handler" ref="basicHandler" />
+		<property name="prefix" value="productMedia/" />
+	</bean>
+
+	<bean id="ipc_sortOrder" class="com.cartmatic.estore.imports.model.Column" scope="prototype">
+		<property name="attrName" value="sortOrder" />
+		<property name="columnHeader" value="顺序" />
+		<property name="handler" ref="basicHandler" />
+		<property name="required" value="true" />
+	</bean>
+
+	<bean id="ipc_templatePath" class="com.cartmatic.estore.imports.model.Column" scope="prototype">
+		<property name="attrName" value="templatePath" />
+		<property name="columnHeader" value="模版路径" />
+		<property name="handler" ref="basicHandler" />
+	</bean>
+
+	<bean id="ipc_metaKeyword" class="com.cartmatic.estore.imports.model.Column" scope="prototype">
+		<property name="attrName" value="metaKeyword" />
+		<property name="columnHeader" value="Meta 关键字" />
+		<property name="handler" ref="basicHandler" />
+	</bean>
+
+	<bean id="ipc_metaDescription" class="com.cartmatic.estore.imports.model.Column" scope="prototype">
+		<property name="attrName" value="metaDescription" />
+		<property name="columnHeader" value="页面Meta描述内容" />
+		<property name="handler" ref="basicHandler" />
+		<property name="maxLength" value="256" />
+	</bean>
+
+	<bean id="ipc_categoryDescription" class="com.cartmatic.estore.imports.model.Column" scope="prototype">
+		<property name="attrName" value="categoryDescription" />
+		<property name="columnHeader" value="描述" />
+		<property name="handler" ref="basicHandler" />
+	</bean>
+	
+	<bean id="ipc_title_attribure" class="com.cartmatic.estore.imports.model.Column" scope="prototype">
+		<property name="attrName" value="cat_title" />
+		<property name="columnHeader" value="标题" />
+		<property name="handler" ref="attributeHandler" />
+	</bean>
+
+	<bean id="categoryParentCategoryHandler" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.imports.handler.category.CategoryParentCategoryHandler" autowire="byName">
+				<property name="categoryType" value="1" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="categoryParentCategoryHandler_name" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.imports.handler.category.CategoryParentCategoryHandler2" autowire="byName">
+				<property name="categoryType" value="1" />
+				<property name="name" value="true" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="categoryParentCategoryHandler_code" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.imports.handler.category.CategoryParentCategoryHandler2" autowire="byName">
+				<property name="categoryType" value="1" />
+				<property name="name" value="false" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="categoryCategoryCodeHandler" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.imports.handler.category.CategoryCategoryCodeHandler" autowire="byName" />
+		</property>
+	</bean>
+
+	<bean id="productCategoryPersistenceHandler" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.imports.handler.category.ProductCategoryPersistenceHandlerImpl" autowire="byName">
+			</bean>
+		</property>
+		<property name="transactionAttributes">
+			<props merge="true">
+				<prop key="validate">PROPAGATION_NOT_SUPPORTED,readOnly</prop>
+				<prop key="saveOrUpdate">PROPAGATION_REQUIRES_NEW,ISOLATION_READ_COMMITTED</prop>
+			</props>
+		</property>
+	</bean>
+</beans>

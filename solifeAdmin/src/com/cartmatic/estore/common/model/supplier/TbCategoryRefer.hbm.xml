@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.supplier.TbCategoryRefer"
+        table="TB_CATEGORY_REFER"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="tbCategoryReferId"
+            column="tbCategoryReferId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+         <property
+            name="tbCategoryId"
+            type="java.lang.Long"
+            update="true"
+            insert="true"
+            access="property"
+            column="tbCategoryId"
+            length="19"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="tbCategoryName"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="tbCategoryName"
+            length="256"
+            not-null="false"
+            unique="false"
+        />
+     <!-- imported bi-directional many-to-one association to Category -->
+		<many-to-one
+			name="category"
+			class="com.cartmatic.estore.common.model.catalog.Category"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="categoryId" />
+		</many-to-one>
+    </class>
+</hibernate-mapping>

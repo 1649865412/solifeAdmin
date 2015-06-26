@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!-- =============================================================== -->
+<!-- Ant build file to run codegen                                   -->
+<!-- =============================================================== -->
+<project name="codegen" default="gen-specified" basedir=".">
+	
+	<!--不再在properties文件里面配置framework等，而基本上也没有什么参数需要配置的-->
+	<!--<loadproperties srcFile="${basedir}/conf/generator.properties" />-->
+
+	<target name="generate" depends="">
+		<condition property="specifiedTables" value="@specifiedTables">
+			<not>
+				<isset property="specifiedTables" />
+			</not>
+		</condition>
+		<java classname="com.codegenerator.runner.AppFuseGenerator" fork="true">
+			<classpath>
+				<pathelement location="${basedir}/" />
+				<pathelement location="${basedir}/conf/" />
+				<fileset dir="${basedir}/lib">
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+			<jvmarg value="-Dfile.encoding=UTF-8"/>
+			<arg value="${specifiedTables}" />
+			<arg value="sys=appfuse" />
+			<arg value="forcedOverwrite=${forcedOverwrite}" />
+			<arg value="removeCode=${removeCode}" />
+		</java>
+	</target>
+
+	<target name="gen-specified">
+		<input message="Specify table(Default: specifiedTables file):" addproperty="specifiedTables" defaultvalue="@specifiedTables" />
+		<antcall target="generate">
+			<param name="forcedOverwrite" value="false" />
+		</antcall>
+	</target>
+
+	<target name="gen-overwrite">
+		<input message="Specify table(Default: specifiedTables file):" addproperty="specifiedTables" defaultvalue="@specifiedTables" />
+		<antcall target="generate">
+			<param name="forcedOverwrite" value="true" />
+		</antcall>
+	</target>
+
+	<target name="gen-all">
+		<property name="specifiedTables" value="@specifiedTables" />
+		<antcall target="generate">
+			<param name="forcedOverwrite" value="true" />
+		</antcall>
+	</target>
+
+	<target name="remove-generated">
+		<input message="Specify table(Default: specifiedTables file):" addproperty="specifiedTables" defaultvalue="@specifiedTables" />
+		<antcall target="generate">
+			<param name="removeCode" value="true" />
+		</antcall>
+	</target>
+
+</project>

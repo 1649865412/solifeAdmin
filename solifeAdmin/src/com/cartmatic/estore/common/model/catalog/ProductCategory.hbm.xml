@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.cartmatic.estore.common.model.catalog.ProductCategory" table="PRODUCT_CATEGORY" select-before-update="false" dynamic-update="false" dynamic-insert="false" optimistic-lock="version">
+		<id name="productCategoryId" column="productCategoryId" type="java.lang.Integer" length="10">
+			<generator class="native" />
+		</id>
+		<property name="isMainCategory" type="java.lang.Short" update="true" insert="true" access="property" column="isMainCategory" length="5" not-null="true" unique="false" />
+		<property name="categoryPath" type="java.lang.String" update="true" insert="true" access="property" column="categoryPath" length="32" not-null="true" unique="false" />
+		<property name="sortOrder" type="java.lang.Integer" update="true" insert="true" access="property" column="sortOrder" length="10" not-null="false" unique="false" />
+		<!-- imported bi-directional many-to-one association to Product -->
+		<many-to-one name="product" class="com.cartmatic.estore.common.model.catalog.Product" not-null="false" fetch="select">
+			<column name="productId" />
+		</many-to-one>
+		<!-- imported bi-directional many-to-one association to Category -->
+		<many-to-one name="category" class="com.cartmatic.estore.common.model.catalog.Category" not-null="false" fetch="select">
+			<column name="categoryId" />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

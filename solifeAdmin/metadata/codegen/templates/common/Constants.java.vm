@@ -1,0 +1,8 @@
+## This is a velocity template
+## to generate The constants from an sql table input
+#set ($table = $sqlTable.Table)
+#set ($class = $utility.makeClassName($sqlTable.EntityName))
+#set ($classVar = $utility.makeFirstLetterLowerCase($class))
+    public static final String ${class}_EDIT_KEY = "${classVar}Form";
+    public static final String ${class}_LIST     = "${classVar}List";
+    

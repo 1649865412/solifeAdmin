@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.cartmatic.estore.common.model.order.OrderAddress"
+		table="order_address" select-before-update="false" dynamic-update="false"
+		dynamic-insert="false" optimistic-lock="version">
+		<id name="orderAddressId" column="orderAddressId" type="java.lang.Integer"
+			length="10">
+			<generator class="native" />
+		</id>
+		<property name="firstname" type="java.lang.String" update="true"
+			insert="true" access="property" column="firstname" length="32"
+			not-null="true" unique="false" />
+		<property name="lastname" type="java.lang.String" update="true"
+			insert="true" access="property" column="lastname" length="32"
+			not-null="false" unique="false" />
+		<property name="title" type="java.lang.String" update="true"
+			insert="true" access="property" column="title" length="8" not-null="true"
+			unique="false" />
+		<property name="phoneNumber" type="java.lang.String" update="true"
+			insert="true" access="property" column="phoneNumber" length="32"
+			not-null="false" unique="false" />
+		<property name="faxNumber" type="java.lang.String" update="true"
+			insert="true" access="property" column="faxNumber" length="32"
+			not-null="false" unique="false" />
+		<property name="postalcode" type="java.lang.String" update="true"
+			insert="true" access="property" column="postalcode" length="12"
+			not-null="false" unique="false" />
+		<property name="country" type="java.lang.String" update="true"
+			insert="true" access="property" column="country" length="64"
+			not-null="true" unique="false" />
+		<property name="state" type="java.lang.String" update="true"
+			insert="true" access="property" column="state" length="64" not-null="false"
+			unique="false" />
+		<property name="section" type="java.lang.String" update="true"
+			insert="true" access="property" column="section" length="64" not-null="false"
+			unique="false" />
+		<property name="city" type="java.lang.String" update="true"
+			insert="true" access="property" column="city" length="64" not-null="false"
+			unique="false" />
+		<property name="address1" type="java.lang.String" update="true"
+			insert="true" access="property" column="address1" length="128"
+			not-null="true" unique="false" />
+		<property name="address2" type="java.lang.String" update="true"
+			insert="true" access="property" column="address2" length="128"
+			not-null="false" unique="false" />
+		<!--
+			exported bi-directional one-to-many association to OrderShipment
+		-->
+		<set name="orderShipments" table="order_shipment" lazy="true"
+			inverse="true" cascade="save-update" sort="unsorted">
+			<key>
+				<column name="shippingAddressId" />
+			</key>
+			<one-to-many class="com.cartmatic.estore.common.model.order.OrderShipment" />
+		</set>
+		<!-- exported bi-directional one-to-many association to SalesOrder -->
+		<set name="salesOrders" table="sales_order" lazy="true" inverse="true"
+			cascade="save-update" sort="unsorted">
+			<key>
+				<column name="billingAddressId" />
+			</key>
+			<one-to-many class="com.cartmatic.estore.common.model.order.SalesOrder" />
+		</set>
+	</class>
+</hibernate-mapping>

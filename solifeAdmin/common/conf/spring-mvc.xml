@@ -1,0 +1,1042 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans  
+	xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:mvc="http://www.springframework.org/schema/mvc"  
+    xmlns:context="http://www.springframework.org/schema/context"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+    xsi:schemaLocation="
+            http://www.springframework.org/schema/beans  
+            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd  
+            http://www.springframework.org/schema/context   
+            http://www.springframework.org/schema/context/spring-context-3.0.xsd  
+            http://www.springframework.org/schema/mvc  
+            http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd" 
+    default-lazy-init="true" default-autowire="byName">
+    
+    <mvc:annotation-driven validator="beanValidator" />
+    <context:component-scan base-package="com.cartmatic.estoresa.mobileapp" />
+    
+	<bean  id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="exceptionMappings">
+			<props>
+				<prop key="com.cartmatic.estore.exception.TrialNotSupportlException">trialNotSupport</prop>
+				<prop key="java.lang.Exception">reportError</prop>
+				<prop key="java.lang.RuntimeException">reportError</prop>
+			</props>
+		</property>
+		<property name="defaultErrorView" value="reportError"/>
+		<property name="defaultStatusCode" value="500"/>
+	</bean>
+
+	<bean id="baseController" class="com.cartmatic.estore.core.controller.BaseController" abstract="true">
+		<property name="methodNameResolver" ref="methodNameResolver" />
+	</bean>
+	
+	<!-- <bean id="baseJspController" class="com.cartmatic.estore.core.controller.BaseJspController">
+		<property name="methodNameResolver" ref="methodNameResolver" />
+	</bean> -->
+
+	<bean id="genericController" class="com.cartmatic.estore.core.controller.GenericController" abstract="true">
+		<property name="methodNameResolver" ref="methodNameResolver" />
+		<property name="validator" ref="beanValidator"/>
+	</bean>
+
+	<bean id="methodNameResolver"  class="org.springframework.web.servlet.mvc.multiaction.ParameterMethodNameResolver">
+		<property  name="paramName" value="doAction"/>
+		<!-- Request using get method will call the defaultAction and load the view by page name
+		 parsed from URL. Controller can overide this defaultAction to provide specific processing. -->
+		<property name="defaultMethodName" value="defaultAction"/>
+	</bean>
+
+	<bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
+    <bean class="org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter" />
+	<!-- Add additional controller beans here -->
+	<bean id="filenameController" class="org.springframework.web.servlet.mvc.UrlFilenameViewController" />
+
+	<!-- View Resolver for JSPs -->
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="requestContextAttribute" value="rc" />
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+		<!-- <property name="prefix" value="/WEB-INF/pages/" /> -->
+		<property name="prefix" value="/pages/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+	
+	<bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="defaultHandler" ref="filenameController" />
+		<property name="mappings">
+			<props>
+				<!-- Start of URL mappings -->
+				<prop key="/selector/regionSelector.html">regionController</prop>
+				<prop key="/system/region/byType.html">regionSelectorController</prop>
+				<prop key="/system/region/byParentIdAndType.html">regionSelectorController</prop>
+				<prop key="/test/**/*.html">testController</prop>
+				<!-- <prop key="/login.html">baseJspController</prop> -->
+				<prop key="/jCaptcha.html">jCaptchaController</prop>
+				<prop key="/editProfile.html">profileFormController</prop>
+				<prop key="/modifyPassword.html">modifyPasswordFormController</prop>
+				<!-- <prop key="/index.html">baseJspController</prop> -->
+				<prop key="/dialog/upload.html">uploadController</prop>
+				
+				<!-- <prop key="/report/summary/summaryReports.html">baseJspController</prop> -->
+				<prop key="/recentView/recentView.html">recentViewController</prop>
+				<prop key="/system/log4jMgr.html">log4jMgrController</prop>
+                <prop key="/system/schedulers.html">schedulerMgrController</prop>
+                <prop key="/system/scheduler_trigger.html">schedulerTriggerMgrController</prop>
+				 <!-- <prop key="/catalog/index.html">baseJspController</prop> 
+				<prop key="/content/index.html">baseJspController</prop>
+				<prop key="/customer/index.html">baseJspController</prop>
+				<prop key="/other/index.html">baseJspController</prop>
+				<prop key="/sales/index.html">baseJspController</prop>
+				<prop key="/system/index.html">baseJspController</prop>
+				<prop key="/report/index.html">baseJspController</prop>
+				<prop key="/order/index.html">baseJspController</prop>
+                <prop key="/inventory/index.html">baseJspController</prop>-->
+				<prop key="/postLogin.html">postLoginController</prop>
+				<prop key="/loginError.html">loginErrorController</prop>
+				<prop key="/scripts/**/*.html">plainHtmlController</prop>
+<!-- start:  Generated for AppRole From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/system/appRole.html">appRoleController</prop>
+<!-- end:  Generated for AppRole From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for SystemConfig From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/system/systemConfig.html">systemConfigController</prop>
+<!-- end:  Generated for SystemConfig From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for Country From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/system/country.html">countryController</prop>
+<!-- end:  Generated for Country From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/system/city/dialog.html">countryController</prop>
+<!-- start:  Generated for ShippingRate From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/system/shippingRate/dialog.html">shippingRateController</prop>
+<!-- end:  Generated for ShippingRate From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for ShippingMethod From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/system/shippingMethod.html">shippingMethodController</prop>
+<!-- end:  Generated for ShippingMethod From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for Carrier From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/system/carrier.html">carrierController</prop>
+<!-- end:  Generated for Carrier From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for Region From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/system/region.html">regionController</prop>
+<!-- end:  Generated for Region From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for RegionItem From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/system/regionItem.html">regionItemController</prop>
+				<prop key="/system/regionItem/dialog.html">regionItemController</prop>
+<!-- end:  Generated for RegionItem From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for PaymentMethod From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/system/paymentMethod.html">paymentMethodController</prop>
+<!-- end:  Generated for PaymentMethod From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for Tax From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/system/tax.html">taxController</prop>
+<!-- end:  Generated for Tax From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for TaxRate From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/system/taxRate.html">taxRateController</prop>
+<!-- end:  Generated for TaxRate From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for Customer From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/customer/customer.html">customerController</prop>
+				<prop key="/customer/emailCustomer.html">customerEmailFormController</prop>
+<!-- end:  Generated for Customer From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for GiftCertificate From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/sales/giftCertificate.html">giftCertificateController</prop>
+<!-- end:  Generated for GiftCertificate From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for ProductAdvertisement From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/content/productAdvertisement.html">productAdvertisementController</prop>
+<!-- end:  Generated for ProductAdvertisement From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for AdPositionType From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/content/adPositionType.html">adPositionTypeController</prop>
+<!-- end:  Generated for AdPositionType From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for Advertisement From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/content/advertisement.html">advertisementController</prop>
+<!-- end:  Generated for Advertisement From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for AppAdmin From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/system/appAdmin.html">appAdminController</prop>
+<!-- end:  Generated for AppAdmin From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for SystemLanguage From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/system/systemLanguage.html">systemLanguageController</prop>
+<!-- end:  Generated for SystemLanguage From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/customer/wishlistItems.html">wishlistItemController</prop>
+				<prop key="/customer/shoppingcartItem*.html">shoppingcartItemController</prop>
+<!-- start:  Generated for AppAudit From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/system/appAudit.html">appAuditController</prop>
+<!-- end:  Generated for AppAudit From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for RecommendedProduct From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/sales/recommendedTypeForCatalog.html">recommendedTypeForCatalogController</prop>
+<!-- end:  Generated for RecommendedProduct From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for RecommendedType From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/sales/recommendedType.html">recommendedTypeController</prop>
+				<prop key="/catalog/recommendedProduct/dialog.html">recommendedProductController</prop>
+<!-- end:  Generated for RecommendedType From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for SystemMessage From Template: spring-mvc.xml.urlvm 
+				<prop key="/content/systemMessage.html">systemMessageController</prop> -->
+<!-- end:  Generated for SystemMessage From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for PaymentHistory From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/system/paymentHistory.html">paymentHistoryController</prop>
+<!-- end:  Generated for PaymentHistory From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for Report From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/report/simple/*">simpleReportController</prop>				
+<!-- end:  Generated for Report From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/report/jasperReport.html">jasperReportController</prop>
+<!-- start:  Generated for Content From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/content/contentCategory.html">contentCategoryController</prop>
+				<prop key="/content/editContent.html">contentController</prop>
+				<prop key="/content/content.html">contentController</prop>
+				<prop key="/content/content/dialog.html">contentController</prop>
+				<prop key="/content/content/window.html">contentController</prop>
+<!-- end:  Generated for Content From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for SystemVersion From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/system/systemVersion.html">systemVersionController</prop>
+<!-- end:  Generated for SystemVersion From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for productType From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/catalog/productTypes.html">productTypeController</prop>
+<!-- end:  Generated for CategoryCategory From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for Wrap From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/system/wrap.html">wrapController</prop>
+<!-- end:  Generated for Wrap From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/system/attribute.html">attributeController</prop>
+<!-- start:  Generated for Brand From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/catalog/brand.html">brandController</prop>
+<!-- end:  Generated for Brand From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for Inventory From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/inventory/inventory.html">inventoryController</prop>
+                <prop key="/inventory/inventory/dialog.html">inventoryController</prop>
+                <prop key="/inventory/inventory/window.html">inventoryController</prop>
+<!-- end:  Generated for Inventory From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for Product From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/catalog/product.html">productController</prop>
+				<prop key="/catalog/product/dialog.html">productController</prop>
+				<prop key="/catalog/product/window.html">productController</prop>
+				<prop key="/catalog/*/product.html">productController</prop>
+				<prop key="/catalog/product/promotion*/dialog.html">productPromotionController</prop>
+				<prop key="/**/dashboard.html">dashboardController</prop>
+				<prop key="/selector/productSelector.html">productSelectorController</prop>
+				<prop key="/selector/productSelectorDataList.html">productSelectorController</prop>
+<!-- end:  Generated for Product From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for ProductCategory From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/catalog/productCategory.html">productCategoryController</prop>
+				<prop key="/catalog/productCategory/dialog.html">productCategoryController</prop>
+				<prop key="/catalog/productCategory/window.html">productCategoryController</prop>
+				<prop key="/catalog/contentCategory.html">contentCategoryController</prop>
+				<prop key="/catalog/contentCategory/dialog.html">contentCategoryController</prop>
+				<prop key="/catalog/contentCategory/window.html">contentCategoryController</prop>
+<!-- end:  Generated for ProductCategory From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for ProductDescription From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/catalog/productDescription.html">productDescriptionController</prop>
+<!-- end:  Generated for ProductDescription From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for ProductMedia From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/catalog/productMedia.html">productMediaController</prop>
+<!-- end:  Generated for ProductMedia From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for ProductPackageItem From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/catalog/productPackageItem.html">productPackageItemController</prop>
+<!-- end:  Generated for ProductPackageItem From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for ProductRateItem From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/catalog/productRateItem.html">productRateItemController</prop>
+<!-- end:  Generated for ProductRateItem From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for ProductRateValue From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/catalog/productRateValue.html">productRateValueController</prop>
+<!-- end:  Generated for ProductRateValue From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for ProductReview From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/catalog/productReview.html">productReviewController</prop>
+                <prop key="/catalog/productReview/dialog.html">productReviewController</prop>
+<!-- end:  Generated for ProductReview From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for ProductSku From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/catalog/productSku.html">productSkuController</prop>
+				<prop key="/catalog/productSku/dialog.html">productSkuController</prop>
+				<prop key="/selector/productSkuSelector.html">productSkuSelectorController</prop>
+				<prop key="/selector/productSkuSelectorDataList.html">productSkuSelectorController</prop>
+<!-- end:  Generated for ProductSku From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for ProductSkuOptionValue From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/catalog/productSkuOptionValue.html">productSkuOptionValueController</prop>
+<!-- end:  Generated for ProductSkuOptionValue From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for ProductType From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/catalog/productType.html">productTypeController</prop>
+<!-- end:  Generated for ProductType From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for ProductTypeSkuOption From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/catalog/productTypeSkuOption.html">productTypeSkuOptionController</prop>
+<!-- end:  Generated for ProductTypeSkuOption From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for SkuOption From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/catalog/skuOption.html">skuOptionController</prop>
+				<prop key="/catalog/skuOption/dialog.html">skuOptionController</prop>
+<!-- end:  Generated for SkuOption From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for SkuOptionValue From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/catalog/skuOptionValue.html">skuOptionValueController</prop>
+				<prop key="/catalog/skuOptionValue/dialog.html">skuOptionValueController</prop>
+<!-- end:  Generated for SkuOptionValue From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for WholesalePrice From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/catalog/wholesalePrice.html">wholesalePriceController</prop>
+<!-- end:  Generated for WholesalePrice From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for ProductAttGroupItem From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/catalog/productAttGroupItem.html">productAttGroupItemController</prop>
+<!-- end:  Generated for ProductAttGroupItem From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for ProductAttGroup From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/catalog/productAttGroup.html">productAttGroupController</prop>
+<!-- end:  Generated for ProductAttGroup From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for ProductStat From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/catalog/productStat.html">productStatController</prop>
+<!-- end:  Generated for ProductStat From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for ReviewVote From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/catalog/reviewVote.html">reviewVoteController</prop>
+<!-- end:  Generated for ReviewVote From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for InventoryAudit From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/inventory/inventoryAudit.html">inventoryAuditController</prop>
+<!-- end:  Generated for InventoryAudit From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for PromoRule From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/sales/promoRule.html">promoRuleController</prop>
+<!-- end:  Generated for PromoRule From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for Coupon From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/sales/coupon.html">couponController</prop>
+<!-- end:  Generated for Coupon From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for SalesOrder From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/order/salesOrder.html">salesOrderController</prop>
+				<prop key="/order/salesOrder/dialog.html">salesOrderController</prop>
+				<prop key="/order/window.html">salesOrderController</prop>
+				<prop key="/order/dialog.html">salesOrderController</prop>
+<!-- end:  Generated for SalesOrder From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for TransferRecord From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/order/transferRecord.html">transferRecordController</prop>
+<!-- end:  Generated for TransferRecord From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for OrderPickList From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/inventory/orderPickList.html">orderPickListController</prop>
+				<prop key="/inventory/picklist/dialog.html">orderPickListController</prop>
+				<prop key="/inventory/orderPickListExtend.html">orderPickListExtendController</prop>
+				<prop key="/inventory/orderShipment.html">orderShipmentController</prop>
+<!-- end:  Generated for OrderPickList From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for OrderReturn From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/order/orderReturn.html">orderReturnController</prop>
+				<prop key="/order/return/dialog.html">orderReturnController</prop>
+				<prop key="/inventory/orderReturn.html">orderReturnController</prop>
+				<prop key="/inventory/return/dialog.html">orderReturnController</prop>
+<!-- end:  Generated for OrderReturn From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for OrderSettlement From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/order/orderSettlement.html">orderSettlementController</prop>
+<!-- end:  Generated for OrderSettlement From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for OrderMessage From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/order/orderMessage.html">orderMessageController</prop>
+<!-- end:  Generated for OrderMessage From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for SalesOrderGeoip From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/order/salesOrderGeoip.html">salesOrderGeoipController</prop>
+<!-- end:  Generated for SalesOrderGeoip From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for SystemQueue From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/system/systemQueue.html">systemQueueController</prop>
+<!-- end:  Generated for SystemQueue From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for Address From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/customer/address.html">addressController</prop>
+<!-- end:  Generated for Address From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for Favorite From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/customer/favorite.html">favoriteController</prop>
+<!-- end:  Generated for Favorite From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for Feedback From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/customer/feedback.html">feedbackController</prop>
+<!-- end:  Generated for Feedback From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for Membership From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/customer/membership.html">membershipController</prop>
+<!-- end:  Generated for Membership From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for ShopPoint From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/customer/shopPoint.html">shopPointController</prop>
+<!-- end:  Generated for ShopPoint From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for ShopPointHistory From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/customer/shopPointHistory.html">shopPointHistoryController</prop>
+<!-- end:  Generated for ShopPointHistory From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for ValidationSession From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/customer/validationSession.html">validationSessionController</prop>
+<!-- end:  Generated for ValidationSession From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for Wishlist From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/customer/wishlist.html">wishlistController</prop>
+<!-- end:  Generated for Wishlist From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for WishlistItem From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/customer/wishlistItem.html">wishlistItemController</prop>
+<!-- end:  Generated for WishlistItem From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for AppUser From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/system/appUser.html">appUserController</prop>
+<!-- end:  Generated for AppUser From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for AccessoryGroup From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/catalog/accessoryGroup.html">accessoryGroupController</prop>
+				<prop key="/catalog/accessoryGroup/dialog.html">accessoryGroupController</prop>
+<!-- end:  Generated for AccessoryGroup From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for Accessory From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/catalog/accessory.html">accessoryController</prop>
+				<prop key="/catalog/accessory/dialog.html">accessoryController</prop>
+<!-- end:  Generated for Accessory From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for Supplier From Template: spring-mvc.xml.urlvm
+				<prop key="/supplier/index.html">supplierController</prop>
+  -->
+
+				<prop key="/supplier/supplier.html">supplierController</prop>
+<!-- end:  Generated for Supplier From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for SupplierProduct From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/supplier/supplierProduct.html">supplierProductController</prop>
+				<prop key="/supplier/productPrice.html">productPriceController</prop>
+<!-- end:  Generated for SupplierProduct From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for PurchaseOrder From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/supplier/purchaseOrder.html">purchaseOrderController</prop>
+<!-- end:  Generated for PurchaseOrder From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for AwaitingPurchase From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/supplier/awaitingPurchase.html">awaitingPurchaseController</prop>
+<!-- end:  Generated for AwaitingPurchase From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for Currency From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/system/currency.html">currencyController</prop>
+<!-- end:  Generated for Currency From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for PatchExecuteHistory From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/other/patchExecuteHistory.html">patchExecuteHistoryController</prop>
+<!-- end:  Generated for PatchExecuteHistory From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for TbCategoryRefer From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/supplier/tbCategoryRefer.html">tbCategoryReferController</prop>
+<!-- end:  Generated for TbCategoryRefer From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for TbCatPropRefer From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/supplier/tbCatPropRefer.html">tbCatPropReferController</prop>
+<!-- end:  Generated for TbCatPropRefer From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for TbCatPropValueRefer From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/supplier/tbCatPropValueRefer.html">tbCatPropValueReferController</prop>
+<!-- end:  Generated for TbCatPropValueRefer From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for Catalog From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/catalog/catalog.html">catalogController</prop>
+				<prop key="/catalog/catalog/window.html">catalogController</prop>
+<!-- end:  Generated for Catalog From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for Store From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/system/store.html">storeController</prop>
+<!-- end:  Generated for Store From Template: spring-mvc.xml.urlvm  -->
+<!-- start:  Generated for TextMessage From Template: spring-mvc.xml.urlvm  -->
+				<prop key="/customer/textMessage.html">textMessageController</prop>
+<!-- end:  Generated for TextMessage From Template: spring-mvc.xml.urlvm  -->
+<!-- End of URL mappings -->
+                <prop key="/system/import.html">importController</prop>
+                <prop key="/system/searchServer.html">searchServerController</prop>
+                
+                <prop key="/selector/supplierSelector.html">supplierSelectorController</prop>
+                <prop key="/selector/supplierSelectorDataList.html">supplierSelectorController</prop>
+                
+                <prop key="/selector/userSelector.html">userSelectorController</prop>
+                <prop key="/selector/userSelectorDataList.html">userSelectorController</prop>
+                <prop key="/system/adminManageBoard.html">adminManageBoardController</prop>
+                
+                <prop key="/activity/award.html">awardController</prop>
+                <prop key="/activity/userAward.html">userAwardController</prop>
+                
+			</props>
+		</property>
+	</bean>
+
+	
+
+	<bean id="plainHtmlController" class="com.cartmatic.estore.core.controller.PlainHtmlController" />
+
+	<bean id="postLoginController" class="com.cartmatic.estore.webapp.action.PostLoginController" parent="baseController" autowire="byName">
+	</bean>
+
+	<bean id="loginErrorController" class="com.cartmatic.estore.core.controller.LoginErrorController" parent="baseController" autowire="byName">
+	</bean>
+	
+	<bean id="log4jMgrController" class="com.cartmatic.estore.core.controller.Log4jMgrController" parent="baseController" autowire="byName">
+	    <property name="defaultView" value="system/log4jMgr"/>
+		<property name="successView" value="/system/log4jMgr.html"/>
+	</bean>
+    <bean id="schedulerMgrController" class="com.cartmatic.estore.system.scheduler.web.SchedulerMgrController" parent="baseController" autowire="byName">
+    	<property name="defaultView" value="system/schedulerMgr"/>
+		<property name="successView" value="/system/schedulers.html"/>
+    </bean>
+    <bean id="schedulerTriggerMgrController" class="com.cartmatic.estore.system.scheduler.web.SchedulerTriggerMgrController" parent="baseController" autowire="byName">
+    </bean>
+
+<!-- start:  Generated for AppRole From Template: spring-mvc.xml.beansvm  -->
+	<bean id="appRoleController" class="com.cartmatic.estoresa.system.web.action.AppRoleController" parent="genericController" autowire="byName">
+		<property name="appRoleManager" ref="appRoleManager"/>
+	</bean>
+<!-- end:  Generated for AppRole From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for SystemConfig From Template: spring-mvc.xml.beansvm  -->
+	<bean id="systemConfigController" class="com.cartmatic.estoresa.system.web.action.SystemConfigController" parent="genericController">
+		<property name="systemConfigManager" ref="systemConfigManager"/>
+	</bean>
+<!-- end:  Generated for SystemConfig From Template: spring-mvc.xml.beansvm  -->
+
+<!-- start:  Generated for Category From Template: spring-mvc.xml.beansvm  -->
+	<bean id="categoryController" class="com.cartmatic.estoresa.catalog.web.action.CategoryController" parent="genericController" abstract="true">
+		
+	</bean>
+<!-- end:  Generated for Category From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for Region From Template: spring-mvc.xml.beansvm  -->
+	<bean id="regionController" class="com.cartmatic.estoresa.system.web.action.RegionController" parent="genericController">
+		<property name="regionManager" ref="regionManager"/>
+	</bean>
+	<bean id="regionSelectorController" class="com.cartmatic.estore.system.web.action.RegionSelectorController" parent="genericController">
+		<property name="regionManager" ref="regionManager"/>
+	</bean>
+	
+<!-- end:  Generated for Region From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for RegionItem From Template: spring-mvc.xml.beansvm  -->
+	<bean id="regionItemController" class="com.cartmatic.estoresa.system.web.action.RegionItemController" parent="genericController" autowire="byName">
+		<property name="regionItemManager" ref="regionItemManager"/>
+	</bean>
+<!-- end:  Generated for RegionItem From Template: spring-mvc.xml.beansvm  -->
+	
+<!-- start:  Generated for ShippingRate From Template: spring-mvc.xml.beansvm  -->
+	<bean id="shippingRateController" class="com.cartmatic.estoresa.system.web.action.ShippingRateController" parent="genericController" autowire="byName">
+		<property name="shippingRateManager" ref="shippingRateManager"/>
+		<property name="formView" value="system/shipping/shippingRateForm"/>
+	</bean>
+<!-- end:  Generated for ShippingRate From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for ShippingMethod From Template: spring-mvc.xml.beansvm  -->
+	<bean id="shippingMethodController" class="com.cartmatic.estoresa.system.web.action.shipping.ShippingMethodController" parent="genericController" autowire="byName">
+		<property name="shippingMethodManager" ref="shippingMethodManager"/>
+		<property name="formView" value="system/shipping/shippingMethodForm"/>
+	</bean>
+<!-- end:  Generated for ShippingMethod From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for Carrier From Template: spring-mvc.xml.beansvm  -->
+	<bean id="carrierController" class="com.cartmatic.estoresa.system.web.action.shipping.CarrierController" parent="genericController" autowire="byName">
+		<property name="carrierManager" ref="carrierManager"/>
+        <property name="listView" value="system/shipping/carrierList"/>
+		<property name="formView" value="system/shipping/carrierForm"/>
+	</bean>
+<!-- end:  Generated for Carrier From Template: spring-mvc.xml.beansvm  -->
+
+
+<!-- start:  Generated for Country From Template: spring-mvc.xml.beansvm  -->
+	<bean id="countryController" class="com.cartmatic.estoresa.system.web.action.CountryController"  parent="genericController" autowire="byName">
+		 <property name="cityView" value="system/city"/>
+         <property name="mappedUrl" value="/system/country.html"/>
+	</bean>
+	
+<!-- end:  Generated for Country From Template: spring-mvc.xml.beansvm  -->
+
+<!-- start:  Generated for Tax From Template: spring-mvc.xml.beansvm  -->
+	<bean id="taxController" class="com.cartmatic.estoresa.system.web.action.TaxController" parent="genericController" autowire="byName">
+		<property name="taxManager" ref="taxManager"/>
+	</bean>
+
+<!-- 	<bean id="taxFormController" class="com.cartmatic.estoresa.system.web.action.TaxFormController" >
+		<property name="commandName" value="tax"/>
+		<property name="commandClass" value="com.cartmatic.estore.common.model.system.Tax"/>
+		<property name="formView" value="system/taxForm"/>
+		<property name="successView" value="taxs.html"/>
+		<property name="taxManager" ref="taxManager"/>
+		<property name="validator" ref="beanValidator"/>
+	</bean> -->
+<!-- end:  Generated for Tax From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for TaxRate From Template: spring-mvc.xml.beansvm  -->
+	<bean id="taxRateController" class="com.cartmatic.estoresa.system.web.action.TaxRateController" parent="genericController" autowire="byName">
+		<property name="taxRateManager" ref="taxRateManager"/>
+	</bean>
+<!-- end:  Generated for TaxRate From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for Customer From Template: spring-mvc.xml.beansvm  -->
+	<bean id="customerController" class="com.cartmatic.estoresa.customer.web.action.CustomerController" parent="genericController" autowire="byName">
+		<property name="customerManager" ref="customerManager"/>
+	</bean>
+<!-- end:  Generated for Customer From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for GiftCertificate From Template: spring-mvc.xml.beansvm  -->
+	<bean id="giftCertificateController" class="com.cartmatic.estoresa.sales.web.action.GiftCertificateController" parent="genericController" autowire="byName">
+	</bean>
+<!-- end:  Generated for GiftCertificate From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for Wrap From Template: spring-mvc.xml.beansvm  -->
+	<bean id="wrapController" class="com.cartmatic.estoresa.system.web.action.WrapController" parent="genericController">
+		<property name="wrapManager" ref="wrapManager"/>
+	</bean>
+<!-- end:  Generated for Wrap From Template: spring-mvc.xml.beansvm  -->
+
+<!-- start:  Generated for PaymentMethod From Template: spring-mvc.xml.beansvm  -->
+	<bean id="paymentMethodController" class="com.cartmatic.estoresa.system.web.action.PaymentMethodController" parent="genericController">
+		<property name="paymentMethodManager" ref="paymentMethodManager"/>
+	</bean>
+<!-- end:  Generated for PaymentMethod From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for ProductAdvertisement From Template: spring-mvc.xml.beansvm  -->
+	<bean id="productAdvertisementController" class="com.cartmatic.estoresa.content.web.action.ProductAdvertisementController" parent="genericController" autowire="byName">
+		<property name="productAdvertisementManager" ref="productAdvertisementManager"/>
+	</bean>
+<!-- end:  Generated for ProductAdvertisement From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for AdPositionType From Template: spring-mvc.xml.beansvm  -->
+	<bean id="adPositionTypeController" class="com.cartmatic.estoresa.content.web.action.AdPositionTypeController" parent="genericController" autowire="byName">
+		<property name="adPositionTypeManager" ref="adPositionTypeManager"/>
+	</bean>
+<!-- end:  Generated for AdPositionType From Template: spring-mvc.xml.beansvm  -->
+
+<!-- start:  Generated for Advertisement From Template: spring-mvc.xml.beansvm  -->
+	<bean id="advertisementController" class="com.cartmatic.estoresa.content.web.action.AdvertisementController" parent="genericController" autowire="byName">
+		<property name="advertisementManager" ref="advertisementManager"/>
+	</bean>
+<!-- end:  Generated for Advertisement From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for AppAdmin From Template: spring-mvc.xml.beansvm  -->
+	<bean id="appAdminController" class="com.cartmatic.estoresa.system.web.action.AppAdminController" parent="genericController" autowire="byName">
+		<property name="appAdminManager" ref="appAdminManager"/>
+	</bean>
+
+	<bean id="profileFormController" class="com.cartmatic.estoresa.system.web.action.ProfileFormController" parent="baseController" autowire="byName">
+		<property name="entityClassName" value="appAdmin"/>
+		<property name="formModelName" value="appAdmin"/>
+		<property name="formView" value="editProfile"/>
+		<property name="successView" value="editProfile.html"/>
+		<property name="cancelFormView" value="redirect:/index.html"/>
+		<property name="appAdminManager" ref="appAdminManager"/>
+		<property name="validator" ref="beanValidator"/>
+	</bean>
+<!-- end:  Generated for AppAdmin From Template: spring-mvc.xml.beansvm  -->
+
+<!-- start:  Generated for SystemLanguage From Template: spring-mvc.xml.beansvm  -->
+	<bean id="systemLanguageController" class="com.cartmatic.estoresa.system.web.action.SystemLanguageController" parent="genericController">
+		<property name="systemLanguageManager" ref="systemLanguageManager"/>
+	</bean>
+
+<!-- end:  Generated for SystemLanguage From Template: spring-mvc.xml.beansvm  -->
+
+	<bean id="customerEmailFormController" class="com.cartmatic.estoresa.customer.web.action.CustomerEmailFormController" parent="baseController" autowire="byName">
+		<property name="successView" value="customer.html"/>
+		<property name="cancelFormView" value="redirect:/customer/customer.html"/>
+	</bean>
+
+<!-- start:  Generated for AppAudit From Template: spring-mvc.xml.beansvm  -->
+	<bean id="appAuditController" class="com.cartmatic.estoresa.system.web.action.AppAuditController" parent="genericController">
+		<property name="appAuditManager" ref="appAuditManager"/>
+	</bean>
+<!-- end:  Generated for AppAudit From Template: spring-mvc.xml.beansvm  -->
+
+
+<!-- start:  Generated for RecommendedType From Template: spring-mvc.xml.beansvm  -->
+	<bean id="recommendedTypeController" class="com.cartmatic.estoresa.sales.web.action.RecommendedTypeController" parent="genericController" autowire="byName">
+	</bean>
+	<bean id="recommendedTypeForCatalogController" class="com.cartmatic.estoresa.sales.web.action.RecommendedTypeForCatalogController" parent="genericController" autowire="byName">
+	</bean>
+	<bean id="recommendedProductController" class="com.cartmatic.estoresa.sales.web.action.RecommendedProductController" parent="genericController" autowire="byName">
+	</bean>
+	
+<!-- end:  Generated for RecommendedType From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for SystemMessage From Template: spring-mvc.xml.beansvm  -->
+	<bean id="systemMessageController" class="com.cartmatic.estoresa.content.web.action.SystemMessageController" parent="genericController">
+		<property name="systemMessageManager" ref="systemMessageManager"/>
+	</bean>
+<!-- end:  Generated for SystemMessage From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for PaymentHistory From Template: spring-mvc.xml.beansvm  -->
+	<bean id="paymentHistoryController" class="com.cartmatic.estoresa.system.web.action.PaymentHistoryController" parent="genericController">
+		<property name="paymentHistoryManager" ref="paymentHistoryManager"/>
+	</bean>
+<!-- end:  Generated for PaymentHistory From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for Report From Template: spring-mvc.xml.beansvm  -->
+	
+	<bean id="simpleReportController" class="com.cartmatic.estore.report.web.action.SimpleReportController" parent="baseController" autowire="byName">
+		<property name="simpleReportDao" ref="simpleReportDao"/>
+	</bean>
+	
+<!-- end:  Generated for Report From Template: spring-mvc.xml.beansvm  -->
+
+	<bean id="jasperReportController" class="com.cartmatic.estore.report.web.action.JasperReportController" parent="baseController" autowire="byName">
+		<property name="multipartResolver">
+			<bean class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+				<property name="maxUploadSize" value="20971520" />
+			</bean>
+		</property>
+	</bean>
+
+
+	<bean id="modifyPasswordFormController" class="com.cartmatic.estoresa.system.web.action.ModifyPasswordFormController" parent="baseController" autowire="byName">
+		<property name="entityClassName" value="modifyPasswordModel"/>
+		<property name="formModelName" value="modifyPasswordModel"/>
+		<property name="successView" value="modifyPassword.html"/>
+		<property name="cancelFormView" value="redirect:/index.html"/>
+		<property name="appUserManager" ref="appUserManager"/>
+		<property name="validator" ref="beanValidator"/>
+	</bean>
+
+	<bean id="jCaptchaController" class="com.cartmatic.estore.core.controller.JCaptchaController" parent="baseController">
+		<property name="captchaService" ref="imageCaptchaService"/>
+	</bean>
+	
+<!-- start:  Generated for Content From Template: spring-mvc.xml.beansvm  -->
+	<bean id="contentController" class="com.cartmatic.estoresa.content.web.action.ContentController" parent="genericController" autowire="byName">
+	</bean>
+<!-- end:  Generated for Content From Template: spring-mvc.xml.beansvm  -->
+	<bean id="recentViewController" class="com.cartmatic.estore.other.web.action.RecentViewController" parent="baseController" autowire="byName">
+ 		<property name="cacheSeconds" value="360000"/>
+	</bean>
+	
+<!-- start:  Generated for SystemVersion From Template: spring-mvc.xml.beansvm  -->
+	<bean id="systemVersionController" class="com.cartmatic.estoresa.system.web.action.SystemVersionController" parent="genericController" autowire="byName">
+		<property name="systemVersionManager" ref="systemVersionManager"/>
+	</bean>
+<!-- end:  Generated for SystemVersion From Template: spring-mvc.xml.beansvm  -->
+	<bean id="testController" class="com.cartmatic.estoresa.TestController" parent="baseController" autowire="byName"/>
+	
+	<bean id="uploadController"
+		class="com.cartmatic.estore.webapp.action.UploadController">
+		<property name="methodNameResolver" ref="methodNameResolver" />
+		<property name="multipartResolver">
+			<bean class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+				<property name="maxUploadSize" value="209715200" />
+			</bean>
+		</property>
+		<property name="uploadManager" ref="uploadManager" />
+	</bean>	
+	
+<!-- start:  Generated for import From Template: spring-mvc.xml.beansvm  -->
+	<bean id="importController" class="com.cartmatic.estore.imports.web.action.ImportController" autowire="byName">
+        <property name="encodings">
+			<list>
+				<value>GBK</value>
+				<value>GB2312</value>
+				<value>UTF-8</value>
+			</list>
+		</property>
+        <property name="importTypes">
+			<list>
+				<value>product</value>
+				<value>productSku</value>
+				<value>category</value>
+				<value>customer</value>
+			</list>
+		</property>
+    </bean>
+    <bean id="searchServerController" class="com.cartmatic.estoresa.system.web.action.SearchServerController" autowire="byName">
+	</bean>
+<!-- end:  Generated for import From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for Attribute From Template: spring-mvc.xml.beansvm  -->
+	<bean id="attributeController" class="com.cartmatic.estoresa.attribute.web.action.AttributeController" parent="genericController">
+         <property name="attributeManager" ref="attributeManager"/>
+         <property name="formView" value="/attribute/attributeForm"/>
+         <property name="listView" value="/attribute/attributeList"/>
+         <property name="successView" value="/attribute/attributeList"/>
+         <property name="mappedUrl" value="/system/attribute.html"/>
+    </bean>
+<!-- end:  Generated for Attribute From Template: spring-mvc.xml.beansvm  -->
+	<bean id="shoppingcartItemController" class="com.cartmatic.estoresa.customer.web.action.ShoppingcartItemController" parent="genericController" autowire="byName">
+		<property name="listView" value="customer/shoppingcartItemList"/>
+		<property name="statView" value="customer/shoppingcartItemStatList"/>
+	</bean>
+<!-- start:  Generated for Brand From Template: spring-mvc.xml.beansvm  -->
+	<bean id="brandController" class="com.cartmatic.estoresa.catalog.web.action.BrandController" parent="genericController">
+		<property name="brandManager" ref="brandManager"/>
+	</bean>
+<!-- end:  Generated for Brand From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for Inventory From Template: spring-mvc.xml.beansvm  -->
+	<bean id="inventoryController" class="com.cartmatic.estoresa.inventory.web.action.InventoryController" parent="genericController" autowire="byName">
+		<property name="inventoryManager" ref="inventoryManager"/>
+	</bean>
+<!-- end:  Generated for Inventory From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for Product From Template: spring-mvc.xml.beansvm  -->
+	<bean id="productController" class="com.cartmatic.estoresa.catalog.web.action.ProductController" parent="genericController" autowire="byName">
+		<property name="productManager" ref="productManager"/>
+		<property name="listView" value="/catalog/include/productListContent"/>
+	</bean>
+	<bean id="productSelectorController" class="com.cartmatic.estoresa.catalog.web.action.ProductSelectorController" parent="genericController" autowire="byName">
+		<property name="productManager" ref="productManager"/>
+        <property name="lastSearchViewAllowed" value="false"></property>
+	</bean>
+	
+	<bean id="dashboardController" class="com.cartmatic.estoresa.DashboardController" parent="genericController" autowire="byName">
+		<property name="lastSearchViewAllowed" value="false"/>
+	</bean>
+    
+<!-- end:  Generated for Product From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for ProductCategory From Template: spring-mvc.xml.beansvm  -->
+	<bean id="productCategoryController" class="com.cartmatic.estoresa.catalog.web.action.ProductCategoryController" parent="categoryController" autowire="byName">
+		<property name="productCategoryManager" ref="productCategoryManager"/>
+		<property name="formView" value="/catalog/productCategoryForm"></property>
+		<property name="categoryManager" ref="categoryManager"/>
+	</bean>
+	
+	<bean id="contentCategoryController" class="com.cartmatic.estoresa.catalog.web.action.ContentCategoryController" parent="categoryController">
+		<property name="contentManager" ref="contentManager"/>
+		<property name="formView" value="/catalog/include/contentCategoryFormContent"></property>
+		<property name="categoryManager" ref="categoryManager"/>
+		<property name="lastSearchViewAllowed" value="false"></property>
+	</bean>
+	
+<!-- end:  Generated for ProductCategory From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for ProductDescription From Template: spring-mvc.xml.beansvm  -->
+	<bean id="productDescriptionController" class="com.cartmatic.estoresa.catalog.web.action.ProductDescriptionController" parent="genericController">
+		<property name="productDescriptionManager" ref="productDescriptionManager"/>
+	</bean>
+<!-- end:  Generated for ProductDescription From Template: spring-mvc.xml.beansvm  -->
+	<bean id="productPromotionController" class="com.cartmatic.estoresa.catalog.web.action.ProductPromotionController" parent="genericController" autowire="byName">
+	</bean>
+<!-- start:  Generated for ProductMedia From Template: spring-mvc.xml.beansvm  -->
+	<bean id="productMediaController" class="com.cartmatic.estoresa.catalog.web.action.ProductMediaController" parent="genericController">
+		<property name="productMediaManager" ref="productMediaManager"/>
+	</bean>
+<!-- end:  Generated for ProductMedia From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for ProductPackageItem From Template: spring-mvc.xml.beansvm  -->
+	<bean id="productPackageItemController" class="com.cartmatic.estoresa.catalog.web.action.ProductPackageItemController" parent="genericController">
+		<property name="productPackageItemManager" ref="productPackageItemManager"/>
+	</bean>
+<!-- end:  Generated for ProductPackageItem From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for ProductRateItem From Template: spring-mvc.xml.beansvm  -->
+	<bean id="productRateItemController" class="com.cartmatic.estoresa.catalog.web.action.ProductRateItemController" parent="genericController">
+		<property name="productRateItemManager" ref="productRateItemManager"/>
+	</bean>
+<!-- end:  Generated for ProductRateItem From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for ProductRateValue From Template: spring-mvc.xml.beansvm  -->
+	<bean id="productRateValueController" class="com.cartmatic.estoresa.catalog.web.action.ProductRateValueController" parent="genericController">
+		<property name="productRateValueManager" ref="productRateValueManager"/>
+	</bean>
+<!-- end:  Generated for ProductRateValue From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for ProductReview From Template: spring-mvc.xml.beansvm  -->
+	<bean id="productReviewController" class="com.cartmatic.estoresa.catalog.web.action.ProductReviewController" parent="genericController" autowire="byName">
+	</bean>
+<!-- end:  Generated for ProductReview From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for ProductSku From Template: spring-mvc.xml.beansvm  -->
+	<bean id="productSkuController" class="com.cartmatic.estoresa.catalog.web.action.ProductSkuController" parent="genericController" autowire="byName">
+		<property name="productSkuManager" ref="productSkuManager"/>
+		<property name="productManager" ref="productManager"/>
+		<property name="formView" value="catalog/include/productSkuFormInfo"></property>
+		<property name="lastSearchViewAllowed" value="false"></property>
+	</bean>
+	<bean id="productSkuSelectorController" class="com.cartmatic.estoresa.catalog.web.action.ProductSkuSelectorController" parent="genericController" autowire="byName">
+		<property name="productManager" ref="productManager"/>
+        <property name="lastSearchViewAllowed" value="false"></property>
+	</bean>
+<!-- end:  Generated for ProductSku From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for ProductSkuOptionValue From Template: spring-mvc.xml.beansvm  -->
+	<bean id="productSkuOptionValueController" class="com.cartmatic.estoresa.catalog.web.action.ProductSkuOptionValueController" parent="genericController">
+		<property name="productSkuOptionValueManager" ref="productSkuOptionValueManager"/>
+	</bean>
+<!-- end:  Generated for ProductSkuOptionValue From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for ProductType From Template: spring-mvc.xml.beansvm  -->
+	<bean id="productTypeController" class="com.cartmatic.estoresa.catalog.web.action.ProductTypeController" parent="genericController" autowire="byName">
+		<property name="productTypeManager" ref="productTypeManager"/>
+	</bean>
+<!-- end:  Generated for ProductType From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for ProductTypeSkuOption From Template: spring-mvc.xml.beansvm  -->
+	<bean id="productTypeSkuOptionController" class="com.cartmatic.estoresa.catalog.web.action.ProductTypeSkuOptionController" parent="genericController">
+		<property name="productTypeSkuOptionManager" ref="productTypeSkuOptionManager"/>
+	</bean>
+<!-- end:  Generated for ProductTypeSkuOption From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for SkuOption From Template: spring-mvc.xml.beansvm  -->
+	<bean id="skuOptionController" class="com.cartmatic.estoresa.catalog.web.action.SkuOptionController" parent="genericController">
+		<property name="skuOptionManager" ref="skuOptionManager"/>
+	</bean>
+<!-- end:  Generated for SkuOption From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for SkuOptionValue From Template: spring-mvc.xml.beansvm  -->
+	<bean id="skuOptionValueController" class="com.cartmatic.estoresa.catalog.web.action.SkuOptionValueController" parent="genericController">
+		<property name="skuOptionValueManager" ref="skuOptionValueManager"/>
+	</bean>
+<!-- end:  Generated for SkuOptionValue From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for WholesalePrice From Template: spring-mvc.xml.beansvm  -->
+	<bean id="wholesalePriceController" class="com.cartmatic.estoresa.catalog.web.action.WholesalePriceController" parent="genericController">
+		<property name="wholesalePriceManager" ref="wholesalePriceManager"/>
+	</bean>
+<!-- end:  Generated for WholesalePrice From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for ProductAttGroupItem From Template: spring-mvc.xml.beansvm  -->
+	<bean id="productAttGroupItemController" class="com.cartmatic.estoresa.catalog.web.action.ProductAttGroupItemController" parent="genericController">
+		<property name="productAttGroupItemManager" ref="productAttGroupItemManager"/>
+	</bean>
+<!-- end:  Generated for ProductAttGroupItem From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for ProductAttGroup From Template: spring-mvc.xml.beansvm  -->
+	<bean id="productAttGroupController" class="com.cartmatic.estoresa.catalog.web.action.ProductAttGroupController" parent="genericController">
+		<property name="productAttGroupManager" ref="productAttGroupManager"/>
+	</bean>
+<!-- end:  Generated for ProductAttGroup From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for ProductStat From Template: spring-mvc.xml.beansvm  -->
+	<bean id="productStatController" class="com.cartmatic.estoresa.catalog.web.action.ProductStatController" parent="genericController">
+		<property name="productStatManager" ref="productStatManager"/>
+	</bean>
+<!-- end:  Generated for ProductStat From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for ReviewVote From Template: spring-mvc.xml.beansvm  -->
+	<bean id="reviewVoteController" class="com.cartmatic.estoresa.catalog.web.action.ReviewVoteController" parent="genericController">
+		<property name="reviewVoteManager" ref="reviewVoteManager"/>
+	</bean>
+<!-- end:  Generated for ReviewVote From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for InventoryAudit From Template: spring-mvc.xml.beansvm  -->
+	<bean id="inventoryAuditController" class="com.cartmatic.estoresa.inventory.web.action.InventoryAuditController" parent="genericController">
+		<property name="inventoryAuditManager" ref="inventoryAuditManager"/>
+	</bean>
+<!-- end:  Generated for InventoryAudit From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for PromoRule From Template: spring-mvc.xml.beansvm  -->
+	<bean id="promoRuleController" class="com.cartmatic.estoresa.sales.web.action.PromoRuleController" parent="genericController" autowire="byName">
+	</bean>
+<!-- end:  Generated for PromoRule From Template: spring-mvc.xml.beansvm  -->
+
+<!-- start:  Generated for Coupon From Template: spring-mvc.xml.beansvm  -->
+	<bean id="couponController" class="com.cartmatic.estoresa.sales.web.action.CouponController" parent="genericController" autowire="byName">
+	</bean>
+<!-- end:  Generated for Coupon From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for SalesOrder From Template: spring-mvc.xml.beansvm  -->
+	<bean id="salesOrderController" class="com.cartmatic.estoresa.order.web.action.SalesOrderController" parent="genericController"  autowire="byName">
+		<property name="salesOrderManager" ref="salesOrderManager"/>
+	</bean>
+<!-- end:  Generated for SalesOrder From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for OrderPickList From Template: spring-mvc.xml.beansvm  -->
+	<bean id="orderPickListController" class="com.cartmatic.estoresa.order.web.action.OrderPickListController" parent="genericController" autowire="byName">
+		<property name="orderPickListManager" ref="orderPickListManager"/>
+		<property name="mappedUrl" value="/inventory/orderPickList.html"/>
+		<property name="listView" value="/order/orderPickListList"/>
+	</bean>
+	<bean id="orderPickListExtendController" class="com.cartmatic.estoresa.order.web.action.OrderPickListExtendController" parent="genericController" autowire="byName">
+		<property name="orderPickListManager" ref="orderPickListManager"/>
+		<property name="mappedUrl" value="/inventory/orderPickListExtend.html"/>
+		<property name="listView" value="/order/orderPickListListExtend"/>
+	</bean>
+	<bean id="orderShipmentController" class="com.cartmatic.estoresa.order.web.action.OrderShipmentController" parent="genericController" autowire="byName">
+		<property name="orderPickListManager" ref="orderPickListManager"/>
+		<property name="mappedUrl" value="/inventory/orderShipment.html"/>
+		<property name="listView" value="/order/orderShipment"/>
+	</bean>
+<!-- end:  Generated for OrderPickList From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for OrderReturn From Template: spring-mvc.xml.beansvm  -->
+	<bean id="orderReturnController" class="com.cartmatic.estoresa.order.web.action.OrderReturnController" parent="genericController" autowire="byName">
+		<property name="orderReturnManager" ref="orderReturnManager"/>
+		<property name="listView" value="/order/orderReturnList"/>
+		<property name="receiveReturnView" value="/order/receiveReturn"/>
+	</bean>
+<!-- end:  Generated for OrderReturn From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for OrderSettlement From Template: spring-mvc.xml.beansvm  -->
+	<bean id="orderSettlementController" class="com.cartmatic.estoresa.order.web.action.OrderSettlementController" parent="genericController">
+		<property name="orderSettlementManager" ref="orderSettlementManager"/>
+	</bean>
+<!-- end:  Generated for OrderSettlement From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for OrderMessage From Template: spring-mvc.xml.beansvm  -->
+	<bean id="orderMessageController" class="com.cartmatic.estoresa.order.web.action.OrderMessageController" parent="genericController">
+		<property name="orderMessageManager" ref="orderMessageManager"/>
+	</bean>
+<!-- end:  Generated for OrderMessage From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for SalesOrderGeoip From Template: spring-mvc.xml.beansvm  -->
+	<bean id="salesOrderGeoipController" class="com.cartmatic.estoresa.order.web.action.SalesOrderGeoipController" parent="genericController">
+		<property name="salesOrderGeoipManager" ref="salesOrderGeoipManager"/>
+	</bean>
+<!-- end:  Generated for SalesOrderGeoip From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for SystemQueue From Template: spring-mvc.xml.beansvm  -->
+	<bean id="systemQueueController" class="com.cartmatic.estoresa.system.web.action.SystemQueueController" parent="genericController">
+		<property name="systemQueueManager" ref="systemQueueManager"/>
+	</bean>
+<!-- end:  Generated for SystemQueue From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for Address From Template: spring-mvc.xml.beansvm  -->
+	<bean id="addressController" class="com.cartmatic.estoresa.customer.web.action.AddressController" parent="genericController">
+		<property name="addressManager" ref="addressManager"/>
+	</bean>
+<!-- end:  Generated for Address From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for Favorite From Template: spring-mvc.xml.beansvm  -->
+	<bean id="favoriteController" class="com.cartmatic.estoresa.customer.web.action.FavoriteController" parent="genericController">
+		<property name="favoriteManager" ref="favoriteManager"/>
+	</bean>
+<!-- end:  Generated for Favorite From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for Feedback From Template: spring-mvc.xml.beansvm  -->
+	<bean id="feedbackController" class="com.cartmatic.estoresa.customer.web.action.FeedbackController" parent="genericController">
+		<property name="feedbackManager" ref="feedbackManager"/>
+	</bean>
+<!-- end:  Generated for Feedback From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for Membership From Template: spring-mvc.xml.beansvm  -->
+	<bean id="membershipController" class="com.cartmatic.estoresa.customer.web.action.MembershipController" parent="genericController">
+		<property name="membershipManager" ref="membershipManager"/>
+	</bean>
+<!-- end:  Generated for Membership From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for ShopPoint From Template: spring-mvc.xml.beansvm  -->
+	<bean id="shopPointController" class="com.cartmatic.estoresa.customer.web.action.ShopPointController" parent="genericController">
+		<property name="shopPointManager" ref="shopPointManager"/>
+	</bean>
+<!-- end:  Generated for ShopPoint From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for ShopPointHistory From Template: spring-mvc.xml.beansvm  -->
+	<bean id="shopPointHistoryController" class="com.cartmatic.estoresa.customer.web.action.ShopPointHistoryController" parent="genericController" autowire="byName">
+		<property name="shopPointHistoryManager" ref="shopPointHistoryManager"/>
+	</bean>
+<!-- end:  Generated for ShopPointHistory From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for ValidationSession From Template: spring-mvc.xml.beansvm  -->
+	<bean id="validationSessionController" class="com.cartmatic.estoresa.customer.web.action.ValidationSessionController" parent="genericController">
+		<property name="validationSessionManager" ref="validationSessionManager"/>
+	</bean>
+<!-- end:  Generated for ValidationSession From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for Wishlist From Template: spring-mvc.xml.beansvm  -->
+	<bean id="wishlistController" class="com.cartmatic.estoresa.customer.web.action.WishlistController" parent="genericController">
+		<property name="wishlistManager" ref="wishlistManager"/>
+	</bean>
+<!-- end:  Generated for Wishlist From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for WishlistItem From Template: spring-mvc.xml.beansvm  -->
+	<bean id="wishlistItemController" class="com.cartmatic.estoresa.customer.web.action.WishlistItemController" parent="genericController">
+		<property name="wishlistItemManager" ref="wishlistItemManager"/>
+	</bean>
+<!-- end:  Generated for WishlistItem From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for AppUser From Template: spring-mvc.xml.beansvm  -->
+	<bean id="appUserController" class="com.cartmatic.estoresa.system.web.action.AppUserController" parent="genericController">
+		<property name="appUserManager" ref="appUserManager"/>
+	</bean>
+	<bean id="userSelectorController" class="com.cartmatic.estoresa.system.web.action.UserSelectorController" parent="genericController" autowire="byName">
+        <property name="lastSearchViewAllowed" value="false"></property>
+	</bean>
+<!-- end:  Generated for AppUser From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for AccessoryGroup From Template: spring-mvc.xml.beansvm  -->
+	<bean id="accessoryGroupController" class="com.cartmatic.estoresa.catalog.web.action.AccessoryGroupController" parent="genericController">
+		<property name="accessoryGroupManager" ref="accessoryGroupManager"/>
+	</bean>
+<!-- end:  Generated for AccessoryGroup From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for Accessory From Template: spring-mvc.xml.beansvm  -->
+	<bean id="accessoryController" class="com.cartmatic.estoresa.catalog.web.action.AccessoryController" parent="genericController">
+		<property name="accessoryManager" ref="accessoryManager"/>
+	</bean>
+<!-- end:  Generated for Accessory From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for Supplier From Template: spring-mvc.xml.beansvm  -->
+	<bean id="supplierController" class="com.cartmatic.estoresa.supplier.web.action.SupplierController" parent="genericController">
+		<property name="supplierManager" ref="supplierManager"/>
+		<property name="appUserManager" ref="appUserManager"/>
+		<property name="customerManager" ref="customerManager"/>
+	</bean>
+	<bean id="supplierSelectorController" class="com.cartmatic.estoresa.supplier.web.action.SupplierSelectorController" parent="genericController" autowire="byName">
+        <property name="lastSearchViewAllowed" value="false"></property>
+	</bean>
+<!-- end:  Generated for Supplier From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for SupplierProduct From Template: spring-mvc.xml.beansvm  -->
+	<bean id="supplierProductController" class="com.cartmatic.estoresa.supplier.web.action.SupplierProductController" parent="genericController" autowire="byName">
+		<property name="supplierProductManager" ref="supplierProductManager"/>
+	</bean>
+	<bean id="productPriceController" class="com.cartmatic.estoresa.supplier.web.action.ProductPriceController" parent="genericController" autowire="byName">
+		<property name="productSkuManager" ref="productSkuManager"/>
+		<property name="formView" value="catalog/include/productSkuFormInfo"></property>
+        <property name="listView" value="/supplier/productPriceList"/>
+		<property name="lastSearchViewAllowed" value="false"></property>
+	</bean>
+<!-- end:  Generated for SupplierProduct From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for PurchaseOrder From Template: spring-mvc.xml.beansvm  -->
+	<bean id="purchaseOrderController" class="com.cartmatic.estoresa.supplier.web.action.PurchaseOrderController" parent="genericController" autowire="byName">
+		<property name="purchaseOrderManager" ref="purchaseOrderManager"/>
+		<property name="purchaseOrderItemManager" ref="purchaseOrderItemManager"/>
+	</bean>
+<!-- end:  Generated for PurchaseOrder From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for AwaitingPurchase From Template: spring-mvc.xml.beansvm  -->
+	<bean id="awaitingPurchaseController" class="com.cartmatic.estoresa.supplier.web.action.AwaitingPurchaseController" parent="genericController">
+		<property name="awaitingPurchaseManager" ref="awaitingPurchaseManager"/>
+	</bean>
+<!-- end:  Generated for AwaitingPurchase From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for Currency From Template: spring-mvc.xml.beansvm  -->
+	<bean id="currencyController" class="com.cartmatic.estoresa.system.web.action.CurrencyController" parent="genericController">
+		<property name="currencyManager" ref="currencyManager"/>
+	</bean>
+<!-- end:  Generated for Currency From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for TransferRecord From Template: spring-mvc.xml.beansvm  -->
+	<bean id="transferRecordController" class="com.cartmatic.estoresa.order.web.action.TransferRecordController" parent="genericController">
+		<property name="transferRecordManager" ref="transferRecordManager"/>
+	</bean>
+<!-- end:  Generated for TransferRecord From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for PatchExecuteHistory From Template: spring-mvc.xml.beansvm  -->
+	<bean id="patchExecuteHistoryController" class="com.cartmatic.estoresa.other.web.action.PatchExecuteHistoryController" parent="genericController">
+		<property name="patchExecuteHistoryManager" ref="patchExecuteHistoryManager"/>
+	</bean>
+<!-- end:  Generated for PatchExecuteHistory From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for TbCategoryRefer From Template: spring-mvc.xml.beansvm  -->
+	<bean id="tbCategoryReferController" class="com.cartmatic.estoresa.supplier.web.action.TbCategoryReferController" parent="genericController" autowire="byName">
+		<property name="tbCategoryReferManager" ref="tbCategoryReferManager"/>
+	</bean>
+<!-- end:  Generated for TbCategoryRefer From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for TbCatPropRefer From Template: spring-mvc.xml.beansvm  -->
+	<bean id="tbCatPropReferController" class="com.cartmatic.estoresa.supplier.web.action.TbCatPropReferController" parent="genericController" autowire="byName">
+		<property name="tbCatPropReferManager" ref="tbCatPropReferManager"/>
+	</bean>
+<!-- end:  Generated for TbCatPropRefer From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for TbCatPropValueRefer From Template: spring-mvc.xml.beansvm  -->
+	<bean id="tbCatPropValueReferController" class="com.cartmatic.estoresa.supplier.web.action.TbCatPropValueReferController" parent="genericController" autowire="byName">
+		<property name="tbCatPropValueReferManager" ref="tbCatPropValueReferManager"/>
+	</bean>
+<!-- end:  Generated for TbCatPropValueRefer From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for Catalog From Template: spring-mvc.xml.beansvm  -->
+	<bean id="catalogController" class="com.cartmatic.estoresa.catalog.web.action.CatalogController" parent="genericController">
+		<property name="catalogManager" ref="catalogManager"/>
+	</bean>
+<!-- end:  Generated for Catalog From Template: spring-mvc.xml.beansvm  -->
+<!-- start:  Generated for Store From Template: spring-mvc.xml.beansvm  -->
+	<bean id="storeController" class="com.cartmatic.estoresa.system.web.action.StoreController" parent="genericController">
+		<property name="storeManager" ref="storeManager"/>
+	</bean>
+<!-- end:  Generated for Store From Template: spring-mvc.xml.beansvm  -->
+
+	<bean id="adminManageBoardController" class="com.cartmatic.estoresa.AdminManageBoardController" parent="baseController">
+	</bean>
+<!-- start:  Generated for TextMessage From Template: spring-mvc.xml.beansvm  -->
+	<bean id="textMessageController" class="com.cartmatic.estoresa.customer.web.action.TextMessageController" parent="genericController">
+		<property name="textMessageManager" ref="textMessageManager"/>
+	</bean>
+<!-- end:  Generated for TextMessage From Template: spring-mvc.xml.beansvm  -->
+
+	<bean id="awardController" class="com.cartmatic.estoresa.activity.web.action.AwardController" parent="genericController" autowire="byName">
+	</bean>
+	
+	<bean id="userAwardController" class="com.cartmatic.estoresa.activity.web.action.UserAwardController" parent="genericController" autowire="byName">
+	</bean>
+	
+</beans>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.system.Wrap"
+        table="WRAP"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="wrapId"
+            column="wrapId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+ 		<version
+            name="version"
+            type="java.lang.Integer"
+            column="version"
+            access="property"
+            unsaved-value="undefined"
+        />
+        <property
+            name="defaultPrice"
+            type="java.math.BigDecimal"
+            update="true"
+            insert="true"
+            access="property"
+            column="defaultPrice"
+            precision="12"
+            scale="2"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="wrapName"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="wrapName"
+            length="64"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="description"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="description"
+            length="1024"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="imageSrc"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="imageSrc"
+            length="255"
+            not-null="false"
+            unique="false"
+        />
+     </class>
+</hibernate-mapping>

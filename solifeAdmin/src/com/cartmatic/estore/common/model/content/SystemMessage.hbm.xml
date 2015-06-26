@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.content.SystemMessage"
+        table="SYSTEM_MESSAGE"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="systemMessageId"
+            column="systemMessageId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+         <property
+            name="messageHtml"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="messageHtml"
+            length="512"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="messageType"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="messageType"
+            length="5"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="status"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="status"
+            length="5"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="createTime"
+            type="java.util.Date"
+            update="true"
+            insert="true"
+            access="property"
+            column="createTime"
+            length="0"
+            not-null="true"
+            unique="false"
+        />
+     <!-- imported bi-directional many-to-one association to AppUser -->
+		<many-to-one
+			name="appUser"
+			class="com.cartmatic.estore.common.model.system.AppUser"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="appuserId" />
+		</many-to-one>
+    </class>
+</hibernate-mapping>

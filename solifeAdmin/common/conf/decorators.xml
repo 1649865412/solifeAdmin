@@ -1,0 +1,40 @@
+<decorators defaultdir="/decorators">
+	<excludes>
+		<pattern>/recent*</pattern>
+		<pattern>/scripts/*</pattern>
+		<pattern>/4*.jsp</pattern>
+		<pattern>/index.jsp</pattern>
+		<pattern>/test*</pattern>
+		<pattern>*login*</pattern>
+	</excludes>
+
+	<!-- decorator for picture select -->
+	<decorator name="selecter" page="decSelecter.jsp">
+		<pattern>/selector/*</pattern>
+		<pattern>/**/dialog.html</pattern>
+	</decorator>
+
+	<!-- decorator for print(has parameter: printable=true)-->
+    <decorator name="printable" page="decPrintable.jsp"/>
+
+    <decorator name="decIndex" page="decIndex.jsp">
+    	<pattern>/index.html</pattern>
+    </decorator>
+    
+
+    <!-- <decorator name="blank" page="decBlank.jsp">
+		<pattern>/**/dialog.html</pattern>
+    </decorator> -->
+    
+    <decorator name="window" page="decWindow.jsp">
+		<pattern>/**/window.html</pattern>
+    </decorator>
+
+    <decorator name="decSimpleReport" page="decSimpleReport.jsp">
+		<pattern>/report/simple/*</pattern>
+    </decorator>
+
+    <decorator name="default" page="decDefault.jsp">
+        <pattern>/*</pattern>
+    </decorator>
+</decorators>

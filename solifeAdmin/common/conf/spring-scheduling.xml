@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+	<!--
+	- Scheduler context for Quartz.
+	- Note that Quartz Jobs are throwaway objects, in contrast to shared TimerTasks.
+-->
+<beans default-lazy-init="true">
+
+	<!-- Quartz Scheduler, with pre-registered triggers -->
+	<bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean" lazy-init="false">
+		<property name="triggers">
+			<list>
+				<ref local="orderReviewTrigger" />
+				<ref local="postSiteMapTrigger" />
+				<ref local="productPublishTrigger" />
+				<ref local="deleteExpirationShoppingcartsTrigger" />
+				<ref local="upgradeMembershipLevelJobTrigger" />
+				<ref local="sendQueuedEmailsJobTrigger" />
+				<ref local="cleanExpiredEmailsJobTrigger" />
+				<ref local="resetIncorrectEmailsJobTrigger" />
+				<ref local="clearAwaitingDeleteProductTrigger" />
+				<ref local="refreshPromoRulesTrigger" />
+				<ref local="lowAndLackStockEmailsJobTrigger" />
+				<ref local="cancelExpiredOrderTrigger" />
+			</list>
+		</property>
+		<property name="globalJobListeners">
+			<list>
+				<ref local="jobListener" />
+			</list>
+		</property>
+		<!-- Don't automatically start (no good error control when startup), context util will start it instead. -->
+		<property name="autoStartup" value="false" />
+		<property name="startupDelay" value="30" />
+	</bean>
+
+	<!-- Listener ss -->
+	<bean id="jobListener" class="com.cartmatic.estore.system.scheduler.service.JobListenerImpl">
+		<property name="name" value="JobListener" />
+	</bean>
+	<!-- Listener end -->
+
+	
+	<!-- product publish trigger start-->
+	<bean id="productPublishTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="description" value="产品发布定时程序,建议周期为每小时" />
+		<property name="jobDetail" ref="productPublishTriggerDetial" />
+		<property name="cronExpression">
+			<value>0 0 * * * ?</value>
+		</property>
+	</bean>
+	<bean id="productPublishTriggerDetial" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="productManager" />
+		<property name="targetMethod" value="updateStatusForPublish" />
+		<property name="concurrent" value="false" />
+	</bean>
+	<!-- product publish trigger ed-->
+	<!-- ===PostSiteMap begin=======-->
+	<bean id="postSiteMapJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="siteMapManager" />
+		<property name="targetMethod" value="makeMapSite" />
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="postSiteMapTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="description" value="自动提交sitemap到google,建议周期为每天2:00" />
+		<property name="jobDetail" ref="postSiteMapJobDetail" />
+		<property name="cronExpression">
+			<value>0 0 2 * * ?</value>
+		</property>
+	</bean>
+
+	<!-- ===PostSiteMap end==========-->
+
+	<!-- begin:delete expiration shoppingcarts -->
+	<bean id="deleteExpirationShoppingcartsDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="shoppingcartManager" />
+		<property name="targetMethod" value="deleteExpirationShoppingcarts" />
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="deleteExpirationShoppingcartsTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="description" value="检查购物车数据是否已过期,建议周期为每天1:00" />
+		<property name="jobDetail" ref="deleteExpirationShoppingcartsDetail" />
+		<property name="cronExpression">
+			<value>0 0 1 * * ?</value>
+		</property>
+	</bean>
+	<!-- end:delete expiration shoppingcarts -->
+
+	<!-- bengin:membershipLevel auto upgrade -->
+	<bean id="upgradeMembershipLevelJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="customerManager" />
+		<property name="targetMethod" value="upgradeMembershipLevelJob" />
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="upgradeMembershipLevelJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="description" value="会员等级自动升级,建议周期为每天0点10分执行一次" />
+		<property name="jobDetail" ref="upgradeMembershipLevelJobDetail" />
+		<property name="cronExpression">
+			<value>0 10 0 * * ?</value>
+		</property>
+	</bean>
+	<!-- end:membershipLevel auto upgrade -->
+	<!-- bengin:mail queue -->
+	<bean id="cleanExpiredEmailsJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="description" value="清理过期的队列,建议周期为每天4点执行一次" />
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="systemQueueManager" />
+				<property name="targetMethod" value="cleanExpiredQueue" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>0 0 4 * * ?</value>
+		</property>
+	</bean>
+	<bean id="resetIncorrectEmailsJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="description" value="清理异常状态的队列,建议周期为每天4点10分执行一次" />
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="systemQueueManager" />
+				<property name="targetMethod" value="resetIncorrectQueue" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>0 10 4 * * ?</value>
+		</property>
+	</bean>
+	<bean id="sendQueuedEmailsJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="description" value="接行队列,建议周期为30秒一次" />
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="systemQueueExecutor" />
+				<property name="targetMethod" value="processQueue" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>0/30 * * * * ?</value>
+		</property>
+	</bean>
+	<!-- end:mail queue -->
+
+	<!-- productMainManager clearAwaitingDeleteProductTrigger trigger start-->
+	<bean id="clearAwaitingDeleteProductTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="description" value="清除待删除产品,建议周期为每3小时一次" />
+		<property name="jobDetail" ref="clearAwaitingDeleteProductTriggerDetial" />
+		<property name="cronExpression">
+			<value>0 0 0/3 * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="clearAwaitingDeleteProductTriggerDetial" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="productMainManager" />
+		<property name="targetMethod" value="doClearAwaitingDeleteProductJob" />
+		<property name="concurrent" value="false" />
+	</bean>
+	<!-- productMainManager clearAwaitingDeleteProductTrigger trigger end-->
+	
+	
+	<bean id="refreshPromoRulesTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="description" value="更新系统中的促销规则,建议在每小时的01分钟执行" />
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="pruleManager" />
+				<property name="targetMethod" value="refresh" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>0 1,31 * * * ?</value>
+		</property>
+	</bean>
+	
+	<bean id="lowAndLackStockEmailsJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="description" value="低库存和缺货警告发送邮件，建议周期为每天3点10分执行一次;[P]" />
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="inventoryManager" />
+				<property name="targetMethod" value="sendEmailOfLowStockProductSku" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>0 10 3 * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="orderReviewTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="description" value="订单智能审核,建议周期为每15分钟执行一次" />
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="orderRobotManager" />
+				<property name="targetMethod" value="doOrderReview" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>0 0/15 * * * ?</value>
+		</property>
+	</bean>
+	
+	<bean id="cancelExpiredOrderTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="description" value="自动取消过期订单,建议周期为每天执行一次" />
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="salesOrderManager" />
+				<property name="targetMethod" value="cancelExpireSalesOrder" />
+				<property name="concurrent" value="false" />
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>0 0 0 * * ?</value>
+		</property>
+	</bean>
+</beans>

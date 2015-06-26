@@ -1,0 +1,102 @@
+<%@ taglib prefix="cartmatic" tagdir="/WEB-INF/tags/cartmatic"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<c:set var="PAYMENT_BTN_HIDDEN" value="${(not salesOrder.lockedByMyself) or salesOrder.isOnHold eq 1 or salesOrder.orderStatus eq 30 or salesOrder.orderStatus eq 80}"></c:set>
+<table width="100%" border="0" cellspacing="3" cellpadding="0" class="table-content">
+	<tr>
+		<th colspan="2">
+			<fmt:message key="order.paymentInfo.summary" />&nbsp;&nbsp;<fmt:message key="salesOrder.hyphen.full.shape"/>&nbsp;&nbsp;
+			<c:choose>
+				<c:when test="${salesOrder.isCod eq 1}"><fmt:message key="salesOrder.cod"/></span></c:when>
+				<c:otherwise><span style="color:blue"><fmt:message key="salesOrder.payFirst"/></span></c:otherwise>
+			</c:choose>
+		</th>
+	</tr>
+	<tr>
+		<td class="FieldLabel">
+			<fmt:message key="salesOrder.paymentStatus" />:
+		</td>
+		<td>
+			<b><fmt:message key="payment.status.${salesOrder.paymentStatus}" /></b>
+		</td>
+	</tr>
+	<%--<c:if test="${salesOrder.paymentStatus==30}">
+		--%>
+	<c:if test="${paymentMethod != null}">
+		<tr>
+			<td class="FieldLabel">
+				<fmt:message key="salesOrder.paymentMethod" />:
+			</td>
+			<td>
+				${paymentMethod.paymentMethodDetail }&nbsp;
+					<a href="${ctxPath}/order/window.html?doAction=checkOrder&orderNo=${salesOrder.orderNo}&paymentMethodId=${salesOrder.paymentMethodId}">
+					(${salesOrder.orderNo })
+					</a>
+			</td>
+		</tr>
+	</c:if>
+	<%--</c:if>
+	--%><tr>
+		<td class="FieldLabel">
+			<fmt:message key="salesOrder.totalAmount" />:
+		</td>
+		<td>
+			${salesOrder.totalAmount}
+		</td>
+	</tr>
+	<tr>
+		<td class="FieldLabel">
+			<fmt:message key="salesOrder.paidAmount" />:
+		</td>
+		<td>
+			${salesOrder.paidAmount}
+		</td>
+	</tr>
+	<tr>
+		<td class="FieldLabel">
+			<fmt:message key="salesOrder.dueAmount" />:
+		</td>
+		<td>
+			${salesOrder.totalAmount - salesOrder.paidAmount}
+		</td>
+	</tr>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table-content">
+	<tr>
+		<th>
+			<fmt:message key="order.paymentInfo.paymentList" />
+		</th>
+	</tr>
+	<tr>
+		<td>
+			<table cellspacing="0" cellpadding="0">
+				<tr>
+					<th width="12%"><fmt:message key="common.message.createTime"/></th>
+					<th width="12%"><fmt:message key="orderPayment.transactionType"/></th>
+					<th width="12%"><fmt:message key="orderPayment.paymentAmount"/></th>
+					<th width="8%"><fmt:message key="orderPayment.balance"/></th>
+					<th width="15%"><fmt:message key="orderPayment.giftCertificateNo"/>/<fmt:message key="orderPayment.paymentGatewayName"/></th>
+					<th width="12%"><fmt:message key="orderPayment.ipAddress"/></th>
+					<th><fmt:message key="orderPayment.addedBy"/></th>
+				</tr>
+				<c:forEach var="orderPayment" items="${salesOrder.orderPayments}">
+					<c:if test="${orderPayment.transactionType != 6}">
+						<tr>
+							<td><fmt:formatDate value="${orderPayment.createTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+							<td>
+								<fmt:message key="salesOrder.paymentType_${orderPayment.transactionType}"/>					
+							</td>
+							<td><c:if test="${orderPayment.transactionType eq 6}">-</c:if>${orderPayment.paymentAmount}</td>
+							<td>${orderPayment.balance}</td>
+							<td>
+								<c:if test="${not empty orderPayment.giftCertificateNo}">${orderPayment.giftCertificateNo}</c:if>
+								<c:if test="${not empty orderPayment.paymentGatewayName}">${orderPayment.paymentGatewayName}</c:if>
+							</td>
+							<td>${orderPayment.ipAddress}</td>
+							<td>${orderPayment.addedBy}</td>
+						</tr>
+					</c:if>
+				</c:forEach>
+			</table>
+		</td>
+	</tr>
+</table>

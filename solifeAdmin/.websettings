@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<websettings version="600">
+<project-type>J2EE</project-type>
+<webcontent>web</webcontent>
+<context-root>StoreAdmin</context-root>
+<jsp-level>1.2</jsp-level>
+</websettings>

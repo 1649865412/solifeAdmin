@@ -1,0 +1,68 @@
+## This is a velocity template
+## to generate a form jsp file from an sql table input
+#set ($table = $sqlTable.Table)
+#set ($class = $utility.makeClassName($sqlTable.EntityName))
+#set ($classVar = $utility.makeFirstLetterLowerCase($class))
+#set ($packagePrefix  = $prop.getProperty("packagePrefix"))
+#set ($keyfield = $sqlTable.getPrimaryKey(0).getColname())
+#set ($keyfieldLC = $keyfield.toLowerCase())
+#set ($keytype  = $sqlTable.getPrimaryKey(0).getAttType())
+#set ($keyVar= $utility.makeVarName($keyfield))
+#set ($keyVarUC = $utility.makeFirstLetterUpperCase($keyVar))
+#set ($keyColumn = $sqlTable.getPrimaryKey(0))
+#set ($appname=$prop.getProperty("appname"))
+#set ($packageModot  = $prop.getProperty("packageModot").substring(1))
+#set ($dl = "${")
+#set ($dot=".")
+<%@ include file="/common/taglibs.jsp"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+
+<app:pageHeading entityName="${dl}${classVar}.${classVar}Name}" entityHeadingKey="${classVar}Detail.heading" />
+<content tag="buttons">
+	<cartmatic:cartmaticBtn btnType="save" onclick="return fnDoSave(this);" />
+	<%--
+	<cartmatic:cartmaticBtn btnType="saveAndNext" onclick="return fnDoSaveAndNext(this);" />
+	--%>
+    <c:if test="${dl}${classVar}.${keyVar}!=null}">
+		<cartmatic:cartmaticBtn btnType="delete" onclick="return fnDoDelete(this);" />
+	</c:if>
+	<cartmatic:cartmaticBtn btnType="cancel" onclick="return fnDoCancelForm(this);" />
+</content>
+<app:showBindErrors bindPath="${classVar}.*" />
+	<form:form method="post" cssClass="mainForm" id="${classVar}" commandName="${classVar}"
+			action="${dl}ctxPath}/${packageModot}/${classVar}.html" onsubmit="return validate${class}(this);">
+#if ($sqlTable.getHasVersion())
+		<form:hidden path="version" />
+#end
+#if ($sqlTable.hasGeneratedKey)
+		<input type="hidden" name="${keyVar}" value="${dl}${classVar}.${keyVar}}"/> 
+#end
+		<table class="table-content" cellSpacing="0" cellPadding="0" width="100%" border="0">
+#foreach( $column in $sqlTable.sqlColumns)
+#if  (!$column.isKey())
+#if  (!$column.isVersion())
+#set ($colname = ${column.attName})
+#if  (!$firstField)
+#set ($firstField = ${colname})
+#end
+#if  ("createBy"==${colname} || "createTime"==${colname} || "updateBy"==${colname} || "updateTime"==${colname})
+#if  ("updateTime"==${colname} || "createTime"==${colname})
+		<app:formText label="common.message.${colname}" value="${dl}${classVar}.${colname}}" />
+#else
+		<app:userName2 label="common.message.${colname}" userId="${dl}${classVar}.${colname}}" />
+#end ##end of common fields checking
+#else
+		<app:input property="${colname}" />
+#end ##end of non-common fields processing					
+#end
+#end
+#end ##end of foreach
+	</table>
+</form:form>
+
+<v:javascript formName="${classVar}" staticJavascript="false" />
+#if ($sqlTable.hasGeneratedKey)
+<script type="text/javascript">
+    document.forms["${classVar}"].elements["${firstField}"].focus();
+</script>
+#end

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.cartmatic.estore.common.model.system.AppUser" table="app_user" select-before-update="false"
+		dynamic-update="false" dynamic-insert="false" optimistic-lock="none" discriminator-value="not null">
+		<!--The unsaved-value attribute is almost never needed in Hibernate3. (From hibernate doc.)-->
+		<id name="appuserId" column="appuserId" type="java.lang.Integer">
+			<generator class="native"/>
+		</id>
+		 <discriminator column="userType" not-null="true" type="short"/>
+		<version
+            name="version"
+            type="java.lang.Integer"
+            column="version"
+            access="property"
+            unsaved-value="undefined"
+        />
+		<property name="username" type="java.lang.String" update="true" insert="true" access="property"
+			column="username" length="32" not-null="true" unique="false" />
+		<property name="password" type="java.lang.String" update="true" insert="true" access="property"
+			column="password" length="32" not-null="false" unique="false" />
+		<property name="userType" type="java.lang.Short" update="false" insert="false" access="property"
+			column="userType" length="11" not-null="false" unique="false" />
+		<property name="title" type="java.lang.String" update="true" insert="true" access="property" column="title"
+			length="8" not-null="false" unique="false" />
+		<property name="firstname" type="java.lang.String" update="true" insert="true" access="property"
+			column="firstname" length="32" not-null="false" unique="false" />
+		<property name="lastname" type="java.lang.String" update="true" insert="true" access="property"
+			column="lastname" length="32" not-null="false" unique="false" />
+		<property name="email" type="java.lang.String" update="true" insert="true" access="property" column="email"
+			length="32" not-null="false" unique="false" />
+		<property name="fax" type="java.lang.String" update="true" insert="true" access="property" column="fax"
+			length="32" not-null="false" unique="false" />
+		<property name="telephone" type="java.lang.String" update="true" insert="true" access="property"
+			column="telephone" length="32" not-null="false" unique="false" />
+		<property name="status" type="java.lang.Short" update="true" insert="true" access="property" column="status"
+			length="11" not-null="false" unique="false" />
+		<property name="isLocked" type="java.lang.Short" update="true" insert="true" access="property" column="isLocked"
+			length="6" not-null="false" unique="false" />
+		<property name="createBy" type="java.lang.Integer" update="true" insert="true" access="property"
+			column="createBy" length="11" not-null="false" unique="false" />
+		<property name="updateBy" type="java.lang.Integer" update="true" insert="true" access="property"
+			column="updateBy" length="11" not-null="false" unique="false" />
+		<property name="createTime" type="java.util.Date" update="true" insert="true" access="property"
+			column="createTime" length="19" not-null="false" unique="false" />
+		<property name="updateTime" type="java.util.Date" update="true" insert="true" access="property"
+			column="updateTime" length="19" not-null="false" unique="false" />
+		<property name="lastLoginTime" type="java.util.Date" update="true" insert="true" access="property"
+			column="lastLoginTime" length="19" not-null="false" unique="false" />
+		<property name="preferredLanguage" type="java.lang.String" update="true" insert="true" access="property"
+            column="preferredLanguage" length="8" not-null="false" unique="false"/>
+		<property name="deleted" type="java.lang.Short" update="true" insert="true" access="property"
+			column="deleted" length="6" not-null="false" unique="false" />
+		<!-- exported bi-directional one-to-many association to UserRole -->
+		<set name="userRoles" table="user_role" lazy="true" cascade="save-update">
+			<key>
+				<column name="appuserId" />
+			</key>
+			<many-to-many class="com.cartmatic.estore.common.model.system.AppRole" column="appRoleId" fetch="join" />
+		</set>
+
+		<set name="userCoupons" table="user_coupon" lazy="false">
+			<key>
+				<column name="userId" />
+			</key>
+			<many-to-many class="com.cartmatic.estore.common.model.sales.Coupon" column="couponId" fetch="join" />
+		</set>
+		
+	</class>
+</hibernate-mapping>

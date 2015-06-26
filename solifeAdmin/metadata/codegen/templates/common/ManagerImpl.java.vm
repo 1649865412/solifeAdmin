@@ -1,0 +1,65 @@
+## This is a velocity template
+## to generate a model class from an sql table input
+#set ($table = $sqlTable.Table)
+#set ($class = $utility.makeClassName($sqlTable.EntityName))
+#set ($classVar = $utility.makeFirstLetterLowerCase($class))
+#set ($packagePrefix  = $prop.getProperty("packagePrefix"))
+#set ($packageModot  = $prop.getProperty("packageModot"))
+#set ($keyfield = $sqlTable.getPrimaryKey(0).getColname())
+#set ($keytype  = $sqlTable.getPrimaryKey(0).getAttType())
+#set ($keyVar= $utility.makeVarName($keyfield))
+#set ($keyVarUC = $utility.makeFirstLetterUpperCase($keyVar))
+package ${packagePrefix}${packageModot}.service.impl;
+
+import ${packagePrefix}.common.model${packageModot}.${class};
+import com.cartmatic.estore.core.service.impl.GenericManagerImpl;
+import ${packagePrefix}${packageModot}.service.${class}Manager;
+import ${packagePrefix}${packageModot}.dao.${class}Dao;
+
+
+/**
+ * Manager implementation for ${class}, responsible for business processing, and communicate between web and persistence layer.
+ */
+public class ${class}ManagerImpl extends GenericManagerImpl<${class}> implements ${class}Manager {
+
+	private ${class}Dao ${classVar}Dao = null;
+
+	/**
+	 * @param ${classVar}Dao
+	 *            the ${classVar}Dao to set
+	 */
+	public void set${class}Dao(${class}Dao ${classVar}Dao) {
+		this.${classVar}Dao = ${classVar}Dao;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.cartmatic.estore.core.service.impl.GenericManagerImpl#init()
+	 */
+	@Override
+	protected void initManager() {
+		dao = ${classVar}Dao;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.cartmatic.estore.core.service.impl.GenericManagerImpl#onDelete()
+	 */
+	@Override
+	protected void onDelete(${class} entity) {
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.cartmatic.estore.core.service.impl.GenericManagerImpl#onSave()
+	 */
+	@Override
+	protected void onSave(${class} entity) {
+
+	}
+
+}

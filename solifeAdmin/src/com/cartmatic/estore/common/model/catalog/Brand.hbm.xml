@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.cartmatic.estore.common.model.catalog.Brand" table="BRAND" select-before-update="false" dynamic-update="false" dynamic-insert="false" optimistic-lock="version">
+		<id name="brandId" column="brandId" type="java.lang.Integer" length="10">
+			<generator class="native" />
+		</id>
+		<version name="version" type="java.lang.Integer" column="version" access="property" unsaved-value="undefined" />
+		<property name="brandName" type="java.lang.String" update="true" insert="true" access="property" column="brandName" length="64" not-null="true" unique="false" />
+		<property name="brandCode" type="java.lang.String" update="true" insert="true" access="property" column="brandCode" length="32" not-null="true" unique="false" />
+		<property name="sortOrder" type="java.lang.Integer" update="true" insert="true" access="property" column="sortOrder" length="10" not-null="false" unique="false" />
+		<property name="website" type="java.lang.String" update="true" insert="true" access="property" column="website" length="255" not-null="false" unique="false" />
+		<property name="story" type="java.lang.String" update="true" insert="true" access="property" column="story" not-null="false" unique="false" />
+		<property name="countryCode" type="java.lang.String" update="true" insert="true" access="property" column="countryCode" length="16" not-null="false" unique="false" />
+		<property name="logo" type="java.lang.String" update="true" insert="true" access="property" column="logo" length="255" not-null="false" unique="false" />
+		<property name="pic" type="java.lang.String" update="true" insert="true" access="property" column="pic" length="255" not-null="false" unique="false" />
+		<property name="pic2" type="java.lang.String" update="true" insert="true" access="property" column="pic2" length="255" not-null="false" unique="false" />
+		<property name="designer" type="java.lang.String" update="true" insert="true" access="property" column="designer" length="64" not-null="false" unique="false" />
+		<property name="icon" type="java.lang.String" update="true" insert="true" access="property" column="icon" length="255" not-null="false" unique="false" />
+		<!-- exported bi-directional one-to-many association to Product -->
+		<set name="products" table="product" lazy="true" inverse="true" cascade="save-update" order-by="productId desc" where="status=1">
+			<key>
+				<column name="brandId" />
+			</key>
+			<one-to-many class="com.cartmatic.estore.common.model.catalog.Product" />
+		</set>
+	</class>
+</hibernate-mapping>

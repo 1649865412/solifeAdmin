@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.cartmatic.estore.common.model.order.SalesOrder"
+		table="sales_order" select-before-update="false" dynamic-update="false"
+		dynamic-insert="false" optimistic-lock="version">
+		<id name="salesOrderId" column="salesOrderId" type="java.lang.Integer"
+			length="10">
+			<generator class="native" />
+		</id>
+		<version name="version" type="java.lang.Integer" column="version"
+			access="property" unsaved-value="undefined" />
+		<property name="orderNo" type="java.lang.String" update="true"
+			insert="true" access="property" column="orderNo" length="20"
+			not-null="true" unique="false" />
+		<property name="membershipId" type="java.lang.Integer"
+			update="true" insert="true" access="property" column="membershipId"
+			length="10" not-null="false" unique="false" />
+		<property name="customerFirstname" type="java.lang.String"
+			update="true" insert="true" access="property" column="customerFirstname"
+			length="32" not-null="true" unique="false" />
+		<property name="customerLastname" type="java.lang.String"
+			update="true" insert="true" access="property" column="customerLastname"
+			length="32" not-null="false" unique="false" />
+		<property name="customerTitle" type="java.lang.String"
+			update="true" insert="true" access="property" column="customerTitle"
+			length="8" not-null="true" unique="false" />
+		<property name="customerEmail" type="java.lang.String"
+			update="true" insert="true" access="property" column="customerEmail"
+			length="64" not-null="true" unique="false" />
+		<property name="shopPoint" type="java.lang.Integer" update="true"
+			insert="true" access="property" column="shopPoint" length="10"
+			not-null="false" unique="false" />
+		<property name="totalAmount" type="java.math.BigDecimal"
+			update="true" insert="true" access="property" column="totalAmount"
+			precision="12" scale="2" not-null="true" unique="false" />
+		<property name="paidAmount" type="java.math.BigDecimal"
+			update="true" insert="true" access="property" column="paidAmount"
+			precision="12" scale="2" not-null="true" unique="false" />
+		<property name="orderStatus" type="java.lang.Short" update="true"
+			insert="true" access="property" column="orderStatus" length="5"
+			not-null="true" unique="false" />
+		<property name="paymentStatus" type="java.lang.Short" update="true"
+			insert="true" access="property" column="paymentStatus" length="5"
+			not-null="true" unique="false" />
+
+		<property name="isExchangeOrder" type="java.lang.Short"
+			update="true" insert="true" access="property" column="isExchangeOrder"
+			length="5" not-null="false" unique="false" />
+		<property name="isCod" type="java.lang.Short" update="true"
+			insert="true" access="property" column="isCod" length="5" not-null="true"
+			unique="false" />
+		<property name="paymentMethodId" type="java.lang.Integer"
+			update="true" insert="true" access="property" column="paymentMethodId"
+			length="10" not-null="false" unique="false" />
+		<property name="invoiceTitle" type="java.lang.String" update="true"
+			insert="true" access="property" column="invoiceTitle" length="128"
+			not-null="false" unique="false" />
+		<property name="hasInvoice" type="java.lang.Short" update="true"
+			insert="true" access="property" column="hasInvoice" length="5"
+			not-null="true" unique="false" />
+		<property name="gainedPoint" type="java.lang.Integer" update="true"
+			insert="true" access="property" column="gainedPoint" length="10"
+			not-null="false" unique="false" />
+		<property name="gainedCouponTypeId" type="java.lang.Integer"
+			update="true" insert="true" access="property" column="gainedCouponTypeId"
+			length="10" not-null="false" unique="false" />
+		<property name="ipAddress" type="java.lang.String" update="true"
+			insert="true" access="property" column="ipAddress" length="64"
+			not-null="false" unique="false" />
+		<property name="isOnHold" type="java.lang.Short" update="true"
+			insert="true" access="property" column="isOnHold" length="5"
+			not-null="true" unique="false" />
+		<property name="isHoldByCustomer" type="java.lang.Short"
+			update="true" insert="true" access="property" column="isHoldByCustomer"
+			length="5" not-null="false" unique="false" />
+		<property name="isLocked" type="java.lang.Short" update="true"
+			insert="true" access="property" column="isLocked" length="5"
+			not-null="true" unique="false" />
+		<property name="hasProblem" type="java.lang.Short" update="true"
+			insert="true" access="property" column="hasProblem" length="5"
+			not-null="true" unique="false" />
+		<property name="lockedBy" type="java.lang.Integer" update="true"
+			insert="true" access="property" column="lockedBy" length="10"
+			not-null="false" unique="false" />
+		<property name="createTime" type="java.util.Date" update="true"
+			insert="true" access="property" column="createTime" length="0"
+			not-null="true" unique="false" />
+		<property name="updateTime" type="java.util.Date" update="true"
+			insert="true" access="property" column="updateTime" length="0"
+			not-null="true" unique="false" />
+		<property name="updateBy" type="java.lang.Integer" update="true"
+			insert="true" access="property" column="updateBy" length="10"
+			not-null="false" unique="false" />
+
+		<!-- imported bi-directional many-to-one association to OrderAddress -->
+		<many-to-one name="orderAddress"
+			class="com.cartmatic.estore.common.model.order.OrderAddress"
+			not-null="false" fetch="select">
+			<column name="billingAddressId" />
+		</many-to-one>
+
+		<many-to-one name="customer"
+			class="com.cartmatic.estore.common.model.customer.Customer" not-null="false"
+			fetch="select">
+			<column name="customerId" />
+		</many-to-one>
+
+		<many-to-one name="originalOrder"
+			class="com.cartmatic.estore.common.model.order.SalesOrder" not-null="false"
+			fetch="select">
+			<column name="originalOrderId" />
+		</many-to-one>
+
+		<!-- exported bi-directional one-to-many association to OrderAudit -->
+		<set name="orderAudits" table="order_audit" lazy="true" inverse="true"
+			cascade="save-update" sort="unsorted" order-by="orderAuditId">
+			<key>
+				<column name="salesOrderId" />
+			</key>
+			<one-to-many class="com.cartmatic.estore.common.model.order.OrderAudit" />
+		</set>
+		<!-- exported bi-directional one-to-many association to OrderPayment -->
+		<set name="orderPayments" table="order_payment" lazy="true"
+			inverse="true" cascade="save-update" sort="unsorted" order-by="orderPaymentId">
+			<key>
+				<column name="salesOrderId" />
+			</key>
+			<one-to-many class="com.cartmatic.estore.common.model.order.OrderPayment" />
+		</set>
+		<!--
+			exported bi-directional one-to-many association to OrderPromotion
+		-->
+		<set name="orderPromotions" table="order_promotion" lazy="true"
+			inverse="true" cascade="save-update" sort="unsorted" order-by="orderPromotionId">
+			<key>
+				<column name="salesOrderId" />
+			</key>
+			<one-to-many class="com.cartmatic.estore.common.model.order.OrderPromotion" />
+		</set>
+		<!-- exported bi-directional one-to-many association to OrderReturn -->
+		<set name="orderReturns" table="order_return" lazy="true" inverse="true"
+			cascade="save-update" sort="unsorted" order-by="orderReturnId">
+			<key>
+				<column name="salesOrderId" />
+			</key>
+			<one-to-many class="com.cartmatic.estore.common.model.order.OrderReturn" />
+		</set>
+		<!--
+			exported bi-directional one-to-many association to OrderShipment
+		-->
+		<set name="orderShipments" table="order_shipment" lazy="true"
+			inverse="true" cascade="save-update" sort="unsorted" order-by="shipmentNo">
+			<key>
+				<column name="salesOrderId" />
+			</key>
+			<one-to-many class="com.cartmatic.estore.common.model.order.OrderShipment" />
+		</set>
+		<set name="orderMessages" table="order_message" lazy="true"
+			inverse="true" cascade="save-update" sort="unsorted" order-by="orderMessageId">
+			<key>
+				<column name="salesOrderId" />
+			</key>
+			<one-to-many class="com.cartmatic.estore.common.model.order.OrderMessage" />
+		</set>
+		<!-- imported bi-directional many-to-one association to Store -->
+		<many-to-one name="store"
+			class="com.cartmatic.estore.common.model.system.Store" not-null="false"
+			fetch="select">
+			<column name="storeId" />
+		</many-to-one>
+		
+		<property name="isSub" type="java.lang.Integer" update="true"
+			insert="true" access="property" column="isSub" length="10"
+			not-null="false" unique="false"/>
+		
+	</class>
+</hibernate-mapping>

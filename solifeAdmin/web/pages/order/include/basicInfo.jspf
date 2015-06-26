@@ -1,0 +1,233 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="cartmatic" tagdir="/WEB-INF/tags/cartmatic"%>
+<%@ taglib prefix="customer" tagdir="/WEB-INF/tags/customer"%>
+<%@ page pageEncoding="UTF-8"%>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table-content">
+	<tr>
+		<th colspan="2">
+			<fmt:message key="order.basicInfo.overview" />
+			<%--
+			&nbsp;&nbsp;<fmt:message key="salesOrder.hyphen.full.shape"/>&nbsp;&nbsp;
+			<c:choose>
+				<c:when test="${salesOrder.isCod eq 1}"><fmt:message key="salesOrder.cod"/></span></c:when>
+				<c:otherwise><span style="color:blue"><fmt:message key="salesOrder.payFirst"/></span></c:otherwise>
+			</c:choose>--%>
+			<c:if test="${salesOrder.isExchangeOrder eq 1}">
+			&nbsp;&nbsp;<fmt:message key="salesOrder.hyphen.full.shape"/>&nbsp;&nbsp;<span style="color:blue"><fmt:message key="salesOrder.exchangeOrder"/></span>
+			</c:if>
+		</th>
+	</tr>
+	<tr>
+		<td class="FieldLabel">
+			<fmt:message key="salesOrder.orderStatus" />
+		</td>
+		<td>
+			<b>
+				<c:if test="${salesOrder.isOnHold eq 1}"><span style="color:red">(<fmt:message key="order.status.onHold"/>)</span></c:if>
+	        	<span class="${salesOrder.orderStatus==30 ? 'green' : (salesOrder.orderStatus==10||salesOrder.orderStatus==20 ? 'yellow' : '')}"><fmt:message key="order.status.${salesOrder.orderStatus}"/></span>
+		 	</b>&nbsp;
+		 	<b><span class="${salesOrder.paymentStatus==30 ? 'green' : 'yellow'}"><fmt:message key="payment.status.${salesOrder.paymentStatus}" /></span></b>
+		 	<c:if test="${salesOrder.isLocked eq 1}">
+				<span id="lockedByTip" style="${(salesOrder.lockedByMyself) ? 'color:green' : ''}"><b><fmt:message key="salesOrder.lockedBy"><fmt:param value="${salesOrder.lockedByUserName}"/></fmt:message></b></span>
+			</c:if>
+			<c:if test="${salesOrder.isOnHold eq 1 and salesOrder.isHoldByCustomer eq 1}">
+				<span id="holdByCustomer" style="color:red"><b><fmt:message key="salesOrder.ask4Cancelling"></fmt:message></b>
+				</span>
+			</c:if>
+			<c:if test="${salesOrder.hasProblem eq 1}">
+			<span id="hasProblem" >
+				<span style="color:red"><b><fmt:message key="salesOrder.hasProblem"/></b></span>
+				<cartmatic:iconBtn icon="pen" textKey="order.action.resume" onclick="fnCancelProblem();" />
+			</span>	
+			</c:if>
+			<c:if test="${empty salesOrder.hasProblem or salesOrder.hasProblem eq 0}">
+			<span id="hasProblem" >
+				<cartmatic:iconBtn icon="pen" textKey="order.action.markProblem" onclick="fnMarkProblem();" />
+			</span>	
+			</c:if>
+		</td>
+	</tr>
+	<tr>
+		<td class="FieldLabel">
+			<fmt:message key="salesOrder.orderNo" />
+		</td>
+		<td>
+			${salesOrder.orderNo}
+		</td>
+	</tr>
+	<tr>
+		<td class="FieldLabel">
+			<fmt:message key="salesOrder.store" />
+		</td>
+		<td>
+			${salesOrder.store.name}
+		</td>
+	</tr>
+	<tr>
+		<td class="FieldLabel">
+			<fmt:message key="common.message.createTime" />
+		</td>
+		<td>
+			<fmt:formatDate value="${salesOrder.createTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
+		</td>
+	</tr>
+	<tr>
+		<td class="FieldLabel">
+			<fmt:message key="salesOrder.totalAmount" />
+		</td>
+		<td>
+			${salesOrder.totalAmount}
+		</td>
+	</tr>
+	<tr>
+		<td class="FieldLabel">
+			<fmt:message key="salesOrder.paidAmount" />
+		</td>
+		<td>
+			${salesOrder.paidAmount}
+		</td>
+	</tr>
+	<tr>
+		<td class="FieldLabel">
+			<fmt:message key="salesOrder.isExchangeOrder" />
+		</td>
+		<td>
+			<c:choose>
+				<c:when test="${salesOrder.isExchangeOrder eq 1}"><fmt:message key="common.message.yes"/> ( <a href="${ctxPath}/order/window.html?doAction=edit&salesOrderId=${salesOrder.originalOrder.salesOrderId}&tid=${param.tid}" title="<fmt:message key="salesOrder.originalOrderNo"/>">${salesOrder.originalOrder.orderNo}</a> )</c:when>
+				<c:otherwise><fmt:message key="common.message.no"/></c:otherwise>
+			</c:choose>
+		</td>
+	</tr>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table-content">
+	<tr>
+		<th colspan="2">
+			<fmt:message key="order.basicInfo.customerInfo" />
+		</th>
+	</tr>	
+	<tr>
+		<td class="FieldLabel">
+			<fmt:message key="salesOrder.customerName" />
+		</td>
+		<td>
+			<c:choose>
+				<c:when test="${empty salesOrder.customerId or salesOrder.customerId eq -2}">
+					${salesOrder.customerFirstname}${emptySpace}${salesOrder.customerLastname}
+					&nbsp;&nbsp;(<fmt:message key="order.from.guest"/>)
+				</c:when>
+				<c:otherwise>
+					<a href="${ctxPath}/customer/customer.html?doAction=edit&from=list&customerId=${salesOrder.customerId}" target="_blank">${salesOrder.customerFirstname}${emptySpace}${salesOrder.customerLastname}</a>
+					&nbsp;&nbsp;
+					(<fmt:message key="order.from.customer"/>)
+					&nbsp;&nbsp;
+					<sec:authorize url="GRANT_EMAIL">
+					<a href="<customer:loginStoreUrl storeId="${salesOrder.storeId}" customerId="${salesOrder.customerId}"></customer:loginStoreUrl>" target="_blank"><fmt:message key="customer.loginEStore"/></a>
+					</sec:authorize>
+				</c:otherwise>
+			</c:choose>
+		</td>
+	</tr>
+	<tr>
+		<td class="FieldLabel">
+			<fmt:message key="salesOrder.customerEmail" />
+		</td>
+		<td>
+			<app:maskEmail email="${salesOrder.customerEmail}"/>
+			
+		</td>
+	</tr>
+	<tr>
+		<td class="FieldLabel">
+			<fmt:message key="orderAddress.phoneNumber" />
+		</td>
+		<td>
+			${salesOrder.orderAddress.phoneNumber}
+		</td>
+	</tr>
+	<tr>
+		<td class="FieldLabel">
+			下单IP地址:
+		</td>
+		<td>
+			<a href="http://whois.domaintools.com/${salesOrder.ipAddress}" target="_blank">${salesOrder.ipAddress}</a>
+		</td>
+	</tr>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table-content">
+	<tr>
+		<th>
+			<fmt:message key="order.basicInfo.billingInfo" />
+		</th>
+	</tr>
+	<tr>
+		<td class="FieldLabel">
+			<cartmatic:iconBtn icon="pen" textKey="order.action.editInvoice" onclick="fnEditBillingAddress();" isDisabled="${not salesOrder.lockedByMyself or salesOrder.orderStatus ge 30}"/>
+		</td>
+	</tr>
+	<tr>
+		<td class="FieldLabel">
+			<c:if test="${salesOrder.hasInvoice eq 1}">
+				<c:if test="${not empty salesOrder.invoiceTitle}">${salesOrder.invoiceTitle}<br/></c:if>		  	
+			  	${salesOrder.orderAddress.firstname}${emptySpace}${salesOrder.orderAddress.lastname}<br/>
+			  	${salesOrder.orderAddress.address1}<br/>
+			  	<c:if test="${not empty salesOrder.orderAddress.address2}">${salesOrder.orderAddress.address2} <br/></c:if>
+			  	${salesOrder.orderAddress.city},${salesOrder.orderAddress.state}${emptySpace}${salesOrder.orderAddress.postalcode}<br/>
+				${salesOrder.orderAddress.country}
+			</c:if>
+		</td>
+	</tr>
+</table>
+<%@ include file="auditInfo.jspf"%>
+<fmt:message key="orderAddress.editInvoice" var="title"><fmt:param value="${salesOrder.orderNo}"/></fmt:message>
+<fmt:message key="common.message.complete" var="buttonComplete"/>
+<fmt:message key="common.message.cancel" var="buttonCancel"/>
+<app:ui_dialog id="EditBillingAddressDlg" title="${title}" width="460" height="400" 
+	url="${ctxPath}/order/dialog.html?doAction=editOrderAddress&salesOrderId=${salesOrder.salesOrderId}" buttons="'${buttonComplete}':fnCompleteEditBillingAddress, '${buttonCancel}':fnCloseEditBillingAddressDlg">
+</app:ui_dialog>
+<script type="text/javascript">
+	function fnCancelProblem()
+	{	if(confirm("确认已经修复订单问题?")){
+    		$j.post(__ctxPath+'/order/salesOrder.html?doAction=markProblem&orderNo=${salesOrder.orderNo}&flag=0', null , fnCompleteCancelProblem,"json");
+    	}
+	}
+	function fnCompleteCancelProblem(result)
+	{
+		$j("#hasProblem").hide();
+	}
+	function fnMarkProblem()
+	{
+		if(confirm("确认标识本订单为[有问题订单]?")){
+    		$j.post(__ctxPath+'/order/salesOrder.html?doAction=markProblem&orderNo=${salesOrder.orderNo}&flag=1', null , fnCompleteMarkProblem,"json");
+    	}
+	}
+	function fnCompleteMarkProblem(result)
+	{
+		$j("#hasProblem").hide();
+	}
+	<%--编辑发票地址--%>
+	function fnEditBillingAddress(){
+		dlgEditBillingAddressDlg_show();
+	}
+	
+	function fnCloseEditBillingAddressDlg(){
+		dlgEditBillingAddressDlg_close();
+		//$j("#EditBillingAddressDlg").html("");
+	}
+	
+	function fnCompleteEditBillingAddress(){
+		if(!validateForm( document.getElementById("orderAddress") )){
+			alert(__vaMsg.notPass);
+			return;
+		}
+		var parameters = $j("#orderAddress :input").serialize();
+    	$j.post(__ctxPath+'/order/salesOrder.html?doAction=saveOrderAddress&orderNo=${salesOrder.orderNo}', parameters, fnCompleteEditBillingAddressCallbackHandler,"json");
+	}
+	
+    function fnCompleteEditBillingAddressCallbackHandler(result){
+    	sysMsg4p(result.msg,result.status!=1);
+        if(result.status==1){
+        	view(0);
+        }
+    }
+    <%--end 编辑发票地址--%>
+</script>

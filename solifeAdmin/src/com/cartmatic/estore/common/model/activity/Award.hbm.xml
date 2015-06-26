@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.cartmatic.estore.common.model.activity.Award"
+		table="award" select-before-update="false" dynamic-update="false"
+		dynamic-insert="false" optimistic-lock="version">
+		
+		<id name="id" column="id" type="java.lang.Integer"
+			length="10">
+			<generator class="native" />
+		</id>
+		
+		<property name="prize" type="java.lang.String" update="true"
+			insert="true" access="property" column="prize" length="40" not-null="true"
+			unique="false" />
+
+		<property name="description" type="java.lang.String" update="true"
+			insert="true" access="property" column="description" length="200"
+			not-null="false" unique="false" />
+			
+		<property name="level" type="java.lang.Integer" update="true"
+			insert="true" access="property" column="level" length="10"
+			not-null="false" unique="false" />
+			
+		<property name="title" type="java.lang.String" update="true"
+			insert="true" access="property" column="title" length="40" not-null="true"
+			unique="false" />
+			
+		<property name="chance" type="java.lang.Double"
+			update="true" insert="true" access="property" column="chance"
+			length="10" not-null="false" unique="false" />
+			
+		<property name="createTime" type="java.util.Date" update="true"
+			insert="true" access="property" column="createTime" length="0"
+			not-null="false" unique="false" />
+			
+		<property name="updateTime" type="java.util.Date" update="true"
+			insert="true" access="property" column="updateTime" length="0"
+			not-null="false" unique="false" />
+
+	</class>
+</hibernate-mapping>

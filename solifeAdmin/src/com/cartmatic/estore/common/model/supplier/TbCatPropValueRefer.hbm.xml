@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.supplier.TbCatPropValueRefer"
+        table="TB_CAT_PROP_VALUE_REFER"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="tbCatPropValueReferId"
+            column="tbCatPropValueReferId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+         <property
+            name="tbCatPropId"
+            type="java.lang.Long"
+            update="true"
+            insert="true"
+            access="property"
+            column="tbCatPropId"
+            length="19"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="tbCatPropValueId"
+            type="java.lang.Long"
+            update="true"
+            insert="true"
+            access="property"
+            column="tbCatPropValueId"
+            length="19"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="tbCatPropValueName"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="tbCatPropValueName"
+            length="256"
+            not-null="false"
+            unique="false"
+        />
+     <!-- imported bi-directional many-to-one association to TbCatPropRefer -->
+		<many-to-one
+			name="tbCatPropRefer"
+			class="com.cartmatic.estore.common.model.supplier.TbCatPropRefer"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="tbCatPropReferId" />
+		</many-to-one>
+    <!-- imported bi-directional many-to-one association to Accessory -->
+		<many-to-one
+			name="accessory"
+			class="com.cartmatic.estore.common.model.catalog.Accessory"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="accessoryId" />
+		</many-to-one>
+    </class>
+</hibernate-mapping>

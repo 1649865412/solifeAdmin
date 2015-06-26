@@ -1,0 +1,94 @@
+﻿<project name="buildManager" default="all">
+	<property name="svn.user" value="lsf" />
+	<property name="svn.password" value="sf2013" />
+	<property name="out.class" value="target/classes" />
+	<property name="out.jar" value="target/jar" />
+	<property name="out.web" value="target/web" />
+
+	<path id="project.classpath">
+		<fileset dir="web/WEB-INF/lib" includes="*.jar" />
+		<fileset dir="../solifeAnt/AntScripts/lib" includes="*.jar" />
+	</path>
+	<path id="ant.classpath">
+		<fileset dir="../solifeAnt/AntScripts/lib" includes="*.jar" />
+	</path>
+	<typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="ant.classpath" />
+
+	<target name="all" depends="init, compile, jar, build-web-files" />
+
+	<target name="init">
+		<delete dir="${out.class}" quiet="true" />
+		<delete dir="${out.jar}" quiet="true" />
+		<mkdir dir="${out.class}" />
+		<mkdir dir="${out.jar}" />
+		<mkdir dir="${out.web}" />
+	</target>
+
+	<!--
+	<target name="update" description="从当前工作目录指向的SVN更新">
+		<svn svnkit="true" username="${svn.user}" password="${svn.password}">
+			<update dir="${basedir}" />
+		</svn>
+	</target>
+	-->
+	
+	<target name="compile" description="Compile all java source files">
+		<echo message="Compiling all java source files..." />
+		<mkdir dir="${out.class}" />
+		<javac encoding="utf-8" srcdir="src" destdir="${out.class}" debug="true" deprecation="false" classpathref="project.classpath" failonerror="true" source="1.6" target="1.6" memoryinitialsize="128m" memorymaximumsize="256m" fork="true">
+		</javac>
+		<!-- copy hibernate config files. -->
+		<copy todir="${out.class}" preservelastmodified="true" failonerror="false">
+			<fileset dir="src" defaultexcludes="true">
+				<include name="**/*.hbm.xml" />
+			</fileset>
+		</copy>
+	</target>
+	<target name="jar" depends="compile" description="把class文件打包成jar">
+		<mkdir dir="${out.jar}" />
+		<echo message="make jar ..." />
+
+		<jar destfile="${out.jar}/cartmatic-core.jar" compress="true">
+			<fileset dir="${out.class}" defaultexcludes="no">
+				<exclude name="com/cartmatic/estoresa/**" />
+			</fileset>
+		</jar>
+		<!-- 把core.jar复制到 dist目录下,方便其他项目的build -->
+		<!-- 自己应用的jar -->
+		<jar destfile="${out.jar}/cartmatic-manager.jar" compress="true">
+			<fileset dir="${out.class}" defaultexcludes="yes">
+				<include name="com/cartmatic/estoresa/**" />
+			</fileset>
+		</jar>
+	</target>
+    <target name="build-web-files" depends="init" description="复制Web资源文件到build目标环境">
+		<echo message="Copying web contents in web to ${out.web} ..." />
+		<copy todir="${out.web}" preservelastmodified="true">
+			<fileset dir="web">
+				<include name="**" />
+			</fileset>
+		</copy>
+		<echo message="Copying non-java resources." />
+		<copy todir="${out.web}/WEB-INF/classes" preservelastmodified="true" failonerror="false">
+			<fileset dir="common" defaultexcludes="true">
+				<include name="**" />
+			</fileset>
+		</copy>
+		<echo message="Copying jar files." />
+		<copy todir="${out.web}/WEB-INF/lib" preservelastmodified="true" failonerror="false">
+			<fileset dir="${out.jar}" defaultexcludes="true">
+				<include name="**" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="cc-build" depends="init,compile,jar" description="copy jar file to cruisecontrol server.">
+		<!-- c:/Program Files (x86)/CruiseControl/webapps/jars/mobilematic -->
+		<copy todir="c:/Program Files (x86)/CruiseControl/artifacts/cartmatic-manager-5.2.2GA" preservelastmodified="true" failonerror="false">
+			<fileset dir="${out.jar}" defaultexcludes="true">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+	</target>
+
+</project>

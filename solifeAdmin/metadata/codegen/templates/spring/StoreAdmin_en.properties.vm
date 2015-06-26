@@ -1,0 +1,21 @@
+## This is a velocity template
+## to generate additional properties from an sql table input
+#set ($table = $sqlTable.Table)
+#set ($class = $utility.makeClassName($sqlTable.EntityName))
+#set ($classVar = $utility.makeFirstLetterLowerCase($class))
+#set ($busClass = $utility.makeBusName($utility.replaceString($sqlTable.EntityName,"_"," ")))
+#set ($packageModot  = $prop.getProperty("packageModot").substring(1))
+menu.view${class}s=View ${busClass}s
+
+# --- ${busClass} page --
+#foreach( $column in $sqlTable.sqlColumns)
+	#set ($attName    = $utility.makeVarName($column.colname))
+	#set ($busName    = $utility.replaceString($utility.makeBusName($column.colname),"_"," "))
+${classVar}.${attName}=${busName}
+#end
+
+# -- ${busClass} profile page --
+${classVar}Detail.heading=${busClass} Information
+
+# -- ${busClass} list page --
+${classVar}List.heading=${busClass} List

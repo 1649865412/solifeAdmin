@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+	<!-- Properties for running unit tests with tomcat -->
+	<!-- 需要安装Ant的tasks的jar；还需要安装manager；所以实用性不是很高-->
+	<property name="tomcat.server" value="localhost" />
+	<property name="http.port" value="8080" />
+	<property name="tomcat.manager.url" value="http://${tomcat.server}:${http.port}/manager" />
+	<property name="tomcat.username" value="tomcat" />
+	<property name="tomcat.password" value="tomcat" />
+
+	<property name="tomcat.home" value="D:/Tomcat5" />
+    <path id="tomcat.classpath">
+        <fileset dir="${tomcat.home}/bin"  includes="*.jar"/>
+        <fileset dir="${tomcat.home}/common/lib"  includes="*.jar"/>
+        <fileset dir="${tomcat.home}/server/lib" includes="*.jar"/>
+    	<fileset dir="${tomcat.home}/shared/lib" includes="*.jar"/> 
+	</path>
+
+	<taskdef resource="org/apache/catalina/ant/catalina.tasks" classpathref="tomcat.classpath" />
+
+	<!-- =================================================================== -->
+	<!-- The "deploy" target deploys/updates the web application in the in   -->
+	<!-- the non-war format.                                                 -->
+	<!-- =================================================================== -->
+	<target name="tomcat-deploy" depends="tomcat-deploy-app,tomcat-check-app-running,tomcat-undeploy-app" description="">
+	</target>
+
+	<!-- =================================================================== -->
+	<!-- The "undeploy" target deletes the web application archive and the   -->
+	<!-- web application directory in the compatible servlet container.      -->
+	<!-- =================================================================== -->
+	<target name="tomcat-undeploy" if="tomcat.home" description="undeploy war file from servlet container's deployment dir" depends="tomcat-undeploy-app">
+	</target>
+
+	<!-- =================================================================== -->
+	<!--            Simple task to ping tomcat and make sure app is running  -->
+	<!-- =================================================================== -->
+	<target name="tomcat-check-app-running" description="pings tomcat to make sure it's running">
+		<waitfor maxwait="30" maxwaitunit="second" checkevery="1000" timeoutproperty="app.start.fail">
+			<http url="http://${tomcat.server}:${http.port}/${webapp.name}" />
+		</waitfor>
+		<!-- Backup application log file. -->
+		<copy todir="${dir.dist.web}/../logs" failonerror="false">
+			<fileset dir="${tomcat.home}/webapps/${webapp.name}/WEB-INF/logs/">
+				<include name="${webapp.name}.log" />
+			</fileset>
+		</copy>
+		<if>
+			<isset property="app.start.fail" />
+			<then>
+				<echo level="error" message="Application deployed but failed to get started." />
+			</then>
+			<else>
+				<echo level="verbose" message="Application deployed and started successfully." />
+			</else>
+		</if>
+	</target>
+
+	<!-- Check whether Tomcat is running -->
+	<target name="tomcat-server-checking" description="Check whether Tomcat is running">
+		<echo level="verbose" message="Checking whether Tomcat is running" />
+		<condition property="tomcat.started">
+			<socket server="${tomcat.server}" port="${http.port}" />
+		</condition>
+		<!-- <available file="${tomcat.home}/webapps/${webapp.name}" property="app.deployed" type="dir" /> -->
+	</target>
+
+	<!-- =================================================================== -->
+	<!--            Start Tomcat                                             -->
+	<!-- =================================================================== -->
+	<target name="tomcat-startup" description="starts tomcat instance" depends="tomcat-server-checking" unless="tomcat.started">
+		<!-- remove remained app if exists -->
+		<antcall target="tomcat-cleanup" />
+		<exec executable="${tomcat.home}/bin/startup" spawn="true" vmlauncher="false" />
+		<waitfor maxwait="30" maxwaitunit="second" checkevery="1000" timeoutproperty="tomcat.startup.failed">
+			<http url="http://${tomcat.server}:${http.port}/" />
+		</waitfor>
+		<fail message="Fatal. Tomcat startup failed." if="tomcat.startup.failed" />
+	</target>
+
+	<!-- =================================================================== -->
+	<!--            Stop Tomcat                                              -->
+	<!-- =================================================================== -->
+	<!-- use ant/antcall to invoke -->
+	<target name="tomcat-shutdown" description="shutdown tomcat instance" depends="">
+		<exec executable="${tomcat.home}/bin/shutdown" vmlauncher="false" />
+		<sleep seconds="3" />
+		<echo level="verbose" message="Backuping server and application log files...">
+		</echo>
+		<!-- <tstamp>
+			<format property="TODAY_CN" pattern="yyyy-MM-dd" />
+			</tstamp> -->
+		<copy todir="${dir.dist.web}/../logs" failonerror="false">
+			<fileset dir="${tomcat.home}/logs/">
+				<include name="*${TODAY_CN}.log" />
+			</fileset>
+			<!-- if the file is still here. e.g. when deploy failed and undeploy is not executed. -->
+			<fileset dir="${tomcat.home}/webapps/${webapp.name}/WEB-INF/logs/">
+				<include name="${webapp.name}.log" />
+			</fileset>
+		</copy>
+		<condition property="tomcat.still.running">
+			<socket server="${tomcat.server}" port="${http.port}" />
+		</condition>
+		<antcall target="tomcat-cleanup" />
+		<fail message="Fatal: Application failed to deploy. Check server log and application log." if="app.deploy.fail" />
+		<fail message="Fatal: Application deployed but not started succefully. Check server log and application log." if="app.start.fail" />
+		<fail message="Urgent!!! Shutdown failed, manually shutdown tomcat server required." if="tomcat.still.running" />
+	</target>
+
+	<target name="tomcat-restart" description="restart tomcat" depends="tomcat-shutdown,tomcat-startup">
+	</target>
+
+	<target name="tomcat-cleanup" description="Clean up tomcat (sometimes last deployment failed and some directoris remained)." depends="">
+		<delete dir="${tomcat.home}/webapps/${webapp.name}" failonerror="false" />
+		<delete dir="${tomcat.home}/work/Catalina/localhost/${webapp.name}" failonerror="false" />
+		<delete includeemptydirs="true" failonerror="false">
+			<fileset dir="${tomcat.home}/logs" includes="*.*" />
+		</delete>
+	</target>
+
+	<!-- =================================================================== -->
+	<!--            Refresh - Stops Tomcat, and refreshes everything         -->
+	<!-- =================================================================== -->
+	<target name="tomcat-refresh" depends="tomcat-undeploy,tomcat-deploy" description="Undeploys, then re-deploys">
+	</target>
+
+	<!-- =================================================================== -->
+	<!--            Tomcat provided tasks                                    -->
+	<!-- =================================================================== -->
+	<target name="tomcat-deploy-app" description="Install application in Tomcat" depends="">
+		<trycatch property="app.deploy.fail">
+			<try>
+				<deploy url="${tomcat.manager.url}" username="${tomcat.username}" password="${tomcat.password}" path="/${webapp.name}" localWar="${dir.build.web}" />
+			</try>
+			<catch>
+			</catch>
+			<finally>
+			</finally>
+		</trycatch>
+	</target>
+
+	<target name="tomcat-undeploy-app" description="Remove application in Tomcat">
+		<trycatch property="app.undeploy.fail">
+			<try>
+				<undeploy url="${tomcat.manager.url}" username="${tomcat.username}" password="${tomcat.password}" path="/${webapp.name}" />
+			</try>
+			<catch>
+			</catch>
+			<finally>
+			</finally>
+		</trycatch>
+	</target>
+
+	<target name="tomcat-reload-app" description="Reload application in Tomcat">
+		<reload url="${tomcat.manager.url}" username="${tomcat.username}" password="${tomcat.password}" path="/${webapp.name}" />
+	</target>
+
+	<target name="tomcat-start-app" description="Start Tomcat application">
+		<start url="${tomcat.manager.url}" username="${tomcat.username}" password="${tomcat.password}" path="/${webapp.name}" />
+	</target>
+
+	<target name="tomcat-stop-app" description="Stop Tomcat application">
+		<stop url="${tomcat.manager.url}" username="${tomcat.username}" password="${tomcat.password}" path="/${webapp.name}" />
+	</target>
+
+	<target name="tomcat-list-app" description="List Tomcat applications">
+		<list url="${tomcat.manager.url}" username="${tomcat.username}" password="${tomcat.password}" />
+	</target>
+
+	<!-- =================================================================== -->
+	<!-- The "tomcat-deploy-app-war" deploys web application in war format   -->
+	<!-- =================================================================== -->
+	<target name="tomcat-deploy-app-war" depends="" if="tomcat.home" description="Deploy '${webapp.name}.war' to local Tomcat">
+		<deploy url="${tomcat.manager.url}" username="${tomcat.username}" password="${tomcat.password}" path="/${webapp.name}" war="${dir.dist.web}/${webapp.war}" />
+	</target>
+
+</project>

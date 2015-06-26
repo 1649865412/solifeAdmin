@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.catalog.ProductStat"
+        table="PRODUCT_STAT"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="productStatId"
+            column="productStatId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+ 		<version
+            name="version"
+            type="java.lang.Integer"
+            column="version"
+            access="property"
+            unsaved-value="undefined"
+        />
+        <property
+            name="reviewCount"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="reviewCount"
+            length="10"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="averageRate"
+            type="java.math.BigDecimal"
+            update="true"
+            insert="true"
+            access="property"
+            column="averageRate"
+            precision="12"
+            scale="2"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="buyCount"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="buyCount"
+            length="10"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="favoriteCount"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="favoriteCount"
+            length="10"
+            not-null="true"
+            unique="false"
+        />
+     <!-- imported bi-directional many-to-one association to Product -->
+		<many-to-one
+			name="product"
+			class="com.cartmatic.estore.common.model.catalog.Product"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="productId" />
+		</many-to-one>
+		
+		<!-- imported bi-directional many-to-one association to Store -->
+		<many-to-one name="store" class="com.cartmatic.estore.common.model.system.Store" not-null="false" fetch="select">
+			<column name="storeId" />
+		</many-to-one>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.cartmatic.estore.common.model.catalog.ProductAttGroupItem" table="PRODUCT_ATT_GROUP_ITEM" select-before-update="false" dynamic-update="false" dynamic-insert="false" optimistic-lock="version">
+		<id name="productAttGroupItemId" column="productAttGroupItemId" type="java.lang.Integer" length="10">
+			<generator class="native" />
+		</id>
+		<property name="productTypeId" type="java.lang.Integer" update="true" insert="true" access="property" column="productTypeId" length="10" not-null="true" unique="false" />
+		<property name="sortOrder" type="java.lang.Integer" update="true" insert="true" access="property" column="sortOrder" length="10" not-null="false" unique="false" />
+		<!-- imported bi-directional many-to-one association to ProductAttGroup -->
+		<many-to-one name="productAttGroup" class="com.cartmatic.estore.common.model.catalog.ProductAttGroup" not-null="false" fetch="select">
+			<column name="productAttGroupId" />
+		</many-to-one>
+		<!-- imported bi-directional many-to-one association to Attribute -->
+		<many-to-one name="attribute" class="com.cartmatic.estore.common.model.attribute.Attribute" not-null="false" fetch="select">
+			<column name="attributeId" />
+		</many-to-one>
+	</class>
+</hibernate-mapping>

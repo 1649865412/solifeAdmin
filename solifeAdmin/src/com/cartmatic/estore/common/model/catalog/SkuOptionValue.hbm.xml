@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.catalog.SkuOptionValue"
+        table="SKU_OPTION_VALUE"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="skuOptionValueId"
+            column="skuOptionValueId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+ 		<version
+            name="version"
+            type="java.lang.Integer"
+            column="version"
+            access="property"
+            unsaved-value="undefined"
+        />
+        <property
+            name="skuOptionValue"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="skuOptionValue"
+            length="128"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="skuOptionValueName"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="skuOptionValueName"
+            length="64"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="sortOrder"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="sortOrder"
+            length="10"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="skuOptionValueType"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="skuOptionValueType"
+            length="5"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="status"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="status"
+            length="5"
+            not-null="true"
+            unique="false"
+        />
+     <!-- imported bi-directional many-to-one association to SkuOption -->
+		<many-to-one
+			name="skuOption"
+			class="com.cartmatic.estore.common.model.catalog.SkuOption"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="skuOptionId" />
+		</many-to-one>
+ <!-- exported bi-directional one-to-many association to ProductSkuOptionValue -->
+	<set name="productSkuOptionValues"
+	     table="product_sku_option_value"
+	     cascade="none"
+	     sort="unsorted"
+	>
+		<key>
+			<column name="skuOptionValueId"/>
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.catalog.ProductSkuOptionValue"
+		/>
+	</set>     
+    </class>
+</hibernate-mapping>

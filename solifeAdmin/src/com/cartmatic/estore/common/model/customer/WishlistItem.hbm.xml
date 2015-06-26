@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.customer.WishlistItem"
+        table="WISHLIST_ITEM"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="wishlistItemId"
+            column="wishlistItemId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+ 		<version
+            name="version"
+            type="java.lang.Integer"
+            column="version"
+            access="property"
+            unsaved-value="undefined"
+        />
+        <property
+            name="quantity"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="quantity"
+            length="10"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="purchasedQty"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="purchasedQty"
+            length="10"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="shortDescription"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="shortDescription"
+            length="512"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="productAttributes"
+            type="java.util.HashMap"
+            update="true"
+            insert="true"
+            access="property"
+            column="productAttributes"
+            length="65535"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="createTime"
+            type="java.util.Date"
+            update="true"
+            insert="true"
+            access="property"
+            column="createTime"
+            length="0"
+            not-null="false"
+            unique="false"
+        />
+     <!-- imported bi-directional many-to-one association to Product -->
+		<many-to-one
+			name="product"
+			class="com.cartmatic.estore.common.model.catalog.Product"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="productId" />
+		</many-to-one>
+    <!-- imported bi-directional many-to-one association to Wishlist -->
+		<many-to-one
+			name="wishlist"
+			class="com.cartmatic.estore.common.model.customer.Wishlist"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="wishListId" />
+		</many-to-one>
+    </class>
+</hibernate-mapping>

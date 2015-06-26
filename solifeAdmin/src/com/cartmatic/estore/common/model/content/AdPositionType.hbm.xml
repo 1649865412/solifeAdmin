@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.content.AdPositionType"
+        table="AD_POSITION_TYPE"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="adPositionTypeId"
+            column="adPositionTypeId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+ 		<version
+            name="version"
+            type="java.lang.Integer"
+            column="version"
+            access="property"
+            unsaved-value="undefined"
+        />
+        <property
+            name="positionName"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="positionName"
+            length="128"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="height"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="height"
+            length="10"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="width"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="width"
+            length="10"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="displayType"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="displayType"
+            length="5"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="status"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="status"
+            length="5"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="description"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="description"
+            length="512"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="templatePath"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="templatePath"
+            length="128"
+            not-null="false"
+            unique="false"
+        />
+        <many-to-one name="store" class="com.cartmatic.estore.common.model.system.Store" not-null="false" fetch="select">
+			<column name="storeId" />
+		</many-to-one>
+  <!-- exported bi-directional one-to-many association to Advertisement -->
+	<set name="advertisements"
+	     table="advertisement"
+	     lazy="true"
+	     inverse="true"
+	     cascade="save-update"
+	     sort="unsorted"
+	>
+		<key>
+			<column name="adPositionTypeId"/>
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.content.Advertisement"
+		/>
+	</set>     
+    </class>
+</hibernate-mapping>

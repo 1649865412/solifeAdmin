@@ -1,0 +1,20 @@
+<%@ page pageEncoding="UTF-8"%>
+<%@ include file="/common/taglibs.jsp"%>
+<i18n:msg expr="$[webapp.softwareInfo]" />&nbsp;<i18n:msg expr="$[webapp.copyrightInfo]" />
+<script type="text/javaScript" defer>
+	<%--//常用搜索条初始化
+	var comSrhUrls = new Array();
+	comSrhUrls[0]={url:"<c:url value="/order/salesOrders.html?btnSearch=true"/>",filed:"orderNo",defaultValue:"${param['orderNo']}"};
+	comSrhUrls[1]={url:"<c:url value="/catalog/categorys.html?btnSearch=true"/>",filed:"categoryName",defaultValue:"${param['categoryName']}"};
+	comSrhUrls[2]={url:"<c:url value="/customer/customer.html?btnSearch=true"/>",filed:"COL@vo.username@String@LIKE",defaultValue:"${param['COL@vo.username@String@LIKE']}"};
+	comSrhUrls[3]={url:"<c:url value="/catalog/products.html?btnSearch=true"/>",filed:"pattern",defaultValue:"${param['pattern']}"};
+	//fnInitSearch();
+	
+	//高亮左边菜单
+	//addOnload(fnInitHighlightCurrentMenu);
+	//-------- for dec_content_description init
+	//if($("dec_help_content").innerHTML.length>17){
+	//	$("dec_help_wrap").style.display="block";
+	//}--%>	
+</script>
+<%-- todo 根据变量,加载ui的js和css--%>

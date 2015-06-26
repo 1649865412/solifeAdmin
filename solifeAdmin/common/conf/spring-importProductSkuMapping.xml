@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+	<!--
+	必须配置一下属性productName,productCode,price,stockQty,buyCount
+-->
+<beans default-lazy-init="true">
+	<!-- 产品导入映射配置 -->
+	<bean id="productSkuImportConfig" class="com.cartmatic.estore.imports.model.ImportMappingConfig" scope="prototype">
+		<property name="target" value="com.cartmatic.estore.common.model.catalog.ProductSku" />
+		<property name="persistenceHandler" ref="productSkuPersistenceHandler" />
+		<property name="importClause" ref="ips_importClause" />
+		<!--初始化属性(不在导入文件列头内)-->
+		<property name="initData">
+			<list>
+				<ref bean="ips_skuKind" />
+				<ref bean="ips_status" />
+			</list>
+		</property>
+		<!--导入属性(与导入文件列头对应)-->
+		<property name="columns">
+			<!--产品导入映射配置涉及的的具体字段-->
+			<list>
+				<ref bean="ips_productCode" />
+				<ref bean="ips_productSkuCode" />
+				<ref bean="ips_skuKind" />
+				<ref bean="ips_image" />
+				<ref bean="ips_price" />
+				<ref bean="ips_costPrice" />
+				<ref bean="ips_status" />
+				<ref bean="ips_salePrice" />
+				<ref bean="ips_listPrice" />
+				<ref bean="ips_wholesalePrice" />
+				<ref bean="ips_weight" />
+				<ref bean="ips_length" />
+				<ref bean="ips_width" />
+				<ref bean="ips_height" />
+				<ref bean="ips_productSkuOptionValue" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="ips_importClause" class="com.cartmatic.estore.imports.handler.ImportClause" scope="prototype">
+		<!-- = equals -->
+		<property name="clauses">
+			<map>
+				<!--entry key="国产机成本8折前价格" value="BigDecimal@>@0" -->
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="ips_productCode" class="com.cartmatic.estore.imports.model.Column" scope="prototype">
+		<property name="attrName" value="productCode" />
+		<property name="columnHeader" value="产品编码" />
+		<property name="handler" ref="skuProductCodeHandler" />
+		<property name="required" value="true" />
+		<property name="maxLength" value="32" />
+		<property name="index" value="2" />
+	</bean>
+
+	<bean id="ips_productSkuCode" class="com.cartmatic.estore.imports.model.Column" scope="prototype">
+		<property name="attrName" value="productSkuCode" />
+		<property name="columnHeader" value="产品编码" />
+		<property name="handler" ref="skuProductSkuCodeHandler" />
+		<property name="required" value="true" />
+		<property name="index" value="1" />
+		<property name="maxLength" value="32" />
+		<!--指定code的后缀-->
+	</bean>
+
+	<bean id="ips_skuKind" class="com.cartmatic.estore.imports.model.Column" scope="prototype">
+		<property name="attrName" value="skuKind" />
+		<property name="columnHeader" value="产品性质" />
+		<property name="handler" ref="basicHandler" />
+		<property name="required" value="true" />
+		<property name="index" value="3" />
+		<property name="selects">
+			<map>
+				<entry key="实体" value="1" />
+				<entry key="服务" value="2" />
+				<entry key="下载" value="3" />
+				<entry key="点卡" value="4" />
+			</map>
+		</property>
+		<property name="defaultValue" value="1"/>
+	</bean>
+
+	<bean id="ips_image" class="com.cartmatic.estore.imports.model.Column" scope="prototype">
+		<property name="attrName" value="image" />
+		<property name="columnHeader" value="图片" />
+		<property name="handler" ref="basicHandler" />
+		<!-- 
+		<property name="prefix" value="product/" />
+		 -->
+	</bean>
+
+	<bean id="ips_price" class="com.cartmatic.estore.imports.model.Column" scope="prototype">
+		<property name="attrName" value="price" />
+		<property name="columnHeader" value="价格" />
+		<property name="handler" ref="basicHandler" />
+		<property name="required" value="true" />
+		<property name="index" value="6" />
+		<property name="pattern" value="##,###,###.##" />
+	</bean>
+	
+	<bean id="ips_costPrice" class="com.cartmatic.estore.imports.model.Column" scope="prototype">
+		<property name="attrName" value="costPrice" />
+		<property name="columnHeader" value="价格" />
+		<property name="handler" ref="basicHandler" />
+		<property name="required" value="true" />
+		<property name="index" value="6" />
+		<property name="pattern" value="##,###,###.##" />
+	</bean>
+
+	<bean id="ips_status" class="com.cartmatic.estore.imports.model.Column" scope="prototype">
+		<property name="attrName" value="status" />
+		<property name="columnHeader" value="状态" />
+		<property name="handler" ref="basicHandler" />
+		<property name="required" value="true" />
+		<property name="index" value="6" />
+		<property name="selects">
+			<map>
+				<entry key="激活" value="1" />
+				<entry key="未激活" value="2" />
+				<entry key="非激活" value="2" />
+			</map>
+		</property>
+		<property name="defaultValue" value="1"/>
+	</bean>
+
+	<bean id="ips_salePrice" class="com.cartmatic.estore.imports.model.Column" scope="prototype">
+		<property name="attrName" value="salePrice" />
+		<property name="columnHeader" value="特价" />
+		<property name="handler" ref="basicHandler" />
+		<property name="pattern" value="##,###,###.##" />
+	</bean>
+
+	<bean id="ips_listPrice" class="com.cartmatic.estore.imports.model.Column" scope="prototype">
+		<property name="attrName" value="listPrice" />
+		<property name="columnHeader" value="市场价" />
+		<property name="handler" ref="basicHandler" />
+		<property name="pattern" value="##,###,###.##" />
+	</bean>
+
+	<bean id="ips_wholesalePrice" class="com.cartmatic.estore.imports.model.Column" scope="prototype">
+		<property name="attrName" value="wholesalePrice" />
+		<property name="columnHeader" value="批发价" />
+		<property name="handler" ref="skuWholesalePriceHandler" />
+		<property name="split" value="," />
+	</bean>
+
+	<bean id="ips_weight" class="com.cartmatic.estore.imports.model.Column" scope="prototype">
+		<property name="attrName" value="weight" />
+		<property name="columnHeader" value="重量" />
+		<property name="handler" ref="basicHandler" />
+	</bean>
+
+	<bean id="ips_length" class="com.cartmatic.estore.imports.model.Column" scope="prototype">
+		<property name="attrName" value="length" />
+		<property name="columnHeader" value="长" />
+		<property name="handler" ref="basicHandler" />
+	</bean>
+
+	<bean id="ips_width" class="com.cartmatic.estore.imports.model.Column" scope="prototype">
+		<property name="attrName" value="width" />
+		<property name="columnHeader" value="宽" />
+		<property name="handler" ref="basicHandler" />
+	</bean>
+
+	<bean id="ips_height" class="com.cartmatic.estore.imports.model.Column" scope="prototype">
+		<property name="attrName" value="height" />
+		<property name="columnHeader" value="高" />
+		<property name="handler" ref="basicHandler" />
+	</bean>
+
+	<bean id="ips_productSkuOptionValue" class="com.cartmatic.estore.imports.model.Column" scope="prototype">
+		<property name="attrName" value="productSkuOptionValue" />
+		<property name="columnHeader" value="SKU选项" />
+		<property name="handler" ref="skuOptionHandler" />
+		<property name="split" value="," />
+		<!-- <property name="defaultValue" value="Movement=Japanese"/> -->
+	</bean>
+
+	<bean id="skuProductSkuCodeHandler" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.imports.handler.sku.SkuProductSkuCodeHandler" autowire="byName" />
+		</property>
+	</bean>
+
+	<bean id="skuProductCodeHandler" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.imports.handler.sku.SkuProductCodeHandler" autowire="byName" />
+		</property>
+	</bean>
+
+	<bean id="skuWholesalePriceHandler" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.imports.handler.sku.SkuWholesalePriceHandler" autowire="byName">
+				<property name="delimiter" value="=" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="skuOptionHandler" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.imports.handler.sku.SkuOptionHandler" autowire="byName">
+				<property name="delimiter" value="=" />
+				<property name="isName" value="true" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="productSkuPersistenceHandler" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.imports.handler.sku.ProductSkuPersistenceHandlerImpl" autowire="byName" />
+		</property>
+		<property name="transactionAttributes">
+			<props merge="true">
+				<prop key="validate">PROPAGATION_NOT_SUPPORTED,readOnly</prop>
+				<prop key="saveOrUpdate">PROPAGATION_REQUIRES_NEW,ISOLATION_READ_COMMITTED</prop>
+			</props>
+		</property>
+	</bean>
+
+</beans>

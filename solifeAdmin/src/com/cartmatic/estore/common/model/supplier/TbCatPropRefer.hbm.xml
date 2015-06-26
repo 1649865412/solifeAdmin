@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.supplier.TbCatPropRefer"
+        table="TB_CAT_PROP_REFER"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="tbCatPropReferId"
+            column="tbCatPropReferId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+         <property
+            name="tbCatPropId"
+            type="java.lang.Long"
+            update="true"
+            insert="true"
+            access="property"
+            column="tbCatPropId"
+            length="19"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="tbCatPropName"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="tbCatPropName"
+            length="128"
+            not-null="false"
+            unique="false"
+        />
+     <!-- imported bi-directional many-to-one association to AccessoryGroup -->
+		<many-to-one
+			name="accessoryGroup"
+			class="com.cartmatic.estore.common.model.catalog.AccessoryGroup"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="accessoryGroupId" />
+		</many-to-one>
+ <!-- exported bi-directional one-to-many association to TbCatPropValueRefer -->
+	<set name="tbCatPropValueRefers"
+	     table="tb_cat_prop_value_refer"
+	     lazy="true"
+	     inverse="true"
+	     cascade="save-update"
+	     sort="unsorted"
+	>
+		<key>
+			<column name="tbCatPropReferId"/>
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.supplier.TbCatPropValueRefer"
+		/>
+	</set>     
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<subclass name="com.cartmatic.estore.common.model.customer.Customer"
+		extends="com.cartmatic.estore.common.model.system.AppUser"
+		discriminator-value="0">
+
+		<set name="customerAttrValues" table="customer_attr_value" lazy="true"
+			sort="unsorted" cascade="all">
+			<key>
+				<column name="customerId" />
+			</key>
+			<one-to-many
+				class="com.cartmatic.estore.common.model.attribute.CustomerAttrValue" />
+		</set>
+		<set name="favorites"
+	     table="favorite"
+	     lazy="true"
+	     cascade="all"
+	     inverse="false"
+	     order-by="createTime desc"	>
+			<key>
+				<column name="customerId"/>
+			</key>
+			<one-to-many class="com.cartmatic.estore.common.model.customer.Favorite"/>
+		</set>
+		<property name="passwordHint" type="java.lang.String" update="true"
+			insert="true" access="property" column="passwordHint" length="128"
+			not-null="false" unique="false" />
+		<property name="passwordHintAnswer" type="java.lang.String"
+			update="true" insert="true" access="property" column="passwordHintAnswer"
+			length="255" not-null="false" unique="false" />
+		<property name="customerPosition" type="java.lang.String"
+			update="true" insert="true" access="property" column="customerPosition"
+			length="128" not-null="false" unique="false" />
+		<property name="registerIpAddress" type="java.lang.String"
+			update="true" insert="true" access="property" column="registerIpAddress"
+			length="64" not-null="false" unique="false" />
+		<property name="registerTime" type="java.util.Date" update="true"
+			insert="true" access="property" column="registerTime" length="19"
+			not-null="false" unique="false" />
+		<property name="membershipId" type="java.lang.Integer"
+			update="true" insert="true" access="property" column="membershipId"
+			length="11" not-null="false" unique="false" />
+		<property name="totalPoints" type="java.lang.Integer" update="true"
+			insert="true" access="property" column="totalPoints" length="11"
+			not-null="false" unique="false" />
+		<property name="note" type="java.lang.String" update="true"
+			insert="true" access="property" column="note" length="1024" not-null="false"
+			unique="false" />
+		<!-- imported bi-directional many-to-one association to Supplier -->
+		<many-to-one name="supplier" class="com.cartmatic.estore.common.model.supplier.Supplier" not-null="false" fetch="select">
+			<column name="supplierId" />
+		</many-to-one>
+		<!-- imported bi-directional many-to-one association to Store -->
+		<many-to-one name="store" class="com.cartmatic.estore.common.model.system.Store" not-null="false" fetch="select">
+			<column name="storeId" />
+		</many-to-one>
+
+		<sql-delete>UPDATE app_user SET deleted=1 WHERE appuserId=? and version=?</sql-delete>
+	</subclass>
+	<!--  </joined-subclass>-->
+</hibernate-mapping>

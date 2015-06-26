@@ -1,0 +1,60 @@
+
+ 
+ .elementList { display: block; margin: 0; padding: 0; position: relative; width:50px; left: 400px; font-weight:bold;}
+ .elementListB{	display: block;	padding: 0;		font-weight:bold;	margin-right: 0;	margin-bottom: 0;	position:relative;	left:0;	float:left;	}
+  .elementList li { display: block; list-style: none; margin: 0; padding: 0; float: left; position: relative; }
+  .elementList a { display: block; }
+  .elementList ul { display: none; position: absolute; left: 0; margin: 0; padding: 0; }
+  * html .elementList ul { line-height: 0; } /* IE6 "fix" */
+  	.elementList ul a { zoom: 1; } /* IE6/7 fix */
+    .elementList ul li { float: none; }
+    .elementList ul ul { top: 0; }
+    
+/* Essentials - configure this */
+.elementList ul { width: 100px; }
+.elementList ul ul { width: 120px; left: 100px; }
+.elementList ul ul ul { width: 150px; left: 120px; }
+
+/* Everything else is theming */
+ 
+.elementList { background-color: #FFFFFF; height: 28px; }
+.elementList *:hover { background-color: none; }
+.elementList a { cursor:pointer;border-right: 1px solid white; color: #000000; font-size: 12px; font-weight:bold;padding: 1px; line-height: 0; height: 20px;}
+  .elementList li.hover a { background-color: #FFEFD5; }
+  .elementList ul { top: 25px; }
+    .elementList ul li a { background-color: #FFEFD5; }
+     .elementList ul a.hover { background-color: #d3e3f6; }
+   .elementList ul a { border-bottom: 1px solid white; border-right: none; }
+/* .elementList ul a { border-bottom: none; } - I also needed this for IE6/7 */
+
+ 
+ 
+ .excludedParameterList {  display:block;	font-weight:bold;		margin:0;	padding:0;	position:relative;	}
+.excludedParameterListB{	display: block;	padding: 0;		font-weight:bold;	margin-right: 0;	margin-bottom: 0;	position:relative;	left:0;	float:left;	 }
+.excludedParameterList li { display: block; list-style: none; margin: 0; padding: 0; float: left; position: relative; }
+  .excludedParameterList a { display: block; }
+  .excludedParameterList ul { display: none; position: absolute; left: 0; margin: 0; padding: 0; }
+  * html .excludedParameterList ul { line-height: 0; } /* IE6 "fix" */
+  	.excludedParameterList ul a { zoom: 1; } /* IE6/7 fix */
+    .excludedParameterList ul li { float: none; }
+    .excludedParameterList ul ul { top: 0; }
+    
+/* Essentials - configure this */
+.excludedParameterList li ul { top:20px; }
+.excludedParameterList ul { width: 80px; }
+
+/* Everything else is theming */
+ 
+.excludedParameterList { background-color: #FFFFFF;  }
+.excludedParameterList *:hover { background-color: none; }
+.excludedParameterList a { border-right: 1px solid white; color: #000000; font-size: 12px; font-weight:bold;padding: 1px; line-height: 1;}
+  .excludedParameterList li.hover a { background-color: #FFEFD5; }
+  .excludedParameterList ul { top: 25px; }
+    .excludedParameterList ul li a { background-color: #FFEFD5; }
+     .excludedParameterList ul a.hover { background-color: #d3e3f6; }
+   .excludedParameterList ul a { border-bottom: 1px solid white; border-right: none;  }
+/* .excludedParameterList ul a { border-bottom: none; } - I also needed this for IE6/7 */
+
+.excludedPara {position:relative;left:50px;}
+.noHover {cursor:pointer;}
+ 

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.cart.ShoppingcartItemStat"
+        table="v_shoppingcart_item_stat"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+    >
+		<id
+            name="productSkuId"
+            column="productSkuId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+
+        <many-to-one name="productSku" 
+          class="com.cartmatic.estore.common.model.catalog.ProductSku" 
+          not-null="true"
+          fetch="select"
+          lazy="false"
+          insert="false"
+          update="false"
+          >
+          <column name="productSkuId"/>
+        </many-to-one>
+           
+        <property
+            name="itemType"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="itemType"
+            length="5"
+            not-null="true"
+            unique="false"
+        />
+                
+        <property
+            name="quantity"
+            type="java.lang.Long"
+            update="true"
+            insert="true"
+            access="property"
+            column="quantity"
+            length="10"
+            not-null="true"
+            unique="false"
+        />
+        
+        <property
+            name="isSaved"
+            type="java.lang.Short"
+            update="true"
+            insert="true"
+            access="property"
+            column="isSaved"
+            length="5"
+            not-null="true"
+            unique="false"
+        />        
+     </class>
+</hibernate-mapping>

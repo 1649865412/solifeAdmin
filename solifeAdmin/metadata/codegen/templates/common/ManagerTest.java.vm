@@ -1,0 +1,257 @@
+## This is a velocity template
+## to generate a model class from an sql table input
+#set ($table = $sqlTable.Table)
+#set ($class = $utility.makeClassName($sqlTable.EntityName))
+#set ($classVar = $utility.makeFirstLetterLowerCase($class))
+#set ($packagePrefix  = $prop.getProperty("packagePrefix"))
+#set ($packageModot  = $prop.getProperty("packageModot"))
+#set ($keyfield = $sqlTable.getPrimaryKey(0).getColname())
+#set ($keytype  = $sqlTable.getPrimaryKey(0).getAttType())
+#set ($keyVar= $utility.makeVarName($keyfield))
+#set ($keyVarUC = $utility.makeFirstLetterUpperCase($keyVar))
+#set ($keyColumn = $sqlTable.getPrimaryKey(0))
+#set ($testKeyVal1   = $utility.makeSampleData($keyColumn.attType,$keyColumn.colname,$keyColumn.colsize,$keyColumn.coltype,"1", "y"))
+#if ($sqlTable.hasCompositeKey)
+#set ($testKeyVal1 = $utility.makeSampleDataPK($sqlTable,"MM/dd/yyyy","1"))
+#end
+#set ($newTestCase   = "8")
+#set ($badTestCase   = "0")
+#set ($testKeyValNew = $utility.makeSampleData($keyColumn.attType,$keyColumn.colname,$keyColumn.colsize,$keyColumn.coltype,$newTestCase, "y"))
+#if ($sqlTable.hasCompositeKey)
+#set ($testKeyValNew = $utility.makeSampleDataPK($sqlTable,"MM/dd/yyyy",$newTestCase))
+#end
+#set ($testKeyValBad = $utility.makeSampleData($keyColumn.attType,$keyColumn.colname,$keyColumn.colsize,$keyColumn.coltype,$badTestCase, "y"))
+#if ($sqlTable.hasCompositeKey)
+#set ($testKeyValBad = $utility.makeSampleDataPK($sqlTable,"MM/dd/yyyy",$badTestCase))
+#end
+#set ($nonKeyCol     = "")
+#set ($nonKeyVal     = "")
+#set ($versionExists = false)
+#set ($hasTestableColumn = $sqlTable.hasTestableColumn)
+#if  ($hasTestableColumn)
+#set ($testableColumn    = $sqlTable.getTestableColumn())
+#set ($testCol = $utility.makeFirstLetterUpperCase($utility.makeVarName($testableColumn.colname)))
+#set ($testVal = $utility.makeSampleData($testableColumn.attType,$testableColumn.colname,$testableColumn.colsize,$testableColumn.coltype,$newTestCase, "y"))
+#end
+package ${packagePrefix}${packageModot}.service;
+
+import java.util.List;
+import java.util.ArrayList;
+#foreach ( $types in $sqlTable.typeList)
+import $types;
+#end
+
+import ${packagePrefix}.Constants;
+import ${packagePrefix}.common.model${packageModot}.${class};
+#if ($sqlTable.hasCompositeKey)
+import ${packagePrefix}.common.model${packageModot}.base.${class}PK;
+#end
+
+import ${packagePrefix}${packageModot}.dao.${class}Dao;
+import ${packagePrefix}${packageModot}.service.impl.${class}ManagerImpl;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.jmock.Mock;
+
+
+public class ${class}ManagerTest extends ${packagePrefix}.service.BaseManagerTestCase {
+    //~ Instance fields ========================================================
+
+    private ${class}Manager mgr = new ${class}ManagerImpl();
+    private Mock ${classVar}Dao = null;
+    private ${class} ${classVar};
+     
+
+    //~ Methods ================================================================
+
+    protected void setUp() throws Exception {
+        super.setUp();
+        ${classVar}Dao = new Mock(${class}Dao.class);
+        mgr.set${class}Dao((${class}Dao) ${classVar}Dao.proxy());
+        
+    }
+    
+ public void testGet${class}() throws Exception {
+        ${class} ${classVar}Data = new ${class}();
+#if ($sqlTable.hasCompositeKey)
+			${class}PK pkey = $testKeyVal1;
+			${classVar}Data.set${class}PK(pkey);
+#else
+        ${classVar}Data.set${keyVarUC}($testKeyVal1);
+#end
+
+        // Optional call: - requires ManagerTest.properties file
+        // populate method in super class to populate test data
+        // from a properties file matching this class name
+        // ${classVar}Data = (${class}) populate(${classVar}Data);
+#foreach( $column in $sqlTable.sqlColumns)
+#if (!$column.isKey() && !("deleted"==${column.attName}))
+#set ($nonKeyColumn=$column)
+#set ($nonKeyVal = $utility.makeSampleData($column.attType,$column.colname,$column.colsize,$column.coltype,"1", "y"))
+#set ($nonKeyCol= $utility.makeFirstLetterUpperCase($utility.makeVarName($column.colname)))
+#if  ($nonKeyCol.equalsIgnoreCase("version"))
+#set ($versionExists = true)
+        ${classVar}Data.setVersion(new Integer(1));
+#else
+        ${classVar}Data.set${nonKeyCol}($nonKeyVal);
+#end
+#end
+#end     
+        // set expected behavior on dao
+        ${classVar}Dao.expects(once()).method("get${class}")
+               .with(eq(${testKeyVal1})).will(returnValue(${classVar}Data));
+        
+        ${classVar} = mgr.get${class}(${testKeyVal1});
+        assertTrue(${classVar} != null);
+        ${classVar}Dao.verify();
+    }
+
+
+    public void testAddAndRemove${class}() throws Exception {
+        ${classVar} = new ${class}();
+#if ($sqlTable.hasCompositeKey)
+		${class}PK pkey = $testKeyValNew;
+		${classVar}.set${class}PK(pkey);
+#else
+#if (!$sqlTable.hasGeneratedKey)
+	    ${classVar}.set${keyVarUC}($testKeyValNew);
+#end
+#end
+
+        // Optional call: - requires ManagerTest.properties file
+        // populate method in super class to populate test data
+        // from a properties file matching this class name
+        // ${classVar} = (${class}) populate(${classVar});
+#foreach( $column in $sqlTable.sqlColumns)
+#if (!$column.isKey() && !("deleted"==${column.attName}))
+#set ($nonKeyColumn=$column)
+#set ($nonKeyVal = $utility.makeSampleData($column.attType,$column.colname,$column.colsize,$column.coltype,$newTestCase, "y"))
+#set ($nonKeyCol= $utility.makeFirstLetterUpperCase($utility.makeVarName($column.colname)))
+#if  ($nonKeyCol.equalsIgnoreCase("version"))
+#set ($versionExists = true)
+        ${classVar}.setVersion(null);
+#else
+        ${classVar}.set${nonKeyCol}($nonKeyVal);
+#end
+#end
+#end   
+
+        // set expected behavior on ${classVar} dao
+        ${classVar}Dao.expects(once()).method("save${class}").with(same(${classVar}));
+        
+        mgr.save${class}(${classVar});
+#if ($sqlTable.hasCompositeKey)
+		assertTrue(${classVar}.get${class}PK().equals(${testKeyValNew}));
+#else
+#if (!$sqlTable.hasGeneratedKey)
+	    assertTrue(${classVar}.get${keyVarUC}().equals(${testKeyValNew}));
+#end
+#end
+        ${classVar}Dao.verify();
+        
+        // reset expectations
+        ${classVar}Dao.reset();
+
+#if ($sqlTable.hasCompositeKey)
+        ${classVar}Dao.expects(once()).method("remove${class}").with(eq(${classVar}.get${class}PK()));
+        mgr.remove${class}(${classVar}.get${class}PK());
+#else
+        ${classVar}Dao.expects(once()).method("remove${class}").with(eq(${classVar}.get${keyVarUC}()));
+        mgr.remove${class}(${classVar}.get${keyVarUC}());
+#end
+        ${classVar}Dao.verify();
+
+        // reset expectations
+        ${classVar}Dao.reset();
+        ${classVar}Dao.expects(once()).method("get${class}").will(returnValue(null));
+        ${classVar} = mgr.get${class}(${testKeyValNew});
+        assertNull(${classVar});
+        ${classVar}Dao.verify();
+    }
+
+    public void test${class}ExistsException() {
+        // set expectations
+        ${classVar} = new ${class}();
+#if ($sqlTable.hasCompositeKey)
+        ${classVar}.set${class}PK($testKeyVal1);
+#else
+        ${classVar}.set${keyVarUC}($testKeyVal1);
+#end
+
+        // Optional call: - requires ManagerTest.properties file
+        // populate method in super class to populate test data
+        // from a properties file matching this class name
+        // ${classVar} = (${class}) populate(${classVar});
+#foreach( $column in $sqlTable.sqlColumns)
+#if (!$column.isKey() && !("deleted"==${column.attName}))
+#set ($nonKeyColumn=$column)
+#set ($nonKeyVal = $utility.makeSampleData($column.attType,$column.colname,$column.colsize,$column.coltype,"1", "y"))
+#set ($nonKeyCol= $utility.makeFirstLetterUpperCase($utility.makeVarName($column.colname)))
+#if  ($nonKeyCol.equalsIgnoreCase("version"))
+#set ($versionExists = true)
+        ${classVar}.setVersion(null);
+#else
+        ${classVar}.set${nonKeyCol}($nonKeyVal);
+#end
+#end
+#end            
+        Exception ex = new DataIntegrityViolationException("");
+        ${classVar}Dao.expects(once()).method("save${class}").with(same(${classVar}))
+               .will(throwException(ex));
+        
+        // run test
+        try {
+            mgr.save${class}(${classVar});
+            fail("Expected ${class}ExistsException not thrown");
+        } catch (Exception e) {
+            logger.debug("expected exception: " + e.getMessage());
+            assertNotNull(e);
+        }
+    }
+   
+#if ($hasTestableColumn)
+#set ($nonKeyVal = $utility.makeSampleData($testableColumn.attType,$testableColumn.colname,$testableColumn.colsize,$testableColumn.coltype,"1", "y"))
+    public void testSave${class}() throws Exception {
+        ${class} ${classVar}Data = new ${class}();
+#if ($sqlTable.hasCompositeKey)
+        ${classVar}Data.set${class}PK($testKeyVal1);
+#else
+        ${classVar}Data.set${keyVarUC}($testKeyVal1);
+#end
+
+        // Optional call: - requires ManagerTest.properties file
+        // populate method in super class to populate test data
+        // from a properties file matching this class name
+        // ${classVar}Data = (${class}) populate(${classVar}Data);
+#foreach( $column in $sqlTable.sqlColumns)
+#if (!$column.isKey() && !("deleted"==${column.attName}))
+#set ($nonKeyColumn=$column)
+#set ($nonKeyVal = $utility.makeSampleData($column.attType,$column.colname,$column.colsize,$column.coltype,"1", "y"))
+#set ($nonKeyCol= $utility.makeFirstLetterUpperCase($utility.makeVarName($column.colname)))
+#if  ($nonKeyCol.equalsIgnoreCase("version"))
+#set ($versionExists = true)
+        ${classVar}Data.setVersion(new Integer(1));
+#else
+        ${classVar}Data.set${nonKeyCol}($nonKeyVal);
+#end
+#end
+#end     
+// set expected behavior on dao
+        ${classVar}Dao.expects(once()).method("get${class}")
+               .with(eq(${testKeyVal1})).will(returnValue(${classVar}Data));
+    
+        ${classVar} = mgr.get${class}(${testKeyVal1});
+
+        ${classVar}.set${testCol}(${testVal});
+        ${classVar}Dao.verify();
+        
+        // reset expectations
+        ${classVar}Dao.reset();
+        ${classVar}Dao.expects(once()).method("save${class}").with(same(${classVar}));
+        
+        mgr.save${class}(${classVar});
+        assertTrue(${classVar}.get${testCol}().equals(${testVal}));
+        ${classVar}Dao.verify();
+       
+    }
+#end
+}

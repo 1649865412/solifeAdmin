@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<beans default-lazy-init="true" default-autowire="byName">
+	<!-- For all application initialization settings -->
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" lazy-init="false">
+        <property name="locations">
+            <list>
+                <value>classpath:conf/app-config.properties</value>
+                <value>classpath:conf/app-config_user.properties</value>
+            </list>
+        </property>
+        <property name="ignoreResourceNotFound" value="true" />
+        <property name="ignoreUnresolvablePlaceholders" value="true" />
+    </bean>
+	<!-- Sytem (non-user) messages, spring will integrate them into JSTL -->
+	<bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="fallbackToSystemLocale" value="false" />
+		<property name="useCodeAsDefaultMessage" value="false" />
+		<property name="cacheSeconds" value="${messageSource.cacheSeconds}" />
+		<property name="defaultEncoding" value="UTF-8" />
+		<property name="basenames">
+			<list>
+				<value>/conf/version</value>
+				<value>/messages/StoreAdmin</value>
+				<value>/messages/Config</value>
+			</list>
+		</property>
+	</bean>
+	<import resource="spring-resources.xml" />
+	<import resource="spring-hibernate.xml" />
+	<import resource="spring-dao.xml" />
+	<import resource="spring-service.xml" />
+	<import resource="spring-validation.xml" />
+	<import resource="spring-mvc.xml" />
+</beans>

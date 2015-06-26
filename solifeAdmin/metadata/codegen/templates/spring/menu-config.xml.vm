@@ -1,0 +1,7 @@
+## This is a velocity template
+## to generate a menu template file from an sql table input
+#set ($table = $sqlTable.Table)
+#set ($class = $utility.makeClassName($sqlTable.EntityName))
+#set ($classVar = $utility.makeFirstLetterLowerCase($class))
+#set ($packageModot  = $prop.getProperty("packageModot").substring(1))
+			<Item name="${class}sMenu" title="menu.view${class}s" page="/${packageModot}/${classVar}.html"/>

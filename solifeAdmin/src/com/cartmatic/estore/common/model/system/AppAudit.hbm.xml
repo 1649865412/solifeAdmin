@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.system.AppAudit"
+        table="APP_AUDIT"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="appAuditId"
+            column="appAuditId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+         <property
+            name="procUserId"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="procUserId"
+            length="10"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="procObj"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="procObj"
+            length="1024"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="actionName"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="actionName"
+            length="64"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="procResult"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="procResult"
+            length="1024"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="requestUrl"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="requestUrl"
+            length="255"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="procTime"
+            type="java.util.Date"
+            update="true"
+            insert="true"
+            access="property"
+            column="procTime"
+            length="0"
+            not-null="true"
+            unique="false"
+        />
+     </class>
+</hibernate-mapping>

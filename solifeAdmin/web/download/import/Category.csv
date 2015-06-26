@@ -1,0 +1,18 @@
+目录名称,目录编码,父目录,状态,目录图片,顺序,模版路径,Meta 关键字,页面Meta描述内容,描述
+import_手机,import_mobile,,激活,,111,,手机手机,,手机手机手机手机手机手机
+import_联想,import_lenovo,import_手机,激活,,1,,,,联想联想联想
+import_诺基亚,import_nokia,import_手机,激活,sdas.jpg,2,,诺基亚,,诺基亚诺基亚诺基亚诺基亚
+import_索尼爱立信,import_sonyericsson,import_手机,激活,,3,,索尼爱立信,,索尼爱立信索尼爱立信索尼爱立信
+import_摩托罗拉,import_motorola,import_手机,激活,,4,,摩托罗拉,,摩托罗拉摩托罗拉摩托罗拉摩托罗拉
+import_服装,import_wgs1,,激活,,112,,,,
+import_男装,import_man,import_服装,激活,12463.jpg,1,,,,
+import_衬衣,import_shirt1,import_男装,激活,,1,,,,
+import_T恤,import_T,import_男装,激活,,2,,,,
+import_女装,import_woman,import_服装,激活,,3,,,,
+import_衬衣,import_shirt2,import_女装,激活,,1,,,,
+import_裙子,import_wgs2,import_女装,激活,,2,,,,
+import_裤子,import_wgs3,import_女装,激活,,3,,,,
+import_彩妆商城,import_caizhuang,,激活,,113,,,,
+import_香水,import_xiangshui,import_彩妆商城,激活,,1,,,,Vera Wang 已经成为享譽全球的现代时尚设计的经典代名词。Vera Wang 创造了一个充满年轻与感官的精致梦想，这是一个令人梦寐以求的世界。精致的细节，复杂精细的裙摺设计以及不受潮流影响的风格造就的Vera Wang 的婚纱帝国是全世界许多女人的梦想。
+import_珠宝商城,import_zhubao,,激活,,114,,,,
+import_点卡,import_diangka,,激活,,115,,,,

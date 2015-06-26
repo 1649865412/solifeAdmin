@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.catalog.WholesalePrice"
+        table="WHOLESALE_PRICE"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="wholesalePriceId"
+            column="wholesalePriceId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+         <property
+            name="price"
+            type="java.math.BigDecimal"
+            update="true"
+            insert="true"
+            access="property"
+            column="price"
+            precision="12"
+            scale="2"
+            not-null="true"
+            unique="false"
+        />
+        <property
+            name="minQuantity"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="minQuantity"
+            length="10"
+            not-null="true"
+            unique="false"
+        />
+     <!-- imported bi-directional many-to-one association to ProductSku -->
+		<many-to-one
+			name="productSku"
+			class="com.cartmatic.estore.common.model.catalog.ProductSku"
+            not-null="false"
+			fetch="select"
+			
+		>	
+			<column name="productSkuId" />
+		</many-to-one>
+    </class>
+</hibernate-mapping>

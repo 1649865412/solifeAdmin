@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beansProjectDescription>
+	<configExtensions>
+		<configExtension>xml</configExtension>
+	</configExtensions>
+	<configs>
+		<config>common/applicationContext-sessionFactory.xml</config>
+		<config>web/WEB-INF/applicationContext-validation.xml</config>
+		<config>common/applicationContext-hibernate.xml</config>
+		<config>web/WEB-INF/applicationContext-resources.xml</config>
+		<config>web/WEB-INF/applicationContext-jcaptcha.xml</config>
+		<config>web/WEB-INF/action-servlet.xml</config>
+		<config>web/WEB-INF/applicationContext-scheduling.xml</config>
+		<config>web/WEB-INF/applicationContext-security.xml</config>
+		<config>web/WEB-INF/applicationContext-web.xml</config>
+		<config>common/applicationContext-service.xml</config>
+	</configs>
+	<configSets>
+		<configSet>
+			<name>Spring-web</name>
+			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
+			<incomplete>false</incomplete>
+			<configs>
+				<config>web/WEB-INF/applicationContext-web.xml</config>
+			</configs>
+		</configSet>
+	</configSets>
+</beansProjectDescription>

@@ -1,0 +1,16 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<c:set var="tabIndex" value="${param['tabIndex']}"/>
+<c:if test="${empty tabIndex}">
+	<c:set var="tabIndex" value="0"/>
+</c:if>
+<app:ui_tabs tabsId="customerTab" selected="${tabIndex}" type="2"/>
+<div id="customerTab">
+	<ul>
+    	<li><a target="_self" href="${ctxPath}/customer/customer.html?doAction=edit&customerId=${param['customerId']}&tabIndex=0"><fmt:message key="customer.tab.customerInfo" /></a></li>
+	    <li><a target="_self" href="${ctxPath}/customer/customer.html?doAction=viewCustomerOrder&customerId=${param['customerId']}&tabIndex=1"><fmt:message key="customer.tab.order" /></a></li>
+		<li><a target="_self" href="${ctxPath}/customer/address.html?customerId=${param['customerId']}&tabIndex=2"><fmt:message key="customer.tab.address" /></a></li>
+		<li><a target="_self" href="${ctxPath}/customer/wishlist.html?customerId=${param['customerId']}&tabIndex=3"><fmt:message key="customer.tab.wishlist" /></a></li>
+		<li><a target="_self" href="${ctxPath}/customer/shopPointHistory.html?customerId=${param['customerId']}&tabIndex=4"><fmt:message key="customer.tab.shopPoint" /></a></li>
+    </ul>
+    <div class="blank10"></div>
+</div>

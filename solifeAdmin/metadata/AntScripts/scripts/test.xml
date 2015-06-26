@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ProbizBuild" basedir="../../../">
+	<import file="properties.xml" />
+	
+	<macrodef name="test-module">
+		<attribute name="module" />
+
+		<sequential>
+			<echo level="info">Testing @{module}...</echo>
+			<mkdir dir="${dir.build.test}/data" />
+
+			<junit printsummary="no" forkmode="once" errorProperty="test.failed" failureProperty="test.failed"
+				fork="${junit.fork}" showoutput="${junit.showoutput}">
+				<jvmarg value="-Duser.language=en" />
+				<classpath refid="test.classpath" />
+
+				<!-- emma-specific jvm parameter -->
+				<!-- =========================== -->
+				<jvmarg value="-Demma.coverage.out.file=${dir.test.coverage}/coverage.emma" />
+
+				<formatter type="xml" />
+				<formatter type="brief" usefile="false" />
+				<batchtest todir="${dir.build.test}/data">
+					<fileset dir="${dir.build.java}">
+						<include name="**/*@{module}Test.class*" />
+					</fileset>
+				</batchtest>
+			</junit>
+
+			<!-- emma report task -->
+			<!-- ================================== -->
+			<!--<emma enabled="${emma.enabled}">
+				<report sourcepathref="all.sources" depth="method">
+				<fileset dir="${dir.test.coverage}">
+				<include name="*.emma"/>
+				</fileset>
+				<html outfile="${dir.test.coverage}/coverage.html"/>
+				</report>
+				</emma>-->
+
+			<fail if="test.failed">
+				Unit tests failed. For error messages, check the log files in ${dir.build.test}/data or run "ant
+				test-reports" to generate reports at ${dir.build.test}/reports.
+			</fail>
+		</sequential>
+	</macrodef>
+
+	<target name="test-dao" depends="" description="Test dao module">
+		<test-module module="DAO" />
+	</target>
+
+	<target name="test-service" depends="" description="Test service module">
+		<test-module module="Manager" />
+	</target>
+
+	<target name="test-web" depends="" description="Test web module">
+		<test-module module="Controller" />
+	</target>
+
+	<target name="test-reports" description="Generate test reports">
+		<mkdir dir="${dir.build.test}/reports" />
+		<junitreport todir="${dir.build.test}">
+			<fileset dir="${dir.build.test}/data">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="frames" todir="${dir.build.test}/reports" />
+		</junitreport>
+		<echo level="info">Test reports generated at ${dir.build.test}/reports</echo>
+	</target>
+
+	<target name="test-deploy-reports" depends="test-reports"
+		description="Deploys Generated JUnit test reports to server">
+		<copy todir="${tomcat.home}/webapps/${webapp.name}/test-reports">
+			<fileset dir="${dir.build.test}/reports" />
+		</copy>
+	</target>
+
+	<!-- =================================================================== -->
+	<!--            Run Canoo WebTests in Tomcat                             -->
+	<!-- =================================================================== -->
+	<target name="test-canoo" if="tomcat.home" 
+		description="Runs Canoo WebTests in Tomcat to test JSPs">
+
+		<copy todir="${dir.build.test}/properties">
+			<filterchain>
+				<filterreader classname="com.probiz.estore.buildtools.EscapeHtmlEntities">
+					<classpath refid="test.classpth" />
+					<param name="mode" value="unescape" />
+				</filterreader>
+			</filterchain>
+			<fileset dir="web/WEB-INF/classes" includes="**/ApplicationResources*.properties" />
+		</copy>
+
+		<taskdef file="webtestTaskdefs.properties" classpathref="test.classpath" />
+
+		<mkdir dir="${dir.build.test}/data" />
+
+		<!-- Delete old results file if it exists -->
+		<delete file="${dir.build.test}/data/web-tests-result.xml" />
+
+		<!-- This is so the default will be used if no test case is specified -->
+		<property name="testcase" value="run-all-tests" />
+		<echo level="info">Testing with locale '${user.language}'</echo>
+		<ant antfile="test/web/web-tests.xml" target="${testcase}" />
+	</target>
+
+	<!-- =================================================================== -->
+	<!--            Run Canoo WebTests using Cargo                           -->
+	<!-- =================================================================== -->
+	<target name="test-jsp" if="tomcat.home" depends="" description="Runs Canoo WebTests using Cargo">
+
+		<taskdef resource="cargo.tasks" classpathref="test.classpath" />
+
+		<echo>running canoo tests at: http://${tomcat.server}:${http.port}/${webapp.name}</echo>
+
+		<if>
+			<isset property="tomcat5" />
+			<then>
+				<property name="cargoId" value="tomcat5x" />
+			</then>
+			<else>
+				<property name="cargoId" value="tomcat4x" />
+			</else>
+		</if>
+
+		<echo message="Starting ${cargoId}..." />
+		<cargo containerId="${cargoId}" id="${cargoId}" home="${tomcat.home}" action="start"
+			output="${dir.build.test}/cargo.log" wait="false">
+			<configuration home="${dir.build.test}/${cargoId}">
+				<property name="cargo.logging" value="high" />
+				<property name="cargo.servlet.port" value="${http.port}" />
+				<!--<property name="cargo.jvmargs" value="${run.StoreAdmin.test.debugargline}"/>-->
+				<deployable type="war" file="${dir.dist.web}/${webapp.war}" />
+			</configuration>
+		</cargo>
+
+		<antcall target="test-canoo" />
+
+		<cargo refid="${cargoId}" action="stop" />
+	</target>
+
+	<!-- =================================================================== -->
+	<!--            Run all tests (tomcat not running)                       -->
+	<!-- =================================================================== -->
+	<target name="test-all" depends="test-dao,test-service,test-web,test-jsp"
+		description="runs all tests for dao, service, web and jsp">
+		<antcall target="db-load-data" />
+	</target>
+
+	<!-- =================================================================== -->
+	<!--  Run all tests (tomcat IS running). The deploy task                 -->
+	<!--  should be run before this one.                                     -->
+	<!-- =================================================================== -->
+	<target name="test-all-running" description="runs all tests for DAOs, Services, Controllers and JSPs">
+		<!-- <antcall target="test-dao"/> 
+			<antcall target="test-service"/>
+			<antcall target="test-web"/>
+			<antcall target="test-canoo"/>
+			<antcall target="db-load-data"/> -->
+	</target>
+
+</project>

@@ -1,0 +1,4224 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--DOCTYPE form-validation PUBLIC
+        "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.3.0//EN"
+        "http://jakarta.apache.org/commons/dtds/validator_1_3_0.dtd"-->
+        
+<form-validation>
+	<global>
+		<constant>
+			<constant-name>phone</constant-name>
+			<constant-value>^\(?(\d{3})\)?[-| ]?(\d{3})[-| ]?(\d{4})$</constant-value>
+		</constant>
+		<constant>
+			<constant-name>zip</constant-name>
+			<constant-value>^\d{5}\d*$</constant-value>
+		</constant>
+		<constant>
+			<constant-name>currency</constant-name>
+			<constant-value>^\d{1,3}(,?\d{1,3})*\.?(\d{1,2})?$</constant-value>
+		</constant>
+	</global>
+
+	<formset>
+		<form name="companyInfo" />
+		<!-- Sample form to show how to write some most used rules -->
+		<form name="sample">
+			<field property="textKey" depends="required">
+				<arg position="0"  key="sample.textKey" />
+			</field>
+			<field property="category" depends="short">
+				<arg position="0"  key="sample.category" />
+			</field>
+			<field property="description" depends="minlength,maxlength">
+				<arg position="0"  key="sample.description" />
+				<arg position="1"  name="minlength" key="${var:minlength}" resource="false" />
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>minlength</var-name>
+					<var-value>4</var-value>
+				</var>
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>255</var-value>
+				</var>
+			</field>
+			<!-- Date localization here and rendering is still an issue unsolved, TODO, maybe do this in installer-->
+			<field property="expireDate" depends="date">
+				<arg position="0"  key="sample.expireDate" />
+			</field>
+			<field property="email" depends="required,email">
+				<arg position="0"  key="sample.email" />
+			</field>
+			<!-- address.postalCode is a property of an association -->
+			<field property="address.postalCode" depends="required,mask">
+				<msg name="mask" key="errors.zip" />
+
+				<arg position="0"  key="sample.address.postalCode" />
+				<!-- mask uses regular expression -->
+				<!-- zip is defined in constant, however you can simply write it below-->
+				<var>
+					<var-name>mask</var-name>
+					<var-value>${zip}</var-value>
+				</var>
+			</field>
+			<!-- TODO, add currency, percent support and samples -->
+		</form>
+
+		<form name="fileUpload">
+			<!-- Client-side Javascript won't catch this in IE, but server-side will -->
+			<field property="file" depends="required">
+				<arg position="0"  key="uploadForm.file" />
+			</field>
+		</form>
+		
+<!-- start:  Generated for I18ntext From Template: validation.xml.vm  -->
+		<form name="i18ntext">
+ 			<field property="textKey" depends="required,maxlength">
+				<arg position="0" key="i18ntext.textKey" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+ 			<field property="category" depends="maxlength">
+				<arg position="0" key="i18ntext.category" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+ 			<field property="description" depends="maxlength">
+				<arg position="0" key="i18ntext.description" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>512</var-value>
+				</var>
+			</field>
+ 			<field property="moduleId" depends="integer">
+				<arg position="0" key="i18ntext.moduleId" />
+			</field>
+		</form>
+<!-- end:  Generated for I18ntext From Template: validation.xml.vm  -->
+		<form name="appRole">
+			<field property="roleName" depends="required,maxlength">
+				<arg position="0" key="appRole.roleName"/>
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false"/>
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="roleDetail" depends="maxlength">
+				<arg position="0" key="appRole.roleDetail"/>
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false"/>
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>255</var-value>
+				</var>
+			</field>
+		</form>
+<!-- start:  Generated for I18ntextItem From Template: validation.xml.vm  -->
+		<form name="i18ntextItem">
+ 			<field property="textKey" depends="required,maxlength">
+				<arg position="0" key="i18ntextItem.textKey" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+ 			<field property="textValue" depends="required,maxlength">
+				<arg position="0" key="i18ntextItem.textValue" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>1024</var-value>
+				</var>
+			</field>
+ 			<field property="category" depends="maxlength">
+				<arg position="0" key="i18ntextItem.category" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+     			<field property="localeCode" depends="required,maxlength">
+				<arg position="0" key="i18ntextItem.localeCode" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>8</var-value>
+				</var>
+			</field>
+		</form>
+<!-- end:  Generated for I18ntextItem From Template: validation.xml.vm  -->
+<!-- start:  Generated for SystemConfig From Template: validation.xml.vm  -->
+		<form name="systemConfig">
+			<field property="configKey" depends="required,maxlength">
+				<arg position="0" key="systemConfig.configKey" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="description" depends="maxlength">
+				<arg position="0" key="systemConfig.description" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>512</var-value>
+				</var>
+			</field>
+			<field property="category" depends="maxlength">
+				<arg position="0" key="systemConfig.category" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="configType" depends="short">
+				<arg position="0" key="systemConfig.configType" />
+			</field>
+			<field property="configValue" depends="required,maxlength">
+				<arg position="0" key="systemConfig.configValue" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>1024</var-value>
+				</var>
+			</field>
+			<field property="options" depends="maxlength">
+				<arg position="0" key="systemConfig.options" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>512</var-value>
+				</var>
+			</field>
+			<field property="dataType" depends="short">
+				<arg position="0" key="systemConfig.dataType" />
+			</field>
+			<field property="isSystem" depends="short">
+				<arg position="0" key="systemConfig.isSystem" />
+			</field>
+		</form>
+<!-- end:  Generated for SystemConfig From Template: validation.xml.vm  -->
+		<form name="membership">
+			<field property="membershipName" depends="required,maxlength">
+				<arg position="0" key="membership.membershipName"/>
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="membershipLevel" depends="required,integer">
+				<arg position="0" key="membership.membershipLevel"/>
+			</field>	
+			<field property="upgradeShopPoint" depends="required,integer">
+				<arg position="0"  key="membership.upgradeShopPoint" />
+			</field>
+		</form>
+<!-- start:  Generated for Region From Template: validation.xml.vm  -->
+		<form name="region">
+			<field property="regionCode" depends="required,maxlength">
+				<arg position="0" key="region.regionCode" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="regionType" depends="short">
+				<arg position="0" key="region.regionType" />
+			</field>
+			<field property="regionName" depends="required,maxlength">
+				<arg position="0" key="region.regionName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="zipCode" depends="maxlength">
+				<arg position="0" key="region.zipCode" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>12</var-value>
+				</var>
+			</field>
+			<field property="telephoneCode" depends="maxlength">
+				<arg position="0" key="region.telephoneCode" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>8</var-value>
+				</var>
+			</field>
+			<field property="regionIcon" depends="maxlength">
+				<arg position="0" key="region.regionIcon" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>256</var-value>
+				</var>
+			</field>
+			<field property="priority" depends="integer">
+				<arg position="0" key="region.priority" />
+			</field>
+			<field property="parentRegionId" depends="required,integer">
+				<arg position="0" key="region.parentRegionId" />
+			</field>
+			<field property="description" depends="maxlength">
+				<arg position="0" key="region.description" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>1024</var-value>
+				</var>
+			</field>
+			<field property="status" depends="short">
+				<arg position="0" key="region.status" />
+			</field>
+		</form>
+<!-- end:  Generated for Region From Template: validation.xml.vm  -->
+<!-- start:  Generated for RegionItem From Template: validation.xml.vm  -->
+		<form name="regionItem">
+			<field property="itemId" depends="integer">
+				<arg position="0" key="regionItem.itemId" />
+			</field>
+		</form>
+<!-- end:  Generated for RegionItem From Template: validation.xml.vm  -->
+<!-- start:  Generated for PromotionProduct From Template: validation.xml.vm  -->
+		<form name="promotionProduct">
+			<field property="COL@sortOrder@Integer@GTE" depends="integer">
+				<arg position="0"  key="promotionProduct.sortOrder" />
+			</field>
+			<field property="COL@sortOrder@Integer@LTE" depends="integer">
+				<arg position="0"  key="promotionProduct.sortOrder" />
+			</field>
+			<field property="COL@quantity@Integer@GTE" depends="integer">
+				<arg position="0"  key="promotionProduct.quantity" />
+			</field>
+			<field property="COL@quantity@Integer@LTE" depends="integer">
+				<arg position="0"  key="promotionProduct.quantity" />
+			</field>
+			<field property="COL@fixedPrice@BigDecimal@GTE" depends="double">
+				<arg position="0"  key="promotionProduct.fixedPrice" />
+			</field>
+			<field property="COL@fixedPrice@BigDecimal@LTE" depends="double">
+				<arg position="0"  key="promotionProduct.fixedPrice" />
+			</field>
+ 			<field property="sortOrder" depends="integer,intRange">
+				<arg position="0"  key="promotionProduct.sortOrder" />
+				<arg position="1" name="intRange" key="${var:min}"/>
+				<arg position="2" name="intRange" key="${var:max}"/>
+				<var>
+					<var-name>min</var-name>
+					<var-value>0</var-value>
+				</var>
+				<var>
+					<var-name>max</var-name>
+					<var-value>1000</var-value>
+				</var>
+			</field>
+ 			<field property="quantity" depends="integer,intRange,required">
+				<arg position="0"  key="promotionProduct.quantity" />
+				<arg position="1" name="intRange" key="${var:min}"/>
+				<arg position="2" name="intRange" key="${var:max}"/>
+				<var>
+					<var-name>min</var-name>
+					<var-value>0</var-value>
+				</var>
+				<var>
+					<var-name>max</var-name>
+					<var-value>1000</var-value>
+				</var>
+			</field>
+			<field property="fixedPrice" depends="price,required">
+				<arg position="0"  key="promotionProduct.fixedPrice" />
+			</field>
+ 			<field property="productName" depends="required,maxlength">
+				<arg position="0"  key="promotionProduct.categoryPath" />
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+ 			<field property="isCategory" depends="short">
+				<arg position="0"  key="promotionProduct.isCategory" />
+			</field>
+		</form>
+<!-- end:  Generated for PromotionProduct From Template: validation.xml.vm  -->
+
+
+<!-- start:  Generated for Carrier From Template: validation.xml.vm  -->
+		<form name="carrier">
+			<field property="carrierName" depends="required,maxlength">
+				<arg position="0" key="carrier.carrierName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="carrierAddress" depends="maxlength">
+				<arg position="0" key="carrier.carrierAddress" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="carrierAddress2" depends="maxlength">
+				<arg position="0" key="carrier.carrierAddress2" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="linkman" depends="maxlength">
+				<arg position="0" key="carrier.linkman" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="telephone" depends="maxlength">
+				<arg position="0" key="carrier.telephone" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="fax" depends="maxlength">
+				<arg position="0" key="carrier.fax" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="email" depends="maxlength">
+				<arg position="0" key="carrier.email" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="zip" depends="maxlength">
+				<arg position="0" key="carrier.zip" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>12</var-value>
+				</var>
+			</field>
+			<field property="status" depends="short">
+				<arg position="0" key="carrier.status" />
+			</field>
+			<field property="logo" depends="maxlength">
+				<arg position="0" key="carrier.logo" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+		</form>
+<!-- end:  Generated for Carrier From Template: validation.xml.vm  -->
+
+<!-- start:  Generated for Tax From Template: validation.xml.vm  -->
+		<form name="tax">
+ 			<field property="taxName" depends="required,maxlength">
+				<arg position="0"  key="tax.taxName" />
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+ 			<field property="taxRegisterNo" depends="maxlength">
+				<arg position="0"  key="tax.taxRegisterNo" />
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+ 			<field property="status" depends="short">
+				<arg position="0"  key="tax.status" />
+			</field>
+   			<!--  <field property="createTime" depends="required,">
+				<arg position="0"  key="tax.createTime" />
+			</field>-->
+  		</form>
+<!-- end:  Generated for Tax From Template: validation.xml.vm  -->
+<!-- start:  Generated for TaxRate From Template: validation.xml.vm  -->
+		<form name="taxRate">
+			<field property="formula" depends="maxlength">
+				<arg position="0" key="taxRate.formula" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>255</var-value>
+				</var>
+			</field>
+			<field property="rateType" depends="short">
+				<arg position="0" key="taxRate.rateType" />
+			</field>
+		</form>
+<!-- end:  Generated for TaxRate From Template: validation.xml.vm  -->
+<!-- start:  Generated for AlsoBuy From Template: validation.xml.vm  -->
+		<form name="alsoBuy">
+ 			<field property="productId" depends="required,integer">
+				<arg position="0" key="alsoBuy.productId" />
+			</field>
+ 			<field property="times" depends="integer">
+				<arg position="0" key="alsoBuy.times" />
+			</field>
+		</form>
+<!-- end:  Generated for AlsoBuy From Template: validation.xml.vm  -->
+<!-- start:  Generated for RecommendedProduct From Template: validation.xml.vm  -->
+		<form name="recommendedProduct">
+            <field property="locationName" depends="required">
+				<arg position="0" key="recommendedProduct.location" />
+			</field>
+ 			<field property="product_sortOrder" depends="integer">
+				<arg position="0" key="recommendedProduct.sortOrder" />
+			</field>
+ 			<field property="product_startTime" depends="required,date">
+				<arg position="0"  key="promotion.startTime" />
+			</field>
+			<field property="product_expireTime" depends="date">
+				<arg position="0"  key="promotion.expireTime" />
+			</field>
+			<field property="productName" depends="required">
+				<arg position="0"  key="product.productName" />
+			</field>
+		</form>
+<!-- end:  Generated for RecommendedProduct From Template: validation.xml.vm  -->
+<!-- start:  Generated for RecommendedType From Template: validation.xml.vm  -->
+		<form name="recommendedType">
+			<field property="recommendTitle" depends="required,maxlength">
+				<arg position="0" key="recommendedType.recommendTitle" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+ 			<field property="typeName" depends="required,maxlength,code">
+				<arg position="0" key="recommendedType.typeName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+ 			<field property="autoEval" depends="required,short">
+				<arg position="0" key="recommendedType.autoEval" />
+			</field>
+ 			<field property="ruleCode" depends="integer">
+				<arg position="0" key="recommendedType.ruleCode" />
+			</field>
+ 			<field property="status" depends="required,short">
+				<arg position="0" key="recommendedType.status" />
+			</field>
+ 			<field property="isSystem" depends="required,short">
+				<arg position="0" key="recommendedType.isSystem" />
+			</field>
+			<field property="templatePath" depends="maxlength">
+				<arg position="0" key="recommendedType.templatePath" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+		</form>
+<!-- end:  Generated for RecommendedType From Template: validation.xml.vm  -->
+<!-- start:  Generated for PaymentHistory From Template: validation.xml.vm  -->
+		<form name="paymentHistory">
+			<field property="orderNo" depends="required,maxlength">
+				<arg position="0" key="paymentHistory.orderNo" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>20</var-value>
+				</var>
+			</field>
+			<field property="flag" depends="required,short">
+				<arg position="0" key="paymentHistory.flag" />
+			</field>
+			<field property="flowNo" depends="maxlength">
+				<arg position="0" key="paymentHistory.flowNo" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="errorMessage" depends="maxlength">
+				<arg position="0" key="paymentHistory.errorMessage" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>256</var-value>
+				</var>
+			</field>
+			<field property="errorCode" depends="maxlength">
+				<arg position="0" key="paymentHistory.errorCode" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="remoteIp" depends="maxlength">
+				<arg position="0" key="paymentHistory.remoteIp" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="receiveData" depends="maxlength">
+				<arg position="0" key="paymentHistory.receiveData" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>2048</var-value>
+				</var>
+			</field>
+			<field property="paymentMethodId" depends="integer">
+				<arg position="0" key="paymentHistory.paymentMethodId" />
+			</field>
+			<field property="isBrowsed" depends="short">
+				<arg position="0" key="paymentHistory.isBrowsed" />
+			</field>
+		</form>
+<!-- end:  Generated for PaymentHistory From Template: validation.xml.vm  -->
+
+<!-- start:  Generated for GiftCertificate From Template: validation.xml.vm  -->
+		<form name="giftCertificate">
+			<field property="giftCertificateNo" depends="minlength,maxlength,mask">
+				<arg position="0"  key="giftCertificate.giftCertificateNo" />
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<arg position="2"  name="minlength" key="${var:minlength}" resource="false" />
+				<arg position="3"  name="mask" key="${var:mask}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>23</var-value>
+				</var>
+				<var>
+					<var-name>minlength</var-name>
+					<var-value>23</var-value>
+				</var>
+				<var>
+					<var-name>mask</var-name>
+					<var-value>^[0-9]{4}-[0-9]{6}-[0-9]{4}-[0-9]{6}$</var-value>
+					
+				</var>
+			</field>
+ 			<field property="purchaser" depends="required,maxlength">
+				<arg position="0"  key="giftCertificate.purchaser" />
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+ 			<field property="recipient" depends="required,maxlength">
+				<arg position="0"  key="giftCertificate.recipient" />
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+ 			<field property="isSentByEmail" depends="required,short">
+				<arg position="0"  key="giftCertificate.isSentByEmail" />
+			</field>
+ 			<field property="recipientEmail" depends="required,maxlength,email">
+				<arg position="0"  key="giftCertificate.recipientEmail" />
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+ 			<field property="recipientFullname" depends="maxlength">
+				<arg position="0"  key="giftCertificate.recipientFullname" />
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+ 			<field property="recipientAddress" depends="maxlength">
+				<arg position="0"  key="giftCertificate.recipientAddress" />
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+ 			<field property="recipientZip" depends="maxlength">
+				<arg position="0"  key="giftCertificate.recipientZip" />
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>6</var-value>
+				</var>
+			</field>
+ 			<field property="recipientContryId" depends="integer">
+				<arg position="0"  key="giftCertificate.recipientContryId" />
+			</field>
+			<field property="recipientPhone" depends="maxlength">
+				<arg position="0"  key="giftCertificate.recipientPhone" />
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+ 			<field property="message" depends="maxlength">
+				<arg position="0"  key="giftCertificate.message" />
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>512</var-value>
+				</var>
+			</field>
+ 			<field property="giftCertAmt" depends="required,price">
+				<arg position="0"  key="giftCertificate.giftCertAmt" />
+			</field>
+  			<field property="expireTime" depends="date">
+				<arg position="0"  key="giftCertificate.expireTime" />
+			</field>
+ 		</form>
+<!-- end:  Generated for GiftCertificate From Template: validation.xml.vm  -->
+
+
+
+<!-- start:  Generated for Wrap From Template: validation.xml.vm  -->
+		<form name="wrap">
+			<field property="defaultPrice" depends="required,price">
+				<arg position="0"  key="wrap.defaultPrice" />
+			</field>
+			<field property="wrapName" depends="required,maxlength">
+				<arg position="0" key="wrap.wrapName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="description" depends="maxlength">
+				<arg position="0" key="wrap.description" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>1024</var-value>
+				</var>
+			</field>
+			<field property="imageSrc" depends="maxlength">
+				<arg position="0" key="wrap.imageSrc" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>255</var-value>
+				</var>
+			</field>
+		</form>
+<!-- end:  Generated for Wrap From Template: validation.xml.vm  -->
+
+<!-- start:  Generated for Shoppingcart From Template: validation.xml.vm  -->
+		<form name="shoppingcart">
+			<field property="uuid" depends="required,maxlength">
+				<arg position="0" key="shoppingcart.uuid" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="customerId" depends="integer">
+				<arg position="0" key="shoppingcart.customerId" />
+			</field>
+			<field property="usedCouponTypeId" depends="integer">
+				<arg position="0" key="shoppingcart.usedCouponTypeId" />
+			</field>
+			<field property="isUsedCoupon" depends="required,short">
+				<arg position="0" key="shoppingcart.isUsedCoupon" />
+			</field>
+			<field property="shippingDiscountInfo" depends="maxlength">
+				<arg position="0" key="shoppingcart.shippingDiscountInfo" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>256</var-value>
+				</var>
+			</field>
+			<field property="gainedPoint" depends="integer">
+				<arg position="0" key="shoppingcart.gainedPoint" />
+			</field>
+			<field property="gainedCouponTypeId" depends="integer">
+				<arg position="0" key="shoppingcart.gainedCouponTypeId" />
+			</field>
+			<field property="subtotal" depends="required,">
+				<arg position="0" key="shoppingcart.subtotal" />
+			</field>
+			<field property="total" depends="required,">
+				<arg position="0" key="shoppingcart.total" />
+			</field>
+			<field property="itemsCount" depends="integer">
+				<arg position="0" key="shoppingcart.itemsCount" />
+			</field>
+			<field property="buyNowItemsCount" depends="integer">
+				<arg position="0" key="shoppingcart.buyNowItemsCount" />
+			</field>
+			<field property="buyLaterItemsCount" depends="integer">
+				<arg position="0" key="shoppingcart.buyLaterItemsCount" />
+			</field>
+		</form>
+<!-- end:  Generated for Shoppingcart From Template: validation.xml.vm  -->
+
+
+<!-- start:  Generated for MetricUnit From Template: validation.xml.vm  -->
+		<form name="metricUnit">
+			<field property="metricUnitCode" depends="required,maxlength">
+				<arg position="0" key="metricUnit.metricUnitCode" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+            <field property="convertRate" depends="required,double">
+				<arg position="0"  key="metricUnit.convertRate" />
+			</field>
+			<field property="metricUnitName" depends="required,maxlength">
+				<arg position="0" key="metricUnit.metricUnitName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="isDefault" depends="short">
+				<arg position="0" key="metricUnit.isDefault" />
+			</field>
+		</form>
+        <form name="metricType">
+			<field property="metricTypeCode" depends="required,maxlength">
+				<arg position="0" key="metricType.metricTypeCode" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="metricTypeName" depends="required,maxlength">
+				<arg position="0" key="metricType.metricTypeName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+		</form>
+<!-- end:  Generated for MetricUnit From Template: validation.xml.vm  -->
+
+		<form name="shippingRate">
+ 			<field property="shippingMethodId" depends="required">
+				<arg position="0"  key="shippingRate.shippingMethodId" />
+			</field>
+            <field property="regionId" depends="required">
+				<arg position="0"  key="shippingRate.regionId" />
+			</field>
+			<field property="shippingMethodId" depends="required">
+				<arg position="0"  key="shippingRate.shippingMethodId" />
+			</field>
+			<field property="basePrice" depends="price">
+				<arg position="0" key="shippingRate.basePrice" />
+			</field>
+			<field property="baseWeight" depends="double4,floatRange">
+				<arg position="0" key="shippingRate.baseWeight" />
+				<arg position="1" name="floatRange" key="${var:min}"/>
+				<arg position="2" name="floatRange" key="${var:max}"/>
+				<var>
+					<var-name>min</var-name>
+					<var-value>0</var-value>
+				</var>
+				<var>
+					<var-name>max</var-name>
+					<var-value>10000</var-value>
+				</var>
+			</field>
+			<field property="increaseUnit" depends="double4,floatRange">
+				<arg position="0" key="shippingRate.increaseUnit" />
+				<arg position="1" name="floatRange" key="${var:min}"/>
+				<arg position="2" name="floatRange" key="${var:max}"/>
+				<var>
+					<var-name>min</var-name>
+					<var-value>0</var-value>
+				</var>
+				<var>
+					<var-name>max</var-name>
+					<var-value>10000</var-value>
+				</var>
+			</field>
+			<field property="weightPerRate" depends="price">
+				<arg position="0" key="shippingRate.weightPerRate" />
+			</field>
+			<field property="baseOn" depends="required,integer">
+				<arg position="0" key="shippingRate.baseOn" />
+			</field>
+			<field property="isFlat" depends="required,short">
+				<arg position="0" key="shippingRate.isFlat" />
+			</field>
+			<field property="isRoundUpValue" depends="short">
+				<arg position="0" key="shippingRate.isRoundUpValue" />
+			</field>
+			<field property="metricUnitCode" depends="maxlength">
+				<arg position="0" key="shippingRate.metricUnitCode" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="maxItem" depends="integer">
+				<arg position="0" key="shippingRate.maxItem" />
+			</field>
+			<field property="description" depends="maxlength">
+				<arg position="0" key="shippingRate.description" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>1024</var-value>
+				</var>
+			</field>
+ 		</form>
+
+<!-- start:  Generated for ShippingMethod From Template: validation.xml.vm  -->
+		<form name="shippingMethod">
+			<field property="shippingMethodName" depends="required,maxlength">
+				<arg position="0" key="shippingMethod.shippingMethodName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="shippingMethodDetail" depends="maxlength">
+				<arg position="0" key="shippingMethod.shippingMethodDetail" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>1024</var-value>
+				</var>
+			</field>
+			<field property="isDomestic" depends="short">
+				<arg position="0" key="shippingMethod.isDomestic" />
+			</field>
+			<field property="deliveryTime" depends="required,maxlength">
+				<arg position="0" key="shippingMethod.deliveryTime" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>256</var-value>
+				</var>
+			</field>
+			<field property="status" depends="short">
+				<arg position="0" key="shippingMethod.status" />
+			</field>
+			<field property="isCod" depends="short">
+				<arg position="0" key="shippingMethod.isCod" />
+			</field>
+		</form>
+<!-- end:  Generated for ShippingMethod From Template: validation.xml.vm  -->
+<!-- start:  Generated for Advertisement From Template: validation.xml.vm  -->
+		<form name="advertisement">
+			<field property="advertisementName" depends="required,maxlength">
+				<arg position="0" key="advertisement.advertisementName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="contentType" depends="required,short">
+				<arg position="0" key="advertisement.contentType" />
+			</field>
+			<field property="advertisementDetail" depends="maxlength">
+				<arg position="0" key="advertisement.advertisementDetail" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>512</var-value>
+				</var>
+			</field>
+			<field property="mediaPath" depends="maxlength">
+				<arg position="0" key="advertisement.mediaPath" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="url" depends="required,maxlength">
+				<arg position="0" key="advertisement.url" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>255</var-value>
+				</var>
+			</field>
+			<field property="redirectUrl" depends="maxlength">
+				<arg position="0" key="advertisement.redirectUrl" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>255</var-value>
+				</var>
+			</field>
+			<field property="target" depends="maxlength">
+				<arg position="0" key="advertisement.target" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="startPublishTime" depends="required,date">
+				<arg position="0" key="advertisement.startPublishTime" />
+			</field>
+			<field property="endPublishTime" depends="required,date">
+				<arg position="0" key="advertisement.endPublishTime" />
+			</field>
+			<field property="sortOrder" depends="integer">
+				<arg position="0" key="advertisement.sortOrder" />
+			</field>
+			
+			<field property="adPositionTypeId" depends="required,integer">
+				<arg position="0" key="advertisement.adPositionTypeId" />
+			</field>
+			
+		</form>
+<!-- end:  Generated for Advertisement From Template: validation.xml.vm  -->
+
+<!-- start:  Generated for AdPositionType From Template: validation.xml.vm  -->
+		<form name="adPositionType">
+			<field property="positionName" depends="required,maxlength">
+				<arg position="0" key="adPositionType.positionName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="height" depends="required,integer">
+				<arg position="0" key="adPositionType.height" />
+			</field>
+			<field property="width" depends="required,integer">
+				<arg position="0" key="adPositionType.width" />
+			</field>
+			<field property="displayType" depends="required,short">
+				<arg position="0" key="adPositionType.displayType" />
+			</field>
+			<field property="storeId" depends="required,integer">
+				<arg position="0" key="adPositionType.store" /> 
+			</field>
+			<field property="status" depends="short">
+				<arg position="0" key="adPositionType.status" />
+			</field>
+			<field property="description" depends="maxlength">
+				<arg position="0" key="adPositionType.description" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>512</var-value>
+				</var>
+			</field>
+			<field property="templatePath" depends="required,maxlength">
+				<arg position="0" key="adPositionType.templatePath" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+		</form>
+<!-- end:  Generated for AdPositionType From Template: validation.xml.vm  -->
+<!-- start:  Generated for AppAdmin From Template: validation.xml.vm  -->
+		<form name="appAdmin">
+			<field property="username" depends="required,minlength,maxlength,code">
+				<arg position="0"  key="appUser.username"/>
+				<arg position="1"  name="minlength" key="${var:minlength}" resource="false" />
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>minlength</var-name>
+					<var-value>3</var-value>
+				</var>
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>20</var-value>
+				</var>
+			</field>
+			<field property="firstname" depends="minlength,maxlength">
+				<arg position="0"  key="appUser.firstname"/>
+				<arg position="1"  name="minlength" key="${var:minlength}" resource="false" />
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>minlength</var-name>
+					<var-value>0</var-value>
+				</var>
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="lastname" depends="minlength,maxlength">
+				<arg position="0"  key="appUser.lastname"/>
+				<arg position="1"  name="minlength" key="${var:minlength}" resource="false" />
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>minlength</var-name>
+					<var-value>0</var-value>
+				</var>
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="newPassword" depends="minlength,maxlength">
+				<arg position="0"  key="appUser.password"/>
+				<arg position="1"  name="minlength" key="${var:minlength}" resource="false" />
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>minlength</var-name>
+					<var-value>6</var-value>
+				</var>
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>20</var-value>
+				</var>
+			</field>
+			<field property="confirmPassword" depends="equalTo">
+				<arg position="0"  key="appUser.confirmPassword"/>
+				<arg position="1"  name="equalTo" key="${var:equalTo}" resource="false"/>
+				<var>
+					<var-name>equalTo</var-name>
+					<var-value>newPassword</var-value>
+				</var>
+			</field>
+			<field property="fax" depends="minlength,maxlength">
+				<arg position="0"  key="appAdmin.fax"/>
+				<arg position="1"  name="minlength" key="${var:minlength}" resource="false" />
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>minlength</var-name>
+					<var-value>0</var-value>
+				</var>
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			
+			<field property="email" depends="email,required">
+				<arg position="0"  key="appAdmin.email"/>
+			</field>
+			<field property="telephone" depends="minlength,maxlength">
+				<arg position="0"  key="appAdmin.telephone"/>
+				<arg position="1"  name="minlength" key="${var:minlength}" resource="false" />
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>minlength</var-name>
+					<var-value>6</var-value>
+				</var>
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>13</var-value>
+				</var>
+			</field>
+ 			<field property="adminInfo.department" depends="maxlength">
+				<arg position="0"  key="adminInfo.department" />
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+ 			<field property="userPosition" depends="maxlength">
+				<arg position="0"  key="appAdmin.userPosition" />
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+ 		</form>
+ 		
+ 		
+ 		<form name="customer">
+			<field property="username" depends="required,minlength,maxlength">
+				<arg position="0"  key="customer.username"/>
+				<arg position="1"  name="minlength" key="${var:minlength}" resource="false" />
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>minlength</var-name>
+					<var-value>4</var-value>
+				</var>
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="firstname" depends="minlength,maxlength">
+				<arg position="0"  key="customer.firstname"/>
+				<arg position="1"  name="minlength" key="${var:minlength}" resource="false" />
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>minlength</var-name>
+					<var-value>0</var-value>
+				</var>
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="lastname" depends="minlength,maxlength">
+				<arg position="0"  key="customer.lastname"/>
+				<arg position="1"  name="minlength" key="${var:minlength}" resource="false" />
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>minlength</var-name>
+					<var-value>0</var-value>
+				</var>
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+
+			<field property="fax" depends="minlength,maxlength">
+				<arg position="0"  key="customer.fax"/>
+				<arg position="1"  name="minlength" key="${var:minlength}" resource="false" />
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>minlength</var-name>
+					<var-value>0</var-value>
+				</var>
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			
+			<field property="email" depends="email,required">
+				<arg position="0"  key="customer.email"/>
+			</field>
+			<field property="telephone" depends="minlength,maxlength">
+				<arg position="0"  key="customer.telephone"/>
+				<arg position="1"  name="minlength" key="${var:minlength}" resource="false" />
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>minlength</var-name>
+					<var-value>6</var-value>
+				</var>
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>13</var-value>
+				</var>
+			</field>
+ 			<field property="passwordHint" depends="maxlength">
+				<arg position="0"  key="customer.passwordHint" />
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+ 			<field property="passwordHintAnswer" depends="maxlength">
+				<arg position="0"  key="customer.passwordHintAnswer" />
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+ 			<field property="customerPosition" depends="maxlength">
+				<arg position="0"  key="customer.customerPosition" />
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+ 			<field property="note" depends="maxlength">
+				<arg position="0"  key="customer.note" />
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>1024</var-value>
+				</var>
+			</field>
+			<field property="registerIpAddress" depends="maxlength">
+				<arg position="0" key="appUser.registerIpAddress" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="newPassword" depends="minlength,maxlength">
+				<arg position="0"  key="appUser.password"/>
+				<arg position="1"  name="minlength" key="${var:minlength}" resource="false" />
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>minlength</var-name>
+					<var-value>6</var-value>
+				</var>
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>20</var-value>
+				</var>
+			</field>
+			<field property="confirmPassword" depends="equalTo">
+				<arg position="0"  key="appUser.confirmPassword"/>
+				<arg position="1"  name="equalTo" key="${var:equalTo}" resource="false"/>
+				<var>
+					<var-name>equalTo</var-name>
+					<var-value>newPassword</var-value>
+				</var>
+			</field>
+ 		</form>
+		
+		
+ 		
+<!-- end:  Generated for AppAdmin From Template: validation.xml.vm  -->
+		<form name="modifyPasswordModel">
+			<field property="oldPassword" depends="required">
+				<arg position="0"  key="appUser.oldPassword"/>
+			</field>
+			
+			<field property="newPassword" depends="required,minlength,maxlength">
+				<arg position="0"  key="appUser.password"/>
+				<arg position="1"  name="minlength" key="${var:minlength}" resource="false" />
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>minlength</var-name>
+					<var-value>6</var-value>
+				</var>
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>20</var-value>
+				</var>
+			</field>
+			<field property="confirmPassword" depends="equalTo">
+				<arg position="0"  key="appUser.confirmPassword"/>
+				<arg position="1"  name="equalTo" key="${var:equalTo}" resource="false"/>
+				<var>
+					<var-name>equalTo</var-name>
+					<var-value>newPassword</var-value>
+				</var>
+			</field>
+		</form>
+
+<!-- start:  Generated for SystemLanguage From Template: validation.xml.vm  -->
+		<form name="systemLanguage">
+ 			<field property="languageName" depends="required,maxlength">
+				<arg position="0"  key="systemLanguage.languageNameKey" />
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+ 			<field property="localeCode" depends="required,maxlength">
+				<arg position="0"  key="systemLanguage.localeCode" />
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>8</var-value>
+				</var>
+			</field>
+			<field property="sortOrder" depends="integer">
+				<arg position="0" key="systemLanguage.sortOrder"/>
+			</field>
+ 			<field property="status" depends="short">
+				<arg position="0"  key="systemLanguage.status" />
+			</field>
+  			<field property="isDefault" depends="short">
+				<arg position="0"  key="systemLanguage.isDefault" />
+			</field>
+		</form>
+<!-- end:  Generated for SystemLanguage From Template: validation.xml.vm  -->
+
+<!-- start:  Generated for MediaMappingRule From Template: validation.xml.vm  -->
+		<form name="mediaMappingRule">
+ 			<field property="mappingName" depends="required,maxlength">
+				<arg position="0" key="mediaMappingRule.mappingName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field> 
+ 			<field property="mappingRule" depends="required,maxlength">
+				<arg position="0" key="mediaMappingRule.mappingRule" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+ 			<field property="mappingDescription" depends="maxlength">
+				<arg position="0" key="mediaMappingRule.mappingDescription" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>1024</var-value>
+				</var>
+			</field>
+ 			<field property="status" depends="short">
+				<arg position="0" key="mediaMappingRule.status" />
+			</field>
+ 		</form>
+<!-- end:  Generated for MediaMappingRule From Template: validation.xml.vm  -->
+<!-- start:  Generated for AppAudit From Template: validation.xml.vm  -->
+		<form name="appAudit">
+			<field property="procUserId" depends="integer">
+				<arg position="0" key="appAudit.procUserId" />
+			</field>
+			<field property="procObj" depends="maxlength">
+				<arg position="0" key="appAudit.procObj" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>1024</var-value>
+				</var>
+			</field>
+			<field property="actionName" depends="required,maxlength">
+				<arg position="0" key="appAudit.actionName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="procResult" depends="maxlength">
+				<arg position="0" key="appAudit.procResult" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>1024</var-value>
+				</var>
+			</field>
+			<field property="requestUrl" depends="maxlength">
+				<arg position="0" key="appAudit.requestUrl" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>255</var-value>
+				</var>
+			</field>
+			<field property="procTime" depends="required,date">
+				<arg position="0" key="appAudit.procTime" />
+			</field>
+		</form>
+<!-- end:  Generated for AppAudit From Template: validation.xml.vm  -->
+
+<!-- start:  Generated for Manufacturer From Template: validation.xml.vm  -->
+        <form name="category">
+            <field property="categoryName" depends="required,maxlength,noHtml"> 			
+				<arg position="0"  key="category.categoryName" />				
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>				
+			</field>
+			<field property="categoryCode" depends="required,maxlength,code">
+				<arg position="0"  key="category.categoryCode" />
+				<arg position="1"  name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>				
+			</field>
+       </form>
+<!-- start:  Generated for PaymentMethod From Template: validation.xml.vm  -->
+		<form name="paymentMethod">
+			<field property="paymentMethodName" depends="required,maxlength">
+				<arg position="0" key="paymentMethod.paymentMethodName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="paymentMethodCode" depends="required,maxlength">
+				<arg position="0" key="paymentMethod.paymentMethodCode" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="paymentMethodDetail" depends="maxlength">
+				<arg position="0" key="paymentMethod.paymentMethodDetail" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>2048</var-value>
+				</var>
+			</field>
+			<field property="paymentMethodType" depends="short">
+				<arg position="0" key="paymentMethod.paymentMethodType" />
+			</field>
+			<field property="paymentMethodIcon" depends="maxlength">
+				<arg position="0" key="paymentMethod.paymentMethodIcon" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>255</var-value>
+				</var>
+			</field>
+			<field property="protocol" depends="maxlength">
+				<arg position="0" key="paymentMethod.protocol" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>8</var-value>
+				</var>
+			</field>
+			<field property="processorFile" depends="maxlength">
+				<arg position="0" key="paymentMethod.processorFile" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>255</var-value>
+				</var>
+			</field>
+			<field property="configFile" depends="maxlength">
+				<arg position="0" key="paymentMethod.configFile" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>256</var-value>
+				</var>
+			</field>
+			<field property="configData" depends="maxlength">
+				<arg position="0" key="paymentMethod.configData" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>65535</var-value>
+				</var>
+			</field>
+			<field property="testModel" depends="maxlength">
+				<arg position="0" key="paymentMethod.testModel" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>10</var-value>
+				</var>
+			</field>
+			<field property="isCod" depends="required,short">
+				<arg position="0" key="paymentMethod.isCod" />
+			</field>
+			<field property="sortOrder" depends="integer">
+				<arg position="0" key="paymentMethod.sortOrder" />
+			</field>
+			<field property="status" depends="short">
+				<arg position="0" key="paymentMethod.status" />
+			</field>
+		</form>
+<!-- end:  Generated for PaymentMethod From Template: validation.xml.vm  -->
+
+<!-- start:  Generated for customerEmail From Template: validation.xml.vm  -->
+	<form name="customerEmail">
+ 			<field property="title" depends="required">
+				<arg position="0" key="customer.email.title" />
+			</field>
+			<field property="receivers" depends="required,email">
+				<arg position="0" key="customer.email.receivers" />
+			</field> 			
+   		</form>
+<!-- end:  Generated for customerEmail From Template: validation.xml.vm  -->
+<!-- start:  Generated for ProductPackage From Template: validation.xml.vm  -->
+		<form name="productPackage">
+ 			<field property="productPackageNameKeyContent" depends="required,maxlength">
+				<arg position="0" key="productPackage.productPackageNameKeyContent" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+ 			<field property="productCode" depends="required,maxlength,code">
+				<arg position="0" key="productPackage.productCode" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+ 			<field property="categoryPath" depends="required,maxlength">
+				<arg position="0" key="productPackage.categoryPath" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>255</var-value>
+				</var>
+			</field>
+ 			<field property="price" depends="required,">
+				<arg position="0" key="productPackage.price" />
+			</field>
+ 			<field property="status" depends="short">
+				<arg position="0" key="productPackage.status" />
+			</field> 			
+		</form>
+<!-- end:  Generated for ProductPackage From Template: validation.xml.vm  -->
+<!-- start:  Report definition  -->
+	<form name="baseReportForm">
+ 		<field property="report@startTime" depends="required,date">
+			<arg position="0"  key="report.startTime" />
+		</field>
+		<field property="report@endTime" depends="required,date">
+			<arg position="0"  key="report.endTime" />
+		</field>   
+	</form>
+    <form name="report">
+        <field property="title" depends="required,maxlength">
+            <arg position="0"  key="report.title" />
+            <arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+                <var>
+                    <var-name>maxlength</var-name>
+                    <var-value>64</var-value>
+                </var>
+        </field>
+        <field property="description" depends="maxlength">
+            <arg position="0"  key="report.description" />
+            <arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+                <var>
+                    <var-name>maxlength</var-name>
+                    <var-value>128</var-value>
+                </var>
+        </field>   
+    </form>
+<!-- end:  Report definition  -->
+	<!-- start:  Generated for Resource From Template: validation.xml.vm  -->
+		<form name="appResource">
+			<field property="resourceName" depends="required,maxlength">
+				<arg position="0" key="resource.resourceName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="resourceType" depends="required,short">
+				<arg position="0" key="resource.resourceType" />
+			</field>
+			<field property="resourceString" depends="required,maxlength">
+				<arg position="0" key="resource.resourceString" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>255</var-value>
+				</var>
+			</field>
+			<field property="resourceDesc" depends="maxlength">
+				<arg position="0" key="resource.resourceDesc" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>512</var-value>
+				</var>
+			</field>
+		</form>
+<!-- end:  Generated for Resource From Template: validation.xml.vm  -->
+<!-- start:  Generated for Content From Template: validation.xml.vm  -->
+		<form name="content">
+			
+			<field property="contentTitle" depends="required,maxlength">
+				<arg position="0" key="content.contentTitle" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			
+			<field property="status" depends="required,short">
+				<arg position="0" key="content.status" />
+			</field>
+			<field property="sortOrder" depends="required,integer">
+				<arg position="0" key="content.sortOrder" />
+			</field>
+			<field property="publishTime" depends="required,date">
+				<arg position="0" key="content.publishTime" />
+			</field>
+			<field property="expiredTime" depends="date">
+				<arg position="0" key="content.expiredTime" />
+			</field>
+			<field property="metaKeyword" depends="maxlength">
+				<arg position="0" key="content.metaKeyword" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>256</var-value>
+				</var>
+			</field>
+			<field property="metaDescription" depends="maxlength">
+				<arg position="0" key="content.metaDescription" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>256</var-value>
+				</var>
+			</field>
+			
+			<field property="contentBody" depends="maxlength">
+				<arg position="0" key="content.contentBody" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>65535</var-value>
+				</var>
+			</field>
+			<field property="contentCode" depends="maxlength,code">
+				<arg position="0" key="content.contentCode" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+		</form>
+<!-- end:  Generated for Content From Template: validation.xml.vm  -->
+<!-- start:  Generated for SystemVersion From Template: validation.xml.vm  -->
+		<form name="systemVersion">
+			<field property="sysVersion" depends="required,maxlength">
+				<arg position="0" key="systemVersion.sysVersion" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="productCode" depends="required,maxlength">
+				<arg position="0" key="systemVersion.productCode" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="domainName" depends="required,maxlength">
+				<arg position="0" key="systemVersion.domainName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>256</var-value>
+				</var>
+			</field>
+			<field property="licenseKey" depends="required,maxlength">
+				<arg position="0" key="systemVersion.licenseKey" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+		</form>
+<!-- end:  Generated for SystemVersion From Template: validation.xml.vm  -->
+
+		<form name="template">
+			<field property="fileName" depends="required,maxlength">
+				<arg position="0" key="template.fileName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+		</form>
+
+
+<!-- start:  Generated for RoleRes From Template: validation.xml.vm  -->
+		<form name="roleRes">
+			<field property="rolePermission" depends="integer">
+				<arg position="0" key="roleRes.rolePermission" />
+			</field>
+		</form>
+<!-- end:  Generated for RoleRes From Template: validation.xml.vm  -->
+<!-- start:  Generated for Brand From Template: validation.xml.vm  -->
+		<form name="brand">
+			<field property="brandName" depends="required,maxlength,noHtml">
+				<arg position="0" key="brand.brandName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="brandCode" depends="required,maxlength,code">
+				<arg position="0" key="brand.brandCode" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="sortOrder" depends="required,integer">
+				<arg position="0" key="brand.sortOrder" />
+			</field>
+			<field property="website" depends="maxlength">
+				<arg position="0" key="brand.website" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>255</var-value>
+				</var>
+			</field>
+			<field property="logo" depends="maxlength">
+				<arg position="0" key="brand.logo" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>255</var-value>
+				</var>
+			</field>
+		</form>
+<!-- end:  Generated for Brand From Template: validation.xml.vm  -->
+<!-- start:  Generated for Inventory From Template: validation.xml.vm  -->
+		<form name="inventory">
+			<field property="quantityOnHand" depends="required,integer">
+				<arg position="0" key="inventory.quantityOnHand" />
+			</field>
+			<field property="allocatedQuantity" depends="required,integer">
+				<arg position="0" key="inventory.allocatedQuantity" />
+			</field>
+			<field property="reservedQuantity" depends="required,integer">
+				<arg position="0" key="inventory.reservedQuantity" />
+			</field>
+			<field property="expectedRestockDate" depends="date">
+				<arg position="0" key="inventory.expectedRestockDate" />
+			</field>
+			<field property="reorderQuantity" depends="integer">
+				<arg position="0" key="inventory.reorderQuantity" />
+			</field>
+			<field property="preOrBackOrderedQty" depends="required,integer">
+				<arg position="0" key="inventory.preOrBackOrderedQty" />
+			</field>
+			<field property="reorderMinimnm" depends="required,integer">
+				<arg position="0" key="inventory.reorderMinimnm" />
+			</field>
+		</form>
+        <form name="inventoryModel">
+            <field property="reservedQuantity" depends="required,integer,intRange">
+                <arg position="0" key="inventory.reservedQuantity" />
+                <arg position="1" name="intRange" key="${var:min}"/>
+                <arg position="2" name="intRange" key="${var:max}"/>
+                <var>
+                    <var-name>min</var-name>
+                    <var-value>0</var-value>
+                </var>
+                <var>
+                     <var-name>max</var-name>
+                     <var-value>9999999</var-value>
+                </var>
+            </field>
+            <field property="reorderQuantity" depends="required,integer,intRange">
+                <arg position="0" key="inventory.reorderQuantity" />
+                <arg position="1" name="intRange" key="${var:min}"/>
+                <arg position="2" name="intRange" key="${var:max}"/>
+                <var>
+                    <var-name>min</var-name>
+                    <var-value>0</var-value>
+                </var>
+                <var>
+                     <var-name>max</var-name>
+                     <var-value>9999999</var-value>
+                </var>
+            </field>
+            <field property="reorderMinimnm" depends="required,integer,intRange">
+                <arg position="0" key="inventory.reorderMinimnm" />
+                <arg position="1" name="intRange" key="${var:min}"/>
+                <arg position="2" name="intRange" key="${var:max}"/>
+                <var>
+                    <var-name>min</var-name>
+                    <var-value>0</var-value>
+                </var>
+                <var>
+                     <var-name>max</var-name>
+                     <var-value>9999999</var-value>
+                </var>
+            </field>
+            <field property="expectedRestockDate" depends="date">
+                <arg position="0" key="inventory.expectedRestockDate" />
+            </field>
+            <field property="adjustmentComment" depends="maxlength">
+				<arg position="0" key="inventory.adjustmentComment" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>1000</var-value> 
+				</var>
+			</field>
+        </form>
+<!-- end:  Generated for Inventory From Template: validation.xml.vm  -->
+<!-- start:  Generated for Product From Template: validation.xml.vm  -->
+		<form name="product">
+			<field property="productName" depends="required,maxlength,noHtml">
+				<arg position="0" key="product.productName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="productCode" depends="maxlength,code">
+				<arg position="0" key="product.productCode" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="productTypeId" depends="required,maxlength,code">
+				<arg position="0" key="product.productType" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="planStartTime" depends="date">
+				<arg position="0" key="product.planStartTime" />
+			</field>
+			<field property="planEndTime" depends="date">
+				<arg position="0" key="product.planEndTime" />
+			</field>
+			<field property="publishTime" depends="date">
+				<arg position="0" key="product.publishTime" />
+			</field>
+			<field property="url" depends="maxlength">
+				<arg position="0" key="product.url" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>255</var-value>
+				</var>
+			</field>
+			<field property="title" depends="maxlength">
+				<arg position="0" key="product.title" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="metaKeyword" depends="maxlength">
+				<arg position="0" key="product.metaKeyword" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>256</var-value>
+				</var>
+			</field>
+			<field property="metaDescription" depends="maxlength">
+				<arg position="0" key="product.metaDescription" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>256</var-value>
+				</var>
+			</field>
+			<field property="isAllowReview" depends="short">
+				<arg position="0" key="product.isAllowReview" />
+			</field>
+			<field property="expectedReleaseDate" depends="date">
+				<arg position="0" key="product.expectedReleaseDate" />
+			</field>
+			<field property="availabilityRule" depends="required,short">
+				<arg position="0" key="product.availabilityRule" />
+			</field>
+			<field property="preOrBackOrderLimit" depends="integer">
+				<arg position="0" key="product.preOrBackOrderLimit" />
+			</field>
+			<field property="minOrderQuantity" depends="required,integer">
+				<arg position="0" key="product.minOrderQuantity" />
+			</field>
+			<field property="templatePath" depends="maxlength">
+				<arg position="0" key="product.templatePath" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+		</form>
+<!-- end:  Generated for Product From Template: validation.xml.vm  -->
+<!-- start:  Generated for ProductCategory From Template: validation.xml.vm  -->
+		<form name="productCategory">
+			<field property="isMainCategory" depends="required,short">
+				<arg position="0" key="productCategory.isMainCategory" />
+			</field>
+			<field property="categoryPath" depends="required,maxlength">
+				<arg position="0" key="productCategory.categoryPath" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="sortOrder" depends="integer">
+				<arg position="0" key="productCategory.sortOrder" />
+			</field>
+		</form>
+<!-- end:  Generated for ProductCategory From Template: validation.xml.vm  -->
+<!-- start:  Generated for ProductDescription From Template: validation.xml.vm  -->
+		<form name="productDescription">
+			<field property="shortDescription" depends="maxlength">
+				<arg position="0" key="productDescription.shortDescription" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>512</var-value>
+				</var>
+			</field>
+		</form>
+<!-- end:  Generated for ProductDescription From Template: validation.xml.vm  -->
+<!-- start:  Generated for ProductMedia From Template: validation.xml.vm  -->
+		<form name="productMedia">
+			<field property="mediaType" depends="required,short">
+				<arg position="0" key="productMedia.mediaType" />
+			</field>
+			<field property="mediaUrl" depends="required,maxlength">
+				<arg position="0" key="productMedia.mediaUrl" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>255</var-value>
+				</var>
+			</field>
+			<field property="mediaDescription" depends="maxlength">
+				<arg position="0" key="productMedia.mediaDescription" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>256</var-value>
+				</var>
+			</field>
+			<field property="sortOrder" depends="integer">
+				<arg position="0" key="productMedia.sortOrder" />
+			</field>
+		</form>
+<!-- end:  Generated for ProductMedia From Template: validation.xml.vm  -->
+<!-- start:  Generated for ProductPackageItem From Template: validation.xml.vm  -->
+		<form name="productPackageItem">
+			<field property="itemSkuId" depends="required,integer">
+				<arg position="0" key="productPackageItem.itemSkuId" />
+			</field>
+			<field property="sortOrder" depends="integer">
+				<arg position="0" key="productPackageItem.sortOrder" />
+			</field>
+			<field property="quantity" depends="required,integer">
+				<arg position="0" key="productPackageItem.quantity" />
+			</field>
+		</form>
+<!-- end:  Generated for ProductPackageItem From Template: validation.xml.vm  -->
+<!-- start:  Generated for ProductRateItem From Template: validation.xml.vm  -->
+		<form name="productRateItem">
+			<field property="rateName" depends="required,maxlength">
+				<arg position="0" key="productRateItem.rateName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="sortOrder" depends="integer">
+				<arg position="0" key="productRateItem.sortOrder" />
+			</field>
+		</form>
+<!-- end:  Generated for ProductRateItem From Template: validation.xml.vm  -->
+<!-- start:  Generated for ProductRateValue From Template: validation.xml.vm  -->
+		<form name="productRateValue">
+			<field property="rateValue" depends="required,integer">
+				<arg position="0" key="productRateValue.rateValue" />
+			</field>
+		</form>
+<!-- end:  Generated for ProductRateValue From Template: validation.xml.vm  -->
+<!-- start:  Generated for ProductReview From Template: validation.xml.vm  -->
+		<form name="productReview">
+			<field property="customerId" depends="integer">
+				<arg position="0" key="productReview.customerId" />
+			</field>
+			<field property="customerName" depends="maxlength">
+				<arg position="0" key="productReview.customerName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="subject" depends="maxlength">
+				<arg position="0" key="productReview.subject" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="message" depends="required,maxlength">
+				<arg position="0" key="productReview.message" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>2048</var-value>
+				</var>
+			</field>
+			<field property="remoteIp" depends="required,maxlength">
+				<arg position="0" key="productReview.remoteIp" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="givenPoint" depends="integer">
+				<arg position="0" key="productReview.givenPoint" />
+			</field>
+			<field property="givenTime" depends="date">
+				<arg position="0" key="productReview.givenTime" />
+			</field>
+			<field property="rate" depends="integer">
+				<arg position="0" key="productReview.rate" />
+			</field>
+			<field property="usefulCount" depends="integer">
+				<arg position="0" key="productReview.usefulCount" />
+			</field>
+			<field property="unusefulCount" depends="integer">
+				<arg position="0" key="productReview.unusefulCount" />
+			</field>
+			<field property="reviewId" depends="integer">
+				<arg position="0" key="productReview.reviewId" />
+			</field>
+			<field property="hasReply" depends="short">
+				<arg position="0" key="productReview.hasReply" />
+			</field>
+			<field property="status" depends="required,short">
+				<arg position="0" key="productReview.status" />
+			</field>
+		</form>
+<!-- end:  Generated for ProductReview From Template: validation.xml.vm  -->
+<!-- start:  Generated for ProductSku From Template: validation.xml.vm  -->
+		<form name="productSku">
+			<field property="productSkuCode" depends="maxlength,code">
+				<arg position="0" key="productSku.productSkuCode" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="image" depends="maxlength">
+				<arg position="0" key="productSku.image" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>255</var-value>
+				</var>
+			</field>
+			<field property="skuKind" depends="required,short">
+				<arg position="0" key="productSku.skuKind" />
+			</field>
+			<field property="price" depends="required,price,floatRange">
+				<arg position="0" key="productSku.price" />
+				<arg position="1" name="floatRange" key="${var:min}"/>
+				<arg position="2" name="floatRange" key="${var:max}"/>
+				<var>
+					<var-name>min</var-name>
+					<var-value>0</var-value>
+				</var>
+				<var>
+					<var-name>max</var-name>
+					<var-value>9999999999</var-value>
+				</var>
+			</field>
+			<field property="costPrice" depends="required,price,floatRange">
+				<arg position="0" key="productSku.costPrice" />
+				<arg position="1" name="floatRange" key="${var:min}"/>
+				<arg position="2" name="floatRange" key="${var:max}"/>
+				<var>
+					<var-name>min</var-name>
+					<var-value>0.01</var-value>
+				</var>
+				<var>
+					<var-name>max</var-name>
+					<var-value>9999999999</var-value>
+				</var>
+			</field>
+			<field property="salePrice" depends="price,floatRange">
+				<arg position="0" key="productSku.salePrice" />
+				<arg position="1" name="floatRange" key="${var:min}"/>
+				<arg position="2" name="floatRange" key="${var:max}"/>
+				<var>
+					<var-name>min</var-name>
+					<var-value>0</var-value>
+				</var>
+				<var>
+					<var-name>max</var-name>
+					<var-value>9999999999</var-value>
+				</var>
+			</field>
+			<field property="listPrice" depends="price,floatRange">
+				<arg position="0" key="productSku.listPrice" />
+				<arg position="1" name="floatRange" key="${var:min}"/>
+				<arg position="2" name="floatRange" key="${var:max}"/>
+				<var>
+					<var-name>min</var-name>
+					<var-value>0</var-value>
+				</var>
+				<var>
+					<var-name>max</var-name>
+					<var-value>9999999999</var-value>
+				</var>
+			</field>
+			<field property="weight" depends="double,floatRange">
+				<arg position="0" key="productSku.weight" />
+				<arg position="1" name="floatRange" key="${var:min}"/>
+				<arg position="2" name="floatRange" key="${var:max}"/>
+				<var>
+					<var-name>min</var-name>
+					<var-value>0</var-value>
+				</var>
+				<var>
+					<var-name>max</var-name>
+					<var-value>10000</var-value>
+				</var>
+			</field>
+			<field property="length" depends="double">
+				<arg position="0" key="productSku.length" />
+			</field>
+			<field property="width" depends="double">
+				<arg position="0" key="productSku.width" />
+			</field>
+			<field property="height" depends="double">
+				<arg position="0" key="productSku.height" />
+			</field>
+		</form>
+<!-- end:  Generated for ProductSku From Template: validation.xml.vm  -->
+<!-- start:  Generated for ProductSkuOptionValue From Template: validation.xml.vm  -->
+		<form name="productSkuOptionValue">
+		</form>
+<!-- end:  Generated for ProductSkuOptionValue From Template: validation.xml.vm  -->
+<!-- start:  Generated for ProductType From Template: validation.xml.vm  -->
+		<form name="productType">
+			<field property="productTypeName" depends="required,maxlength,noHtml">
+				<arg position="0" key="productType.productTypeName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="productTypeDescription" depends="maxlength">
+				<arg position="0" key="productType.productTypeDescription" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="templatePath" depends="maxlength">
+				<arg position="0" key="productType.templatePath" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="minOrderQuantity" depends="required,integer">
+				<arg position="0" key="productType.minOrderQuantity" />
+			</field>
+			<field property="status" depends="required,short">
+				<arg position="0" key="productType.status" />
+			</field>
+		</form>
+<!-- end:  Generated for ProductType From Template: validation.xml.vm  -->
+<!-- start:  Generated for ProductTypeSkuOption From Template: validation.xml.vm  -->
+		<form name="productTypeSkuOption">
+			<field property="sortOrder" depends="integer">
+				<arg position="0" key="productTypeSkuOption.sortOrder" />
+			</field>
+		</form>
+<!-- end:  Generated for ProductTypeSkuOption From Template: validation.xml.vm  -->
+<!-- start:  Generated for SkuOption From Template: validation.xml.vm  -->
+		<form name="skuOption">
+			<field property="skuOptionName" depends="required,maxlength,noHtml">
+				<arg position="0" key="skuOption.skuOptionName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="skuOptionCode" depends="required,maxlength,code">
+				<arg position="0" key="skuOption.skuOptionCode" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="status" depends="required,short">
+				<arg position="0" key="skuOption.status" />
+			</field>
+		</form>
+<!-- end:  Generated for SkuOption From Template: validation.xml.vm  -->
+<!-- start:  Generated for SkuOptionValue From Template: validation.xml.vm  -->
+		<form name="skuOptionValue">
+			<field property="skuOptionValue" depends="required,maxlength">
+				<arg position="0" key="skuOptionValue.skuOptionValue" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="skuOptionValueName" depends="required,maxlength,noHtml">
+				<arg position="0" key="skuOptionValue.skuOptionValueName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="sortOrder" depends="integer">
+				<arg position="0" key="skuOptionValue.sortOrder" />
+			</field>
+			<field property="skuOptionValueType" depends="required,short">
+				<arg position="0" key="skuOptionValue.skuOptionValueType" />
+			</field>
+			<field property="status" depends="required,short">
+				<arg position="0" key="skuOptionValue.status" />
+			</field>
+		</form>
+<!-- end:  Generated for SkuOptionValue From Template: validation.xml.vm  -->
+<!-- start:  Generated for WholesalePrice From Template: validation.xml.vm  -->
+		<form name="wholesalePrice">
+			<field property="price" depends="required,">
+				<arg position="0" key="wholesalePrice.price" />
+			</field>
+			<field property="minQuantity" depends="required,integer">
+				<arg position="0" key="wholesalePrice.minQuantity" />
+			</field>
+		</form>
+<!-- end:  Generated for WholesalePrice From Template: validation.xml.vm  -->
+<!-- start:  Generated for ProductAttGroupItem From Template: validation.xml.vm  -->
+		<form name="productAttGroupItem">
+			<field property="productTypeId" depends="required,integer">
+				<arg position="0" key="productAttGroupItem.productTypeId" />
+			</field>
+			<field property="sortOrder" depends="integer">
+				<arg position="0" key="productAttGroupItem.sortOrder" />
+			</field>
+		</form>
+<!-- end:  Generated for ProductAttGroupItem From Template: validation.xml.vm  -->
+<!-- start:  Generated for ProductAttGroup From Template: validation.xml.vm  -->
+		<form name="productAttGroup">
+			<field property="sortOrder" depends="integer">
+				<arg position="0" key="productAttGroup.sortOrder" />
+			</field>
+			<field property="productAttGroupName" depends="required,maxlength,noHtml">
+				<arg position="0" key="productAttGroup.productAttGroupName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+		</form>
+<!-- end:  Generated for ProductAttGroup From Template: validation.xml.vm  -->
+<!-- start:  Generated for ProductStat From Template: validation.xml.vm  -->
+		<form name="productStat">
+			<field property="reviewCount" depends="required,integer">
+				<arg position="0" key="productStat.reviewCount" />
+			</field>
+			<field property="averageRate" depends="required,">
+				<arg position="0" key="productStat.averageRate" />
+			</field>
+			<field property="buyCount" depends="required,integer">
+				<arg position="0" key="productStat.buyCount" />
+			</field>
+		</form>
+<!-- end:  Generated for ProductStat From Template: validation.xml.vm  -->
+<!-- start:  Generated for ReviewVote From Template: validation.xml.vm  -->
+		<form name="reviewVote">
+		</form>
+<!-- end:  Generated for ReviewVote From Template: validation.xml.vm  -->
+<!-- start:  Generated for InventoryAudit From Template: validation.xml.vm  -->
+		<form name="inventoryAudit">
+			<field property="quantity" depends="required,integer">
+				<arg position="0" key="inventoryAudit.quantity" />
+			</field>
+			<field property="eventType" depends="required,short">
+				<arg position="0" key="inventoryAudit.eventType" />
+			</field>
+			<field property="reason" depends="maxlength">
+				<arg position="0" key="inventoryAudit.reason" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="comment" depends="maxlength">
+				<arg position="0" key="inventoryAudit.comment" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>1024</var-value>
+				</var>
+			</field>
+			<field property="orderId" depends="integer">
+				<arg position="0" key="inventoryAudit.orderId" />
+			</field>
+			<field property="eventHandler" depends="required,maxlength">
+				<arg position="0" key="inventoryAudit.eventHandler" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+		</form>
+<!-- end:  Generated for InventoryAudit From Template: validation.xml.vm  -->
+<!-- start:  Generated for PromoRule From Template: validation.xml.vm  -->
+		<form name="promoRule">
+			<field property="name" depends="required,maxlength">
+				<arg position="0" key="promoRule.name" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="storeId" depends="required,integer">
+				<arg position="0" key="promoRule.store" /> 
+			</field>
+			<field property="description" depends="maxlength">
+				<arg position="0" key="promoRule.description" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>65535</var-value> 
+				</var>
+			</field>
+			<field property="priority" depends="required,integer">
+				<arg position="0" key="promoRule.priority" /> 
+			</field>
+			
+			<field property="enableDiscountAgain" depends="required,short">
+				<arg position="0" key="promoRule.enableDiscountAgain" />
+			</field>
+			<field property="startTime" depends="required,date">
+				<arg position="0" key="promoRule.startTime" />
+			</field>
+			<field property="endTime" depends="date">
+				<arg position="0" key="promoRule.endTime" />
+			</field>
+			<field property="promoType" depends="required,maxlength">
+				<arg position="0" key="promoRule.promoType" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="status" depends="required,short">
+				<arg position="0" key="promoRule.status" />
+			</field>
+			<field property="eligibilityOperator" depends="required,short">
+				<arg position="0" key="promoRule.eligibilityOperator" />
+			</field>
+			<field property="conditionOperator" depends="required,short">
+				<arg position="0" key="promoRule.conditionOperator" />
+			</field>
+		</form>
+<!-- end:  Generated for PromoRule From Template: validation.xml.vm  -->
+<!-- start:  Generated for PromoRuleElement From Template: validation.xml.vm  -->
+		<form name="promoRuleElement">
+			<field property="kind" depends="required,maxlength">
+				<arg position="0" key="promoRuleElement.kind" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>16</var-value>
+				</var>
+			</field>
+			<field property="type" depends="required,maxlength">
+				<arg position="0" key="promoRuleElement.type" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="sort" depends="integer">
+				<arg position="0" key="promoRuleElement.sort" />
+			</field>
+		</form>
+<!-- end:  Generated for PromoRuleElement From Template: validation.xml.vm  -->
+<!-- start:  Generated for PromoRuleParameter From Template: validation.xml.vm  -->
+		<form name="promoRuleParameter">
+			<field property="paramName" depends="required,maxlength">
+				<arg position="0" key="promoRuleParameter.paramName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="paramValue" depends="required,maxlength">
+				<arg position="0" key="promoRuleParameter.paramValue" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="isExcluded" depends="required,short">
+				<arg position="0" key="promoRuleParameter.isExcluded" />
+			</field>
+			<field property="excludedType" depends="maxlength">
+				<arg position="0" key="promoRuleParameter.excludedType" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>16</var-value>
+				</var>
+			</field>
+		</form>
+<!-- end:  Generated for PromoRuleParameter From Template: validation.xml.vm  -->
+<!-- start:  Generated for Coupon From Template: validation.xml.vm  -->
+		<form name="coupon">
+			<field property="couponNo" depends="required,maxlength">
+				<arg position="0" key="coupon.couponNo" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>16</var-value>
+				</var>
+			</field>
+			<field property="isSent" depends="short">
+				<arg position="0" key="coupon.isSent" />
+			</field>
+			<field property="remainedTimes" depends="integer">
+				<arg position="0" key="coupon.remainedTimes" />
+			</field>
+			
+			<field property="status" depends="short">
+				<arg position="0" key="coupon.status" />
+			</field>
+		</form>
+<!-- end:  Generated for Coupon From Template: validation.xml.vm  -->
+<!-- start:  Generated for SalesOrder From Template: validation.xml.vm  -->
+		<form name="salesOrder">
+			<field property="orderNo" depends="required,maxlength">
+				<arg position="0" key="salesOrder.orderNo" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>20</var-value>
+				</var>
+			</field>
+			<field property="customerFirstname" depends="required,maxlength">
+				<arg position="0" key="salesOrder.customerFirstname" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="customerLastname" depends="maxlength">
+				<arg position="0" key="salesOrder.customerLastname" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="customerEmail" depends="required,maxlength">
+				<arg position="0" key="salesOrder.customerEmail" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="invoiceTitle" depends="required,maxlength">
+				<arg position="0" key="salesOrder.invoiceTitle" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+		</form>
+		<form name="orderAddress">
+			<field property="firstname" depends="required,maxlength">
+				<arg position="0" key="orderAddress.firstname" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="lastname" depends="required,maxlength">
+				<arg position="0" key="orderAddress.lastname" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="phoneNumber" depends="maxlength">
+				<arg position="0" key="orderAddress.phoneNumber" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="faxNumber" depends="maxlength">
+				<arg position="0" key="orderAddress.faxNumber" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="postalcode" depends="maxlength">
+				<arg position="0" key="orderAddress.postalcode" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>6</var-value>
+				</var>
+			</field>
+			<field property="country" depends="required,maxlength">
+				<arg position="0" key="orderAddress.country" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="state" depends="required,maxlength">
+				<arg position="0" key="orderAddress.state" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="city" depends="required,maxlength">
+				<arg position="0" key="orderAddress.city" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="address1" depends="required,maxlength">
+				<arg position="0" key="orderAddress.address1" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="address2" depends="maxlength">
+				<arg position="0" key="orderAddress.address2" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+		</form>
+<!-- end:  Generated for SalesOrder From Template: validation.xml.vm  -->
+		<form name="orderShipment">
+			<field property="shipmentNo" depends="required">
+				<arg position="0" key="orderShipment.shipmentNo" />
+			</field>
+		</form>
+<!-- start:  Generated for OrderAudit From Template: validation.xml.vm  -->
+		<form name="orderAudit">
+			<field property="addedBy" depends="required,maxlength">
+				<arg position="0" key="orderAudit.addedBy" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="transactionType" depends="required,maxlength">
+				<arg position="0" key="orderAudit.transactionType" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="detail" depends="maxlength">
+				<arg position="0" key="orderAudit.detail" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>1024</var-value>
+				</var>
+			</field>
+		</form>
+<!-- end:  Generated for OrderAudit From Template: validation.xml.vm  -->
+<!-- start:  Generated for OrderPayment From Template: validation.xml.vm  -->
+		<form name="orderPayment">
+			<field property="paymentAmount" depends="required,">
+				<arg position="0" key="orderPayment.paymentAmount" />
+			</field>
+			<field property="balance" depends="required,">
+				<arg position="0" key="orderPayment.balance" />
+			</field>
+			<field property="transactionType" depends="required,short">
+				<arg position="0" key="orderPayment.transactionType" />
+			</field>
+			<field property="paymentGatewayName" depends="maxlength">
+				<arg position="0" key="orderPayment.paymentGatewayName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>256</var-value>
+				</var>
+			</field>
+			<field property="ipAddress" depends="maxlength">
+				<arg position="0" key="orderPayment.ipAddress" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="giftCertificateNo" depends="maxlength">
+				<arg position="0" key="orderPayment.giftCertificateNo" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="addedBy" depends="required,maxlength">
+				<arg position="0" key="orderPayment.addedBy" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+		</form>
+<!-- end:  Generated for OrderPayment From Template: validation.xml.vm  -->
+
+<!-- start:  Generated for OrderSettlement From Template: validation.xml.vm  -->
+		<form name="orderSettlement">
+			<field property="shipmentNo" depends="required,maxlength">
+				<arg position="0" key="orderSettlement.shipmentNo" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="orderId" depends="required,integer">
+				<arg position="0" key="orderSettlement.orderId" />
+			</field>
+			<field property="orderNo" depends="required,maxlength">
+				<arg position="0" key="orderSettlement.orderNo" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>20</var-value>
+				</var>
+			</field>
+			<field property="carrierName" depends="required,maxlength">
+				<arg position="0" key="orderSettlement.carrierName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="trackingNo" depends="required,maxlength">
+				<arg position="0" key="orderSettlement.trackingNo" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="originalTotal" depends="required,">
+				<arg position="0" key="orderSettlement.originalTotal" />
+			</field>
+			<field property="settlementAmount" depends="required,">
+				<arg position="0" key="orderSettlement.settlementAmount" />
+			</field>
+			<field property="isComplete" depends="required,short">
+				<arg position="0" key="orderSettlement.isComplete" />
+			</field>
+			<field property="addedBy" depends="maxlength">
+				<arg position="0" key="orderSettlement.addedBy" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+		</form>
+<!-- end:  Generated for OrderSettlement From Template: validation.xml.vm  -->
+<!-- start:  Generated for OrderMessage From Template: validation.xml.vm  -->
+		<form name="orderMessage">
+			<field property="subject" depends="required,maxlength">
+				<arg position="0" key="orderMessage.subject" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="message" depends="required,maxlength">
+				<arg position="0" key="orderMessage.message" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>65535</var-value>
+				</var>
+			</field>
+			<field property="customerId" depends="required,integer">
+				<arg position="0" key="orderMessage.customerId" />
+			</field>
+			<field property="salesOrderId" depends="required,integer">
+				<arg position="0" key="orderMessage.salesOrderId" />
+			</field>
+			<field property="status" depends="required,short">
+				<arg position="0" key="orderMessage.status" />
+			</field>
+		</form>
+<!-- end:  Generated for OrderMessage From Template: validation.xml.vm  -->
+<!-- start:  Generated for SystemQueue From Template: validation.xml.vm  -->
+		<form name="systemQueue">
+			<field property="title" depends="required,maxlength">
+				<arg position="0" key="systemQueue.title" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>256</var-value>
+				</var>
+			</field>
+			<field property="queueType" depends="required,short">
+				<arg position="0" key="systemQueue.queueType" />
+			</field>
+			<field property="execTimes" depends="required,short">
+				<arg position="0" key="systemQueue.execTimes" />
+			</field>
+			<field property="targetEntiy" depends="required,maxlength">
+				<arg position="0" key="systemQueue.targetEntiy" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>65535</var-value>
+				</var>
+			</field>
+			<field property="errorMsg" depends="maxlength">
+				<arg position="0" key="systemQueue.errorMsg" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>1024</var-value>
+				</var>
+			</field>
+			<field property="queueStatus" depends="required,short">
+				<arg position="0" key="systemQueue.queueStatus" />
+			</field>
+		</form>
+<!-- end:  Generated for SystemQueue From Template: validation.xml.vm  -->
+<!-- start:  Generated for Address From Template: validation.xml.vm  -->
+		<form name="address">
+			<field property="addressType" depends="required,short">
+				<arg position="0" key="address.addressType" />
+			</field>
+			<field property="title" depends="required,maxlength">
+				<arg position="0" key="address.title" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>8</var-value>
+				</var>
+			</field>
+			<field property="firstname" depends="required,maxlength">
+				<arg position="0" key="address.firstname" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="lastname" depends="required,maxlength">
+				<arg position="0" key="address.lastname" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="telephone" depends="required,maxlength">
+				<arg position="0" key="address.telephone" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="zip" depends="maxlength">
+				<arg position="0" key="address.zip" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>12</var-value>
+				</var>
+			</field>
+			<field property="fax" depends="maxlength">
+				<arg position="0" key="address.fax" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="companyName" depends="maxlength">
+				<arg position="0" key="address.companyName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="isDefaultShippingAddress" depends="short">
+				<arg position="0" key="address.isDefaultShippingAddress" />
+			</field>
+			<field property="isDefaultBillingAddress" depends="short">
+				<arg position="0" key="address.isDefaultBillingAddress" />
+			</field>
+			<field property="address" depends="required,maxlength">
+				<arg position="0" key="address.address" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="address2" depends="maxlength">
+				<arg position="0" key="address.address2" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="countryName" depends="required,maxlength">
+				<arg position="0" key="address.countryName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="stateName" depends="maxlength">
+				<arg position="0" key="address.stateName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="cityName" depends="maxlength">
+				<arg position="0" key="address.cityName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="countryId" depends="required,integer">
+				<arg position="0" key="address.countryId" />
+			</field>
+			<field property="stateId" depends="integer">
+				<arg position="0" key="address.stateId" />
+			</field>
+			<field property="cityId" depends="integer">
+				<arg position="0" key="address.cityId" />
+			</field>
+			<field property="userDefinedId" depends="integer">
+				<arg position="0" key="address.userDefinedId" />
+			</field>
+			<field property="email" depends="maxlength">
+				<arg position="0" key="address.email" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+		</form>
+<!-- end:  Generated for Address From Template: validation.xml.vm  -->
+<!-- start:  Generated for Favorite From Template: validation.xml.vm  -->
+		<form name="favorite">
+			<field property="favoriteTitle" depends="required,maxlength">
+				<arg position="0" key="favorite.favoriteTitle" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="url" depends="required,maxlength">
+				<arg position="0" key="favorite.url" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>255</var-value>
+				</var>
+			</field>
+		</form>
+<!-- end:  Generated for Favorite From Template: validation.xml.vm  -->
+<!-- start:  Generated for Feedback From Template: validation.xml.vm  -->
+		<form name="feedback">
+			<field property="title" depends="maxlength">
+				<arg position="0" key="feedback.title" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>8</var-value>
+				</var>
+			</field>
+			<field property="firstName" depends="maxlength">
+				<arg position="0" key="feedback.firstName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="lastName" depends="maxlength">
+				<arg position="0" key="feedback.lastName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="subject" depends="maxlength">
+				<arg position="0" key="feedback.subject" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="content" depends="maxlength">
+				<arg position="0" key="feedback.content" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>512</var-value>
+				</var>
+			</field>
+			<field property="status" depends="short">
+				<arg position="0" key="feedback.status" />
+			</field>
+			<field property="replyType" depends="short">
+				<arg position="0" key="feedback.replyType" />
+			</field>
+			<field property="feedbackType" depends="short">
+				<arg position="0" key="feedback.feedbackType" />
+			</field>
+			<field property="priority" depends="integer">
+				<arg position="0" key="feedback.priority" />
+			</field>
+			<field property="email" depends="maxlength">
+				<arg position="0" key="feedback.email" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="telephone" depends="maxlength">
+				<arg position="0" key="feedback.telephone" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="fax" depends="maxlength">
+				<arg position="0" key="feedback.fax" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="threadId" depends="integer">
+				<arg position="0" key="feedback.threadId" />
+			</field>
+			<field property="givenShopPointAction" depends="short">
+				<arg position="0" key="feedback.givenShopPointAction" />
+			</field>
+		</form>
+<!-- end:  Generated for Feedback From Template: validation.xml.vm  -->
+<!-- start:  Generated for Membership From Template: validation.xml.vm  -->
+		<form name="membership">
+			<field property="membershipName" depends="required,maxlength">
+				<arg position="0" key="membership.membershipName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="membershipDetail" depends="maxlength">
+				<arg position="0" key="membership.membershipDetail" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>1024</var-value>
+				</var>
+			</field>
+			<field property="membershipLevel" depends="required,integer">
+				<arg position="0" key="membership.membershipLevel" />
+			</field>
+			<field property="upgradeShopPoint" depends="integer">
+				<arg position="0" key="membership.upgradeShopPoint" />
+			</field>
+			<field property="status" depends="short">
+				<arg position="0" key="membership.status" />
+			</field>
+		</form>
+<!-- end:  Generated for Membership From Template: validation.xml.vm  -->
+<!-- start:  Generated for ShopPoint From Template: validation.xml.vm  -->
+		<form name="shopPoint">
+			<field property="total" depends="required,integer">
+				<arg position="0" key="shopPoint.total" />
+			</field>
+			<field property="gainedTotal" depends="required,integer">
+				<arg position="0" key="shopPoint.gainedTotal" />
+			</field>
+			<field property="usedTotal" depends="required,integer">
+				<arg position="0" key="shopPoint.usedTotal" />
+			</field>
+		</form>
+<!-- end:  Generated for ShopPoint From Template: validation.xml.vm  -->
+<!-- start:  Generated for ShopPointHistory From Template: validation.xml.vm  -->
+		<form name="shopPointHistory">
+			<field property="shopPointType" depends="required,short">
+				<arg position="0" key="shopPointHistory.shopPointType" />
+			</field>
+			<field property="description" depends="maxlength">
+				<arg position="0" key="shopPointHistory.description" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="amount" depends="required,integer">
+				<arg position="0" key="shopPointHistory.amount" />
+			</field>
+		</form>
+<!-- end:  Generated for ShopPointHistory From Template: validation.xml.vm  -->
+<!-- start:  Generated for ValidationSession From Template: validation.xml.vm  -->
+		<form name="validationSession">
+			<field property="url" depends="required,maxlength">
+				<arg position="0" key="validationSession.url" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>255</var-value>
+				</var>
+			</field>
+			<field property="expiredDate" depends="required,date">
+				<arg position="0" key="validationSession.expiredDate" />
+			</field>
+			<field property="email" depends="required,maxlength">
+				<arg position="0" key="validationSession.email" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="vsType" depends="required,short">
+				<arg position="0" key="validationSession.vsType" />
+			</field>
+		</form>
+<!-- end:  Generated for ValidationSession From Template: validation.xml.vm  -->
+<!-- start:  Generated for Wishlist From Template: validation.xml.vm  -->
+		<form name="wishlist">
+			<field property="wishListTitle" depends="required,maxlength">
+				<arg position="0" key="wishlist.wishListTitle" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="wishListType" depends="required,short">
+				<arg position="0" key="wishlist.wishListType" />
+			</field>
+			<field property="wishListDetail" depends="maxlength">
+				<arg position="0" key="wishlist.wishListDetail" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>512</var-value>
+				</var>
+			</field>
+			<field property="shareLevel" depends="integer">
+				<arg position="0" key="wishlist.shareLevel" />
+			</field>
+			<field property="isDefault" depends="short">
+				<arg position="0" key="wishlist.isDefault" />
+			</field>
+			<field property="recipientEmailList" depends="maxlength">
+				<arg position="0" key="wishlist.recipientEmailList" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>512</var-value>
+				</var>
+			</field>
+			<field property="eventDate" depends="date">
+				<arg position="0" key="wishlist.eventDate" />
+			</field>
+			<field property="priority" depends="integer">
+				<arg position="0" key="wishlist.priority" />
+			</field>
+		</form>
+<!-- end:  Generated for Wishlist From Template: validation.xml.vm  -->
+<!-- start:  Generated for WishlistItem From Template: validation.xml.vm  -->
+		<form name="wishlistItem">
+			<field property="quantity" depends="integer">
+				<arg position="0" key="wishlistItem.quantity" />
+			</field>
+			<field property="purchasedQty" depends="integer">
+				<arg position="0" key="wishlistItem.purchasedQty" />
+			</field>
+			<field property="shortDescription" depends="maxlength">
+				<arg position="0" key="wishlistItem.shortDescription" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>512</var-value>
+				</var>
+			</field>
+			<field property="productAttributes" depends="maxlength">
+				<arg position="0" key="wishlistItem.productAttributes" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>65535</var-value>
+				</var>
+			</field>
+		</form>
+<!-- end:  Generated for WishlistItem From Template: validation.xml.vm  -->
+<!-- start:  Generated for AppUser From Template: validation.xml.vm  -->
+		<form name="appUser">
+			<field property="username" depends="required,maxlength">
+				<arg position="0" key="appUser.username" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="password" depends="maxlength">
+				<arg position="0" key="appUser.password" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="usertype" depends="required,short">
+				<arg position="0" key="appUser.usertype" />
+			</field>
+			<field property="title" depends="maxlength">
+				<arg position="0" key="appUser.title" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>8</var-value>
+				</var>
+			</field>
+			<field property="firstname" depends="maxlength">
+				<arg position="0" key="appUser.firstname" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="lastname" depends="maxlength">
+				<arg position="0" key="appUser.lastname" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="email" depends="required,maxlength">
+				<arg position="0" key="appUser.email" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="fax" depends="maxlength">
+				<arg position="0" key="appUser.fax" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="zip" depends="maxlength">
+				<arg position="0" key="appUser.zip" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>12</var-value>
+				</var>
+			</field>
+			<field property="telephone" depends="maxlength">
+				<arg position="0" key="appUser.telephone" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="preferredLanguage" depends="maxlength">
+				<arg position="0" key="appUser.preferredLanguage" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>8</var-value>
+				</var>
+			</field>
+			<field property="lastLoginTime" depends="date">
+				<arg position="0" key="appUser.lastLoginTime" />
+			</field>
+			<field property="status" depends="short">
+				<arg position="0" key="appUser.status" />
+			</field>
+			<field property="isLocked" depends="short">
+				<arg position="0" key="appUser.isLocked" />
+			</field>
+			<field property="totalPoints" depends="integer">
+				<arg position="0" key="appUser.totalPoints" />
+			</field>
+			<field property="userPosition" depends="maxlength">
+				<arg position="0" key="appUser.userPosition" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="department" depends="maxlength">
+				<arg position="0" key="appUser.department" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="passwordHint" depends="maxlength">
+				<arg position="0" key="appUser.passwordHint" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="passwordHintAnswer" depends="maxlength">
+				<arg position="0" key="appUser.passwordHintAnswer" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>256</var-value>
+				</var>
+			</field>
+			<field property="registerIpAddress" depends="maxlength">
+				<arg position="0" key="appUser.registerIpAddress" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="customerPosition" depends="maxlength">
+				<arg position="0" key="appUser.customerPosition" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="registerTime" depends="date">
+				<arg position="0" key="appUser.registerTime" />
+			</field>
+			<field property="note" depends="maxlength">
+				<arg position="0" key="appUser.note" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>1024</var-value>
+				</var>
+			</field>
+		</form>
+<!-- end:  Generated for AppUser From Template: validation.xml.vm  -->
+<!-- start:  Generated for AccessoryGroup From Template: validation.xml.vm  -->
+		<form name="accessoryGroup">
+			<field property="groupName" depends="required,maxlength">
+				<arg position="0" key="accessoryGroup.groupName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="groupCode" depends="required,maxlength">
+				<arg position="0" key="accessoryGroup.groupCode" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="groupDesc" depends="maxlength">
+				<arg position="0" key="accessoryGroup.groupDesc" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+		</form>
+<!-- end:  Generated for AccessoryGroup From Template: validation.xml.vm  -->
+<!-- start:  Generated for Accessory From Template: validation.xml.vm  -->
+		<form name="accessory">
+			<field property="accessoryName" depends="required,maxlength">
+				<arg position="0" key="accessory.accessoryName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="sortOrder" depends="integer">
+				<arg position="0" key="accessory.sortOrder" />
+			</field>
+		</form>
+<!-- end:  Generated for Accessory From Template: validation.xml.vm  -->
+<!-- start:  Generated for Supplier From Template: validation.xml.vm -->
+		<form name="supplier">
+			<field property="supplierName" depends="required,maxlength">
+				<arg position="0" key="supplier.supplierName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="supplierCode" depends="maxlength">
+				<arg position="0" key="supplier.supplierCode" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="email" depends="email,maxlength">
+				<arg position="0" key="supplier.email" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="address" depends="required,maxlength">
+				<arg position="0" key="supplier.address" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>256</var-value>
+				</var>
+			</field>
+			<field property="webSite" depends="maxlength">
+				<arg position="0" key="supplier.webSite" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>255</var-value>
+				</var>
+			</field>
+			<field property="fax" depends="maxlength">
+				<arg position="0" key="supplier.fax" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="zip" depends="maxlength">
+				<arg position="0" key="supplier.zip" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>12</var-value>
+				</var>
+			</field>
+			<field property="adminId" depends="integer">
+				<arg position="0" key="supplier.adminId" />
+			</field>
+			<field property="comments" depends="maxlength">
+				<arg position="0" key="supplier.comments" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>512</var-value>
+				</var>
+			</field>
+			<field property="status" depends="required,short">
+				<arg position="0" key="supplier.status" />
+			</field>
+		</form>
+<!-- end:  Generated for Supplier From Template: validation.xml.vm  -->
+<!-- start:  Generated for SupplierProduct From Template: validation.xml.vm  -->
+		<form name="supplierProduct">
+			<field property="productName" depends="required,maxlength">
+				<arg position="0" key="supplierProduct.productName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>256</var-value>
+				</var>
+			</field>
+			<field property="productDesc" depends="maxlength">
+				<arg position="0" key="supplierProduct.productDesc" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>65535</var-value>
+				</var>
+			</field>
+			<field property="wholesalePrice" depends="required,maxlength">
+				<arg position="0" key="supplierProduct.wholesalePrice" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>256</var-value>
+				</var>
+			</field>
+			<field property="productCode" depends="required,maxlength">
+				<arg position="0" key="supplierProduct.productCode" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="status" depends="required,short">
+				<arg position="0" key="supplierProduct.status" />
+			</field>
+			<field property="mediaUrl" depends="maxlength">
+				<arg position="0" key="supplierProduct.mediaUrl" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>512</var-value>
+				</var>
+			</field>
+			<field property="modifyLogs" depends="maxlength">
+				<arg position="0" key="supplierProduct.modifyLogs" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>65535</var-value>
+				</var>
+			</field>
+		</form>
+<!-- end:  Generated for SupplierProduct From Template: validation.xml.vm  -->
+<!-- start:  Generated for PurchaseOrder From Template: validation.xml.vm  -->
+		<form name="purchaseOrder">
+			<field property="supplierName" depends="required,maxlength">
+				<arg position="0" key="purchaseOrder.supplierName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="trackingNo" depends="maxlength">
+				<arg position="0" key="purchaseOrder.trackingNo" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="poStatus" depends="required,short">
+				<arg position="0" key="purchaseOrder.poStatus" />
+			</field>
+			<field property="poResult" depends="required,short">
+				<arg position="0" key="purchaseOrder.poResult" />
+			</field>
+			<field property="comments" depends="maxlength">
+				<arg position="0" key="purchaseOrder.comments" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>512</var-value>
+				</var>
+			</field>
+		</form>
+<!-- end:  Generated for PurchaseOrder From Template: validation.xml.vm  -->
+<!-- start:  Generated for PurchaseOrderItem From Template: validation.xml.vm  -->
+		<form name="purchaseOrderItem">
+			<field property="productName" depends="required,maxlength">
+				<arg position="0" key="purchaseOrderItem.productName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="supplierProductName" depends="maxlength">
+				<arg position="0" key="purchaseOrderItem.supplierProductName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>256</var-value>
+				</var>
+			</field>
+			<field property="skuDisplay" depends="maxlength">
+				<arg position="0" key="purchaseOrderItem.skuDisplay" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="purchaseQuantity" depends="required,integer">
+				<arg position="0" key="purchaseOrderItem.purchaseQuantity" />
+			</field>
+			<field property="passedQuantity" depends="required,integer">
+				<arg position="0" key="purchaseOrderItem.passedQuantity" />
+			</field>
+			<field property="purchasePrice" depends="required,">
+				<arg position="0" key="purchaseOrderItem.purchasePrice" />
+			</field>
+		</form>
+<!-- end:  Generated for PurchaseOrderItem From Template: validation.xml.vm  -->
+<!-- start:  Generated for AwaitingPurchase From Template: validation.xml.vm  -->
+		<form name="awaitingPurchase">
+			<field property="quantity" depends="required,integer">
+				<arg position="0" key="awaitingPurchase.quantity" />
+			</field>
+		</form>
+<!-- end:  Generated for AwaitingPurchase From Template: validation.xml.vm  -->
+<!-- start:  Generated for Currency From Template: validation.xml.vm  -->
+		<form name="currency">
+			<field property="currencyCode" depends="required,maxlength">
+				<arg position="0" key="currency.currencyCode" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>8</var-value>
+				</var>
+			</field>
+			<field property="currencyName" depends="required,maxlength">
+				<arg position="0" key="currency.currencyName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="isDefault" depends="short">
+				<arg position="0" key="currency.isDefault" />
+			</field>
+			<field property="status" depends="short">
+				<arg position="0" key="currency.status" />
+			</field>
+			<field property="sortOrder" depends="integer">
+				<arg position="0" key="currency.sortOrder" />
+			</field>
+			<field property="currencySymbol" depends="required,maxlength">
+				<arg position="0" key="currency.currencySymbol" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>16</var-value>
+				</var>
+			</field>
+		</form>
+<!-- end:  Generated for Currency From Template: validation.xml.vm  -->
+<!-- start:  Generated for TransferRecord From Template: validation.xml.vm  -->
+		<form name="transferRecord">
+			<field property="type" depends="required,short">
+				<arg position="0" key="transferRecord.type" />
+			</field>
+			<field property="orderNo" depends="required,maxlength">
+				<arg position="0" key="transferRecord.orderNo" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>20</var-value>
+				</var>
+			</field>
+			<field property="mtcnNo" depends="maxlength">
+				<arg position="0" key="transferRecord.mtcnNo" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>16</var-value>
+				</var>
+			</field>
+			<field property="firstname" depends="maxlength">
+				<arg position="0" key="transferRecord.firstname" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="middlename" depends="maxlength">
+				<arg position="0" key="transferRecord.middlename" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="lastname" depends="maxlength">
+				<arg position="0" key="transferRecord.lastname" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="address" depends="maxlength">
+				<arg position="0" key="transferRecord.address" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>256</var-value>
+				</var>
+			</field>
+			<field property="country" depends="maxlength">
+				<arg position="0" key="transferRecord.country" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="state" depends="maxlength">
+				<arg position="0" key="transferRecord.state" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="city" depends="maxlength">
+				<arg position="0" key="transferRecord.city" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="zip" depends="maxlength">
+				<arg position="0" key="transferRecord.zip" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>16</var-value>
+				</var>
+			</field>
+			<field property="phone" depends="maxlength">
+				<arg position="0" key="transferRecord.phone" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="question" depends="maxlength">
+				<arg position="0" key="transferRecord.question" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="answer" depends="maxlength">
+				<arg position="0" key="transferRecord.answer" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="status" depends="required,short">
+				<arg position="0" key="transferRecord.status" />
+			</field>
+		</form>
+<!-- end:  Generated for TransferRecord From Template: validation.xml.vm  -->
+<!-- start:  Generated for CompanyInfo From Template: validation.xml.vm  -->
+		<form name="companyInfo">
+			<field property="companyName" depends="required,maxlength">
+				<arg position="0" key="companyInfo.companyName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="country" depends="maxlength">
+				<arg position="0" key="companyInfo.country" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="state" depends="maxlength">
+				<arg position="0" key="companyInfo.state" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="city" depends="maxlength">
+				<arg position="0" key="companyInfo.city" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="address" depends="maxlength">
+				<arg position="0" key="companyInfo.address" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="phone" depends="maxlength">
+				<arg position="0" key="companyInfo.phone" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="email" depends="maxlength">
+				<arg position="0" key="companyInfo.email" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="fax" depends="maxlength">
+				<arg position="0" key="companyInfo.fax" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="zip" depends="maxlength">
+				<arg position="0" key="companyInfo.zip" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>12</var-value>
+				</var>
+			</field>
+			<field property="reserve1" depends="maxlength">
+				<arg position="0" key="companyInfo.reserve1" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>256</var-value>
+				</var>
+			</field>
+			<field property="reserve2" depends="maxlength">
+				<arg position="0" key="companyInfo.reserve2" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="logo" depends="maxlength">
+				<arg position="0" key="companyInfo.logo" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="qq" depends="maxlength">
+				<arg position="0" key="companyInfo.qq" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="msn" depends="maxlength">
+				<arg position="0" key="companyInfo.msn" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+			<field property="telephoneHotLine" depends="maxlength">
+				<arg position="0" key="companyInfo.telephoneHotLine" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+		</form>
+<!-- end:  Generated for CompanyInfo From Template: validation.xml.vm  -->
+<!-- start:  Generated for AppRole From Template: validation.xml.vm  -->
+		<form name="appRole">
+			<field property="roleName" depends="required,maxlength">
+				<arg position="0" key="appRole.roleName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="roleDetail" depends="maxlength">
+				<arg position="0" key="appRole.roleDetail" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>255</var-value>
+				</var>
+			</field>
+			<field property="status" depends="short">
+				<arg position="0" key="appRole.status" />
+			</field>
+			<field property="isSystem" depends="short">
+				<arg position="0" key="appRole.isSystem" />
+			</field>
+		</form>
+<!-- end:  Generated for AppRole From Template: validation.xml.vm  -->
+<!-- start:  Generated for PatchExecuteHistory From Template: validation.xml.vm  -->
+		<form name="patchExecuteHistory">
+			<field property="transactionUid" depends="maxlength">
+				<arg position="0" key="patchExecuteHistory.transactionUid" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="fileName" depends="required,maxlength">
+				<arg position="0" key="patchExecuteHistory.fileName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="fileType" depends="required,maxlength">
+				<arg position="0" key="patchExecuteHistory.fileType" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="flag" depends="required,short">
+				<arg position="0" key="patchExecuteHistory.flag" />
+			</field>
+			<field property="resultDescription" depends="maxlength">
+				<arg position="0" key="patchExecuteHistory.resultDescription" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>256</var-value>
+				</var>
+			</field>
+			<field property="fromVersion" depends="required,maxlength">
+				<arg position="0" key="patchExecuteHistory.fromVersion" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="toVersion" depends="required,maxlength">
+				<arg position="0" key="patchExecuteHistory.toVersion" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="executeTime" depends="date">
+				<arg position="0" key="patchExecuteHistory.executeTime" />
+			</field>
+		</form>
+<!-- end:  Generated for PatchExecuteHistory From Template: validation.xml.vm  -->
+<!-- start:  Generated for SystemMessage From Template: validation.xml.vm  -->
+		<form name="systemMessage">
+			<field property="messageHtml" depends="required,maxlength">
+				<arg position="0" key="systemMessage.messageHtml" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>512</var-value>
+				</var>
+			</field>
+			<field property="messageType" depends="short">
+				<arg position="0" key="systemMessage.messageType" />
+			</field>
+			<field property="status" depends="short">
+				<arg position="0" key="systemMessage.status" />
+			</field>
+		</form>
+<!-- end:  Generated for SystemMessage From Template: validation.xml.vm  -->
+<!-- start:  Generated for TbCategoryRefer From Template: validation.xml.vm  -->
+		<form name="tbCategoryRefer">
+			<field property="tbCategoryId" depends="required,long">
+				<arg position="0" key="tbCategoryRefer.tbCategoryId" />
+			</field>
+			<field property="tbCategoryName" depends="maxlength">
+				<arg position="0" key="tbCategoryRefer.tbCategoryName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>256</var-value>
+				</var>
+			</field>
+		</form>
+<!-- end:  Generated for TbCategoryRefer From Template: validation.xml.vm  -->
+<!-- start:  Generated for TbCatPropRefer From Template: validation.xml.vm  -->
+		<form name="tbCatPropRefer">
+			<field property="tbCatPropId" depends="required,long">
+				<arg position="0" key="tbCatPropRefer.tbCatPropId" />
+			</field>
+			<field property="tbCatPropName" depends="maxlength">
+				<arg position="0" key="tbCatPropRefer.tbCatPropName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>128</var-value>
+				</var>
+			</field>
+		</form>
+<!-- end:  Generated for TbCatPropRefer From Template: validation.xml.vm  -->
+<!-- start:  Generated for TbCatPropValueRefer From Template: validation.xml.vm  -->
+		<form name="tbCatPropValueRefer">
+			<field property="tbCatPropId" depends="required,long">
+				<arg position="0" key="tbCatPropValueRefer.tbCatPropId" />
+			</field>
+			<field property="tbCatPropValueId" depends="required,long">
+				<arg position="0" key="tbCatPropValueRefer.tbCatPropValueId" />
+			</field>
+			<field property="tbCatPropValueName" depends="maxlength">
+				<arg position="0" key="tbCatPropValueRefer.tbCatPropValueName" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>256</var-value>
+				</var>
+			</field>
+		</form>
+<!-- end:  Generated for TbCatPropValueRefer From Template: validation.xml.vm  -->
+<!-- start:  Generated for Catalog From Template: validation.xml.vm  -->
+		<form name="catalog">
+			<field property="name" depends="required,maxlength">
+				<arg position="0" key="catalog.name" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="code" depends="required,maxlength,code">
+				<arg position="0" key="catalog.code" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="description" depends="maxlength">
+				<arg position="0" key="catalog.description" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>65535</var-value>
+				</var>
+			</field>
+			<field property="isVirtual" depends="required,short">
+				<arg position="0" key="catalog.isVirtual" />
+			</field>
+			<field property="status" depends="required,short">
+				<arg position="0" key="catalog.status" />
+			</field>
+		</form>
+<!-- end:  Generated for Catalog From Template: validation.xml.vm  -->
+<!-- start:  Generated for Store From Template: validation.xml.vm  -->
+		<form name="store">
+			<field property="name" depends="required,maxlength">
+				<arg position="0" key="store.name" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="catalogId" depends="required,integer">
+				<arg position="0" key="store.catalogId" />
+			</field>
+			<field property="code" depends="required,maxlength,code">
+				<arg position="0" key="store.code" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="siteUrl" depends="required,maxlength">
+				<arg position="0" key="store.siteUrl" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>255</var-value>
+				</var>
+			</field>
+			<field property="description" depends="maxlength">
+				<arg position="0" key="store.description" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>65535</var-value>
+				</var>
+			</field>
+			<field property="status" depends="required,short">
+				<arg position="0" key="store.status" />
+			</field>
+		</form>
+<!-- end:  Generated for Store From Template: validation.xml.vm  -->
+<!-- start:  Generated for AdminInfo From Template: validation.xml.vm  -->
+		<form name="adminInfo">
+			<field property="department" depends="maxlength">
+				<arg position="0" key="adminInfo.department" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>64</var-value>
+				</var>
+			</field>
+			<field property="pagingSetting" depends="integer">
+				<arg position="0" key="adminInfo.pagingSetting" />
+			</field>
+		</form>
+<!-- end:  Generated for AdminInfo From Template: validation.xml.vm  -->
+<!-- start:  Generated for TextMessage From Template: validation.xml.vm  -->
+		<form name="textMessage">
+			<field property="phone" depends="required,maxlength">
+				<arg position="0" key="textMessage.phone" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+			<field property="email" depends="required,maxlength">
+				<arg position="0" key="textMessage.email" />
+				<arg position="1" name="maxlength" key="${var:maxlength}" resource="false" />
+				<var>
+					<var-name>maxlength</var-name>
+					<var-value>32</var-value>
+				</var>
+			</field>
+		</form>
+<!-- end:  Generated for TextMessage From Template: validation.xml.vm  -->
+
+<!-- start:  Generated for award From Template: validation.xml.vm  -->
+		<form name="award">
+			<field property="level" depends="required,double">
+			</field>
+			<field property="title" depends="required">
+			</field>
+			<field property="chance" depends="required,double">
+			</field>
+			<field property="prize" depends="required">
+			</field>
+		</form>
+<!-- end:  Generated for award From Template: validation.xml.vm  -->
+
+</formset>
+</form-validation>

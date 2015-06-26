@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.catalog.ProductSkuOptionValue"
+        table="PRODUCT_SKU_OPTION_VALUE"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="productSkuOptionValueId"
+            column="productSkuOptionValueId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+      <!-- imported bi-directional many-to-one association to SkuOptionValue -->
+		<many-to-one
+			name="skuOptionValue"
+			class="com.cartmatic.estore.common.model.catalog.SkuOptionValue"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="skuOptionValueId" />
+		</many-to-one>
+    <!-- imported bi-directional many-to-one association to ProductSku -->
+		<many-to-one
+			name="productSku"
+			class="com.cartmatic.estore.common.model.catalog.ProductSku"
+            not-null="false"
+			fetch="select"
+		>	
+			<column name="productSkuId" />
+		</many-to-one>
+    </class>
+</hibernate-mapping>

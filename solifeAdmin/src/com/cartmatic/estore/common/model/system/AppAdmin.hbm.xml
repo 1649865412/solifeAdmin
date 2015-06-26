@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<subclass 
+			name="com.cartmatic.estore.common.model.system.AppAdmin"
+			discriminator-value="1"
+			extends="com.cartmatic.estore.common.model.system.AppUser"
+		>
+
+        <property
+            name="userPosition"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="userPosition"
+            length="128"
+            not-null="false"
+            unique="false"
+        />
+       <!-- imported bi-directional many-to-one association to AdminInfo -->
+		<many-to-one name="adminInfo" class="com.cartmatic.estore.common.model.system.AdminInfo" not-null="false" fetch="select">
+			<column name="adminInfoId" />
+		</many-to-one>
+		
+		<sql-delete>UPDATE app_user SET deleted=1 WHERE appuserId=? and version=?</sql-delete>
+	</subclass>
+	
+</hibernate-mapping>

@@ -1,0 +1,8 @@
+## This is a velocity template
+## to generate a List jsp file from an sql table input
+#set ($table = $sqlTable.Table)
+#set ($class = $utility.makeClassName($sqlTable.EntityName))
+#set ($packageModot  = $prop.getProperty("packageModot").substring(1))
+<c:if test="$}sessionScope.moduleName=='${packageModot}'}">	
+    <menu:displayMenu name="${packageModot}Menu"/>
+</c:if>

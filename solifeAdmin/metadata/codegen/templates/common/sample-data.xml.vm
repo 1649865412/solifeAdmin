@@ -1,0 +1,19 @@
+## This is a velocity template
+## to generate a list of data rows for a table for testing
+#set ( $table = $sqlTable.Table)
+#set ( $testlist = ["1", "2", "3", "4"] )
+<table name='$table.toLowerCase()'>
+#foreach( $column in $sqlTable.sqlColumns)
+    <column>$utility.makeLowerCase($column.colname)</column>
+#end
+#foreach( $testcase in $testlist)
+    <row>
+#foreach( $column in $sqlTable.sqlColumns)
+#set ($colname = $column.colname)
+#set ($colsize = $column.colsize)
+#set ($coltype = $column.coltype)
+      <value>$utility.makeSampleData($column.attType,$colname,$colsize,$coltype,$testcase, "n")</value> 
+#end
+    </row>
+#end
+</table>

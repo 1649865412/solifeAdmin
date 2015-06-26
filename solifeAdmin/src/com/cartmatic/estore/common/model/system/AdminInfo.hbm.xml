@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="com.cartmatic.estore.common.model.system.AdminInfo"
+        table="ADMIN_INFO"
+        select-before-update="false"
+        dynamic-update="false"
+        dynamic-insert="false"
+        optimistic-lock="version"
+    >
+		<id
+            name="adminInfoId"
+            column="adminInfoId"
+            type="java.lang.Integer"
+            length="10"
+        >
+            <generator class="native"/>
+        </id>
+         <property
+            name="department"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="department"
+            length="64"
+            not-null="false"
+            unique="false"
+        />
+        <property
+            name="pagingSetting"
+            type="java.lang.Integer"
+            update="true"
+            insert="true"
+            access="property"
+            column="pagingSetting"
+            length="10"
+            not-null="false"
+            unique="false"
+        />
+        <property 
+        	name="productViewSetting" type="java.lang.Short" update="true" insert="true" access="property" 
+        	column="productViewSetting"
+			length="6" not-null="true" unique="false" />
+        
+  <!-- exported bi-directional one-to-many association to AppUser -->
+	<set name="appUsers"
+	     table="app_user"
+	     lazy="true"
+	     inverse="true"
+	     cascade="save-update"
+	     sort="unsorted"
+	>
+		<key>
+			<column name="adminInfoId"/>
+		</key>
+		<one-to-many
+			class="com.cartmatic.estore.common.model.system.AppUser"
+		/>
+	</set>     
+    </class>
+</hibernate-mapping>

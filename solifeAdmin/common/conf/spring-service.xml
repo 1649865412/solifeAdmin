@@ -1,0 +1,1299 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       	   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       	   http://www.springframework.org/schema/util 
+       	   http://www.springframework.org/schema/util/spring-util-3.0.xsd"
+	default-lazy-init="true">
+	<!-- Transaction template for all Managers -->
+	<bean id="txProxyTemplate" abstract="true"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager" ref="transactionManager" />
+		<property name="transactionAttributes">
+			<props>
+				<prop key="set*">PROPAGATION_NOT_SUPPORTED,readOnly</prop>
+				<prop key="get*">PROPAGATION_SUPPORTS,readOnly</prop>
+				<prop key="is*">PROPAGATION_SUPPORTS,readOnly</prop>
+				<prop key="find*">PROPAGATION_SUPPORTS,readOnly</prop>
+				<prop key="search*">PROPAGATION_SUPPORTS,readOnly</prop>
+				<prop key="load*">PROPAGATION_SUPPORTS,readOnly</prop>
+				<prop key="save*">PROPAGATION_REQUIRED,ISOLATION_READ_COMMITTED,-Exception</prop>
+				<prop key="update*">PROPAGATION_REQUIRED,ISOLATION_READ_COMMITTED</prop>
+				<prop key="create*">PROPAGATION_REQUIRED,ISOLATION_READ_COMMITTED</prop>
+				<prop key="add*">PROPAGATION_REQUIRED,ISOLATION_READ_COMMITTED,-Exception</prop>
+				<prop key="remove*">PROPAGATION_REQUIRED,ISOLATION_READ_COMMITTED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED,ISOLATION_READ_COMMITTED</prop>
+				<prop key="do*">PROPAGATION_REQUIRED,ISOLATION_READ_COMMITTED,-Exception</prop>
+				<prop key="*">PROPAGATION_SUPPORTS</prop>
+			</props>
+		</property>
+		<!-- <property name="proxyTargetClass" value="true"/>
+		<property name="optimize" value="true"/>
+		<property name="preInterceptors">
+			<list></list>
+		</property>
+		<property name="postInterceptors">
+			<list></list>
+		</property> -->
+	</bean>
+
+	<!-- This is the base definition for all Hibernate based DAOs -->
+	<bean id="genericManager" class="com.cartmatic.estore.core.service.impl.GenericManagerImpl" abstract="true" >
+	</bean>
+
+	<!-- <bean id="proxyCreator" class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator">
+	</bean> -->
+
+	<bean id="debugInterceptor" class="com.cartmatic.estore.aop.DebugInterceptor"></bean>
+	<bean id="debugAdvisor" class="org.springframework.aop.support.NameMatchMethodPointcutAdvisor">
+		<property name="advice" ref="debugInterceptor" />
+		<property name="mappedNames">
+			<list>
+				<value>*save*</value>
+				<value>*update*</value>
+				<value>*delete*</value>
+				<value>*remove*</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="auditInterceptor" class="com.cartmatic.estore.aop.AuditInterceptor" autowire="byName"></bean>
+	<bean id="auditAdvisor" class="org.springframework.aop.support.NameMatchMethodPointcutAdvisor">
+		<property name="advice" ref="auditInterceptor" />
+		<property name="mappedNames">
+			<list>
+				<value>*save*</value>
+				<value>*update*</value>
+				<value>*delete*</value>
+				<value>*remove*</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- ==============================   CACHE   ============================= -->
+
+	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+		<property name="configLocation" value="classpath:conf/ehcache_spring.xml" />
+	</bean>
+
+	<!-- Remove the following 3 beans to disable method level data cache -->
+	<bean id="methodCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+		<property name="cacheManager" ref="cacheManager" />
+		<property name="cacheName" value="METHOD_CACHE" />
+	</bean>
+
+	<bean id="methodCacheInterceptor" class="com.cartmatic.estore.aop.MethodCacheInterceptor">
+		<property name="cache" ref="methodCache" />
+	</bean>
+	<!-- for the shop point -->
+	
+	<!-- //Disable auto proxy, so need to specify in each proxied bean, e.g. a manager
+	<bean id="cacheAdvisor" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
+		<property name="advice" ref="methodCacheInterceptor" />
+		<property name="patterns">
+			<list>
+				<value>com.cartmatic.estore.*AdPositionTypeManagerImpl.getAllsForFront.*</value>
+				<value>com.cartmatic.estore.*ProductAdvertisementManagerImpl.getAllsForFront.*</value>
+				<value>com.cartmatic.estore.*AdvertisementManagerImpl.getAllsForFront.*</value>
+				<value>com.cartmatic.estore.*SystemConfigManagerImpl.getConfigAsMap.*</value>
+			</list>
+		</property>
+	</bean> -->
+
+	<bean id="cacheAdvisorTemplate" abstract="true"
+		class="org.springframework.aop.support.NameMatchMethodPointcutAdvisor">
+		<property name="advice" ref="methodCacheInterceptor" />
+	</bean>
+
+	<!-- helper and util section -->
+	<bean id="i18nUtil" class="com.cartmatic.estore.core.util.I18nUtil" lazy-init="false" factory-method="getInstance" autowire="byName">
+	</bean>
+
+	<bean id="configUtil" class="com.cartmatic.estore.common.helper.ConfigUtil" lazy-init="false" factory-method="getInstance" autowire="byName">
+		<property name="systemConfigManager" ref="systemConfigManager" />
+		<property name="systemMode" value="${system.mode}"/>
+		<property name="autoStartScheduler" value="${system.autoStartScheduler}"/>
+		<property name="assetsPath" value="${system.assetsPath}"/>
+		<property name="serverSideDataCacheEnabled" value="${system.serverSideDataCacheEnabled}"/>
+		<property name="orderNoPrefix" value="${order.orderNoPrefix}"/>
+		<property name="orderNoSuffix" value="${order.orderNoSuffix}"/>
+		<property name="poNoPrefix" value="${supplier.poNoPrefix}"/>
+		<!-- <property name="storeFrontSiteUrl" value="${system.storeFrontSiteUrl}"/> -->
+		<property name="mailMarketerUrl" value="${system.mailMarketerUrl}"/>
+		<!-- <property name="mediaUrlPath" value="${system.mediaUrlPath}"/> -->
+		<property name="cmsAccessCategories" value="${cms.access.categories}"/>
+	</bean>
+
+	<bean id="configRegistry" class="com.cartmatic.estore.common.helper.ConfigRegistryImpl" lazy-init="false"
+		factory-method="getInstance" autowire="byName">
+	</bean>
+
+	<bean id="appAuditHelper" class="com.cartmatic.estore.common.helper.AppAuditHelper" lazy-init="false"
+		factory-method="getInstance" autowire="byName">
+	</bean>
+
+	<bean id="attributeUtil" class="com.cartmatic.estore.common.helper.AttributeUtil" lazy-init="false" factory-method="getInstance">
+       <property name="attributeService" ref="attributeService"/>
+    </bean>
+	<!-- dwr service bean here begin -->
+
+	<!-- dwr
+	 service bean here end -->
+	<!-- service manager bean here begin -->
+	
+	<bean id="attributeService" class="com.cartmatic.estore.common.service.impl.AttributeServiceImpl">
+       <property name="attributeManager" ref="attributeManager"/>
+       <property name="attributeValueManager" ref="attributeValueManager"/>
+    </bean>
+
+    <bean id="pruleManager" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.sales.engine.PRuleManager" autowire="byName" lazy-init="false" />
+		</property>
+	</bean>
+	<bean id="promoService" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.common.service.impl.PromoServiceImpl" autowire="byName" lazy-init="false" />
+		</property>
+		<property name="transactionAttributes">
+			<props merge="true">
+				<prop key="appendPromoInfo*">PROPAGATION_NOT_SUPPORTED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+     <bean id="giftCertificateService" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.common.service.impl.GiftCertificateServiceImpl" autowire="byName" />
+		</property>
+	</bean> 
+
+    <bean id="recommendedService" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.common.service.impl.RecommendedServiceImpl" autowire="byName" />
+		</property>
+	</bean>
+
+    <bean id="solrService" class="com.cartmatic.estore.common.service.impl.SolrServiceImpl" init-method="init">
+    	<property name="serverUrl" value="${system.searchServer.url}"/>
+    </bean>
+
+	<bean id="supplierService" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.common.service.impl.SupplierServiceImpl" autowire="byName" />
+		</property>
+	</bean> 
+   
+	<!-- service manager bean here end -->
+
+	<!-- Add new Managers here -->
+<!-- start:  Generated for AppRole From Template: spring-service.xml.vm  -->
+    <bean id="appRoleManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.system.service.impl.AppRoleManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for AppRole From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for SystemConfig From Template: spring-service.xml.vm  -->
+    <bean id="systemConfigManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.system.service.impl.SystemConfigManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+        <property name="preInterceptors">
+			<list>
+				<!-- <ref bean="auditAdvisor" /> -->
+				<bean parent="cacheAdvisorTemplate">
+					<property name="mappedNames">
+						<list>
+							<value>getConfigAsMap</value>
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+    </bean>
+<!-- end:  Generated for SystemConfig From Template: spring-service.xml.vm  -->
+	
+	<!-- start:  Generated for Category From Template: spring-service.xml.vm  -->
+	<bean id="categoryManager" parent="txProxyTemplate">
+	   <property name="preInterceptors">
+			<list>
+				<bean parent="cacheAdvisorTemplate">
+					<property name="mappedNames">
+						<list>
+							<value>getCatalogTreeItemList4Front</value>
+                            <value>getContentTreeItemList4Front</value>
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+		<property name="target">
+			<bean class="com.cartmatic.estore.catalog.service.impl.CategoryManagerImpl" autowire="byName" />
+		</property>
+	</bean>
+    <bean id="categoryService" parent="txProxyTemplate">
+     <!--  
+        <property name="preInterceptors">
+            <list>
+             <bean parent="cacheAdvisorTemplate">
+                   <property name="mappedNames">
+                         <list>
+                              <value>getActiveTopLevelCategories</value>
+                         </list>
+                   </property>
+             </bean>
+            </list>
+        </property>
+        -->
+        <property name="target">
+            <bean class="com.cartmatic.estore.common.service.impl.CategoryServiceImpl" autowire="byName"/>
+        </property>
+    </bean>
+    
+    <bean id="catalogHelper" class="com.cartmatic.estore.common.helper.CatalogHelper" lazy-init="false" factory-method="getInstance" autowire="byName">
+       
+    </bean>
+    
+    <bean id="bulkHelper" class="com.cartmatic.estore.catalog.helper.BulkHelper" lazy-init="false" factory-method="getInstance" autowire="byName">
+
+    </bean>
+    <!-- end:  Generated for Category From Template: spring-service.xml.vm  -->
+	
+
+	
+<!-- start:  Generated for ShippingRate From Template: spring-service.xml.vm  -->
+    <bean id="shippingRateManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.system.service.impl.ShippingRateManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for ShippingRate From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for ShippingMethod From Template: spring-service.xml.vm  -->
+    <bean id="shippingMethodManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.system.service.impl.ShippingMethodManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for ShippingMethod From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for Carrier From Template: spring-service.xml.vm  -->
+    <bean id="carrierManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.system.service.impl.CarrierManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for Carrier From Template: spring-service.xml.vm  -->
+
+<!-- start:  Generated for Region From Template: spring-service.xml.vm  -->
+    <bean id="regionManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.system.service.impl.RegionManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for Region From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for RegionItem From Template: spring-service.xml.vm  -->
+    <bean id="regionItemManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.system.service.impl.RegionItemManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for RegionItem From Template: spring-service.xml.vm  -->
+
+	<!-- start:  Generated for Customer From Template: spring-service.xml.vm  -->
+	<bean id="customerManager" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.customer.service.impl.CustomerManagerImpl" autowire="byName" />
+		</property>
+	</bean>
+	
+	<bean id="customerService" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.common.service.impl.CustomerServiceImpl" autowire="byName" />
+		</property>
+	</bean>	
+	
+	<bean id="customerDashboardManager" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.customer.service.impl.CustomerDashboardManagerImpl" autowire="byName" />
+		</property>
+	</bean>	
+	<!-- end:  Generated for Customer From Template: spring-service.xml.vm  -->
+	<!-- start:  Generated for GiftCertificate From Template: spring-service.xml.vm  -->
+	<bean id="giftCertificateManager" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.sales.service.impl.GiftCertificateManagerImpl" parent="genericManager" autowire="byName" />
+		</property>
+	</bean>
+	
+	<!-- end:  Generated for GiftCertificate From Template: spring-service.xml.vm  -->
+	
+	<!-- start:  Generated for Tax From Template: spring-service.xml.vm  -->
+	<bean id="taxManager" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.system.service.impl.TaxManagerImpl" parent="genericManager" autowire="byName" />
+		</property>
+	</bean>
+	<!-- end:  Generated for Tax From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for TaxRate From Template: spring-service.xml.vm  -->
+    <bean id="taxRateManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.system.service.impl.TaxRateManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for TaxRate From Template: spring-service.xml.vm  -->
+	
+	
+	<!-- start:CheckoutService -->
+	<bean id="checkoutService" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.common.service.impl.CheckoutServiceImpl" autowire="byName" />
+		</property>
+		<property name="preInterceptors">
+			<list>
+				<bean parent="cacheAdvisorTemplate">
+					<property name="mappedNames">
+						<list>
+							<value>getRegionShippingRates</value>
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	<!-- end: CheckoutService-->
+	
+<!-- start:  Generated for PaymentMethod From Template: spring-service.xml.vm  -->
+    <bean id="paymentMethodManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.system.service.impl.PaymentMethodManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for PaymentMethod From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for Wrap From Template: spring-service.xml.vm  -->
+    <bean id="wrapManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.system.service.impl.WrapManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for Wrap From Template: spring-service.xml.vm  -->
+
+	<!-- start:  Generated for Shoppingcart From Template: spring-service.xml.vm  -->
+	<bean id="shoppingcartManager" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.cart.service.impl.ShoppingcartManagerImpl" parent="genericManager" autowire="byName" />
+		</property>
+		<property name="transactionAttributes">
+			<props merge="true">
+				<prop key="initShoppingcart">PROPAGATION_REQUIRED,ISOLATION_READ_COMMITTED</prop>
+			</props>
+		</property>
+	</bean>
+	<!-- end:  Generated for Shoppingcart From Template: spring-service.xml.vm  -->
+	<bean id="shoppingcartService" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.common.service.impl.ShoppingcartServiceImpl" autowire="byName" />
+		</property>
+	</bean>
+	<bean id="checkoutManager" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.cart.service.impl.CheckoutManagerImpl" autowire="byName" />
+		</property>
+	</bean>	
+
+<!-- start:  Generated for ProductAdvertisement From Template: spring-service.xml.vm  -->
+    <bean id="productAdvertisementManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.content.service.impl.ProductAdvertisementManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for ProductAdvertisement From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for AdPositionType From Template: spring-service.xml.vm  -->
+    <bean id="adPositionTypeManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.content.service.impl.AdPositionTypeManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for AdPositionType From Template: spring-service.xml.vm  -->
+
+
+	<!-- start:  Generated for AppAdmin From Template: spring-service.xml.vm  -->
+	<bean id="appAdminManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.system.service.impl.AppAdminManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+	<!-- end:  Generated for AppAdmin From Template: spring-service.xml.vm  -->
+
+<!-- start:  Generated for Advertisement From Template: spring-service.xml.vm  -->
+    <bean id="advertisementManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.content.service.impl.AdvertisementManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for Advertisement From Template: spring-service.xml.vm  -->
+
+	<!-- start:  Generated for SystemLanguage From Template: spring-service.xml.vm  -->
+	<bean id="systemLanguageManager" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.system.service.impl.SystemLanguageManagerImpl" parent="genericManager" autowire="byName"/>
+		</property>
+	</bean>
+	<!-- end:  Generated for SystemLanguage From Template: spring-service.xml.vm  -->
+
+<!-- start:  Generated for AppAudit From Template: spring-service.xml.vm  -->
+    <bean id="appAuditManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.system.service.impl.AppAuditManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for AppAudit From Template: spring-service.xml.vm  -->
+	
+	<!-- start:  Generated for AlsoBuy From Template: spring-service.xml.vm  -->
+	<bean id="alsoBuyManager" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.sales.service.impl.AlsoBuyManagerImpl" parent="genericManager" autowire="byName" />
+		</property>
+	</bean>
+	 
+	<!-- end:  Generated for AlsoBuy From Template: spring-service.xml.vm  -->
+
+	<!-- start:  Generated for RecommendedProduct From Template: spring-service.xml.vm  -->
+	<bean id="recommendedProductManager" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.sales.service.impl.RecommendedProductManagerImpl" parent="genericManager"  autowire="byName" />
+		</property>
+	</bean>
+	<!-- end:  Generated for RecommendedProduct From Template: spring-service.xml.vm  -->
+	<!-- start:  Generated for RecommendedType From Template: spring-service.xml.vm  -->
+	<bean id="recommendedTypeManager" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.sales.service.impl.RecommendedTypeManagerImpl"  parent="genericManager" autowire="byName" />
+		</property>
+		<property name="preInterceptors">
+			<list>
+				<!-- <ref bean="auditAdvisor" /> -->
+				<bean parent="cacheAdvisorTemplate">
+					<property name="mappedNames">
+						<list>
+							<value>getRecommendedTypeByName</value>
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="autoEvalRecommendationManager" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.sales.service.impl.AutoEvalRecommendationManagerImpl"  parent="genericManager" autowire="byName" />
+		</property>
+	</bean>
+	
+	<bean id="evalRecommendationManager" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.sales.service.impl.EvalRecommendationManagerImpl"  parent="genericManager" autowire="byName" />
+		</property>
+		<property name="preInterceptors">
+			<list>
+				<!-- <ref bean="auditAdvisor" /> -->
+				<bean parent="cacheAdvisorTemplate">
+					<property name="mappedNames">
+						<list>
+							<!-- 测试关闭
+							<value>getProductsByRecommendedTypeNameByCategoryId</value>
+							 -->
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	
+	<!-- end:  Generated for RecommendedType From Template: spring-service.xml.vm  -->
+	<bean id="orderNoGenerator" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.order.service.impl.OrderNoGeneratorImpl" autowire="byName" />
+		</property>
+	</bean>
+	<bean id="poNoGenerator" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.supplier.service.impl.PoNoGeneratorImpl" autowire="byName" />
+		</property>
+	</bean>
+	
+	<bean id="productCodeGenerator" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.catalog.service.impl.ProductCodeGeneratorImpl" autowire="byName" />
+		</property>
+	</bean>
+	
+<!-- start:  Generated for SystemMessage From Template: spring-service.xml.vm  -->
+    <bean id="systemMessageManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.content.service.impl.SystemMessageManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for SystemMessage From Template: spring-service.xml.vm  -->
+
+<!-- start:  Generated for PaymentHistory From Template: spring-service.xml.vm  -->
+    <bean id="paymentHistoryManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.system.service.impl.PaymentHistoryManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for PaymentHistory From Template: spring-service.xml.vm  -->
+	<!-- start:-->
+    <bean id="siteMapManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.system.service.impl.SiteMapManagerImpl" autowire="byName"/>
+        </property>
+    </bean>
+   <!-- end: -->
+
+	<bean id="jasperReportManager" parent="txProxyTemplate">
+		<property name="target">
+			<bean
+				class="com.cartmatic.estore.report.service.impl.JasperReportManagerImpl"
+				autowire="byName" />
+		</property>
+	</bean>
+
+	<!-- start:  Generated for Resource From Template: spring-service.xml.vm  -->
+    <bean id="appResourceManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.system.service.impl.AppResourceManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for Resource From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for Content From Template: spring-service.xml.vm  -->
+    
+     <bean id="contentManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.content.service.impl.ContentManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for Content From Template: spring-service.xml.vm  -->
+
+<!-- start:  Generated for SystemVersion From Template: spring-service.xml.vm  -->
+    <bean id="systemVersionManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.system.service.impl.SystemVersionManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for SystemVersion From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for PatchExecuteHistory From Template: spring-service.xml.vm  -->
+    <bean id="patchExecuteHistoryManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.other.service.impl.PatchExecuteHistoryManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for PatchExecuteHistory From Template: spring-service.xml.vm  -->
+
+<!-- start:  Generated for AppEvent From Template: spring-service.xml.vm  -->
+    <bean id="appEventManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.system.service.impl.AppEventManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for AppEvent From Template: spring-service.xml.vm  -->
+	<bean id="cacheFilterBean" class="com.cartmatic.estore.core.filter.CacheFilter">
+	</bean>
+<!-- end:  Generated for productTypeManager From Template: spring-service.xml.vm  -->
+	<!-- start:  Generated for import From Template: spring-service.xml.vm  -->
+	<bean id="importManager" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.imports.service.impl.ImportManagerImpl" autowire="byName" />
+		</property>
+	</bean>
+	<bean id="importEngine" parent="txProxyTemplate" scope="prototype">
+		<property name="target">
+			<bean class="com.cartmatic.estore.imports.engine.impl.ImportEngineImpl" autowire="byName">
+			</bean>
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="doImportTarget">PROPAGATION_SUPPORTS,readOnly</prop>
+				<!-- 
+				<prop key="startImport">PROPAGATION_NOT_SUPPORTED,readOnly</prop>
+				 -->
+			</props>
+		</property>
+	</bean>
+	<!-- end:  Generated for import From Template: spring-service.xml.vm  -->
+    
+	<bean id="actionFilterBean" class="com.cartmatic.estore.webapp.filter.ActionFilter">
+	</bean>
+    <bean id="appContextLoader" class="com.cartmatic.estore.webapp.AppContextLoaderImpl" autowire="byName">
+    </bean>
+    <bean id="imageProcessorJai" class="com.cartmatic.estore.core.util.ImageProcessorJaiImpl">
+		<property name="encodeQuality" value="0.90f"/>
+		<property name="alpha" value="0.3f"/>
+		<property name="watermarkText" value="Demo"/>
+		<property name="fontName" value="Lucida Bright"/>
+		<property name="fontStyle" value="2"/>
+		<property name="fontSize" value="36"/>
+	</bean>
+	<bean id="imageProcessorImageMagick" class="com.cartmatic.estore.core.util.ImageProcessorImageMagickImpl">
+		<property name="quality" value="${system.imageMagickQuality}"/>
+		<property name="imageMagickCommand" value="${system.imageMagickCommand}"/>
+	</bean>
+	<util:map id="imageProcessorConfs" map-class="java.util.HashMap">
+        <entry key="a">
+        	<bean class="com.cartmatic.estore.webapp.action.ImageProcessorConf">
+				<property name="category" value="a"/>
+				<property name="width" value="${image.size.a_w}"/>
+				<property name="height" value="${image.size.a_h}"/>
+				<property name="padding" value="0"/>
+    		</bean>
+        </entry>
+        <entry key="b">
+        	<bean class="com.cartmatic.estore.webapp.action.ImageProcessorConf">
+				<property name="category" value="b"/>
+				<property name="width" value="${image.size.b_w}"/>
+				<property name="height" value="${image.size.b_h}"/>
+				<property name="padding" value="0"/>
+    		</bean>
+        </entry>
+        <entry key="c">
+        	<bean class="com.cartmatic.estore.webapp.action.ImageProcessorConf">
+				<property name="category" value="c"/>
+				<property name="width" value="${image.size.c_w}"/>
+				<property name="height" value="${image.size.c_h}"/>
+				<property name="padding" value="0"/>
+    		</bean>
+        </entry>
+        <entry key="d">
+        	<bean class="com.cartmatic.estore.webapp.action.ImageProcessorConf">
+				<property name="category" value="d"/>
+				<property name="width" value="${image.size.d_w}"/>
+				<property name="height" value="${image.size.d_h}"/>
+				<property name="padding" value="0"/>
+    		</bean>
+        </entry>
+        <entry key="e">
+        	<bean class="com.cartmatic.estore.webapp.action.ImageProcessorConf">
+				<property name="category" value="e"/>
+				<property name="width" value="${image.size.e_w}"/>
+				<property name="height" value="${image.size.e_h}"/>
+				<property name="padding" value="0"/>
+    		</bean>
+        </entry>
+        <entry key="f">
+        	<bean class="com.cartmatic.estore.webapp.action.ImageProcessorConf">
+				<property name="category" value="f"/>
+				<property name="width" value="${image.size.f_w}"/>
+				<property name="height" value="${image.size.f_h}"/>
+				<property name="padding" value="0"/>
+    		</bean>
+        </entry>
+        <entry key="g">
+        	<bean class="com.cartmatic.estore.webapp.action.ImageProcessorConf">
+				<property name="category" value="g"/>
+				<property name="width" value="${image.size.g_w}"/>
+				<property name="height" value="${image.size.g_h}"/>
+				<property name="padding" value="0"/>
+    		</bean>
+        </entry>
+        <entry key="wm_d">
+        	<bean class="com.cartmatic.estore.webapp.action.ImageProcessorConf">
+				<property name="category" value="d"/>		
+				<property name="autoScaleImage" value="false"/>
+				<property name="autoWatermark" value="true"/>
+    		</bean>
+        </entry>
+        <entry key="wm_v">
+        	<bean class="com.cartmatic.estore.webapp.action.ImageProcessorConf">
+				<property name="category" value="v"/>		
+				<property name="autoScaleImage" value="false"/>
+				<property name="autoWatermark" value="true"/>
+    		</bean>
+        </entry>
+    </util:map>
+    	 
+	
+    <bean id="attributeManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.attribute.service.impl.AttributeManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+        <!-- 
+        <property name="preInterceptors">
+			<list>
+				<bean parent="cacheAdvisorTemplate">
+					<property name="mappedNames">
+						<list>
+							<value>getAttribute</value>
+							<value>getAttributes</value>
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+   -->
+    </bean>
+    
+<!-- start:  Generated for ContentAttrValue From Template: spring-service.xml.vm  -->
+    <bean id="attributeValueManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.attribute.service.impl.AttributeValueManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for CategoryAttrValue From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for RoleRes From Template: spring-service.xml.vm  -->
+    <bean id="roleResManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.system.service.impl.RoleResManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for RoleRes From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for Brand From Template: spring-service.xml.vm  -->
+    <bean id="brandManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.catalog.service.impl.BrandManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for Brand From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for Inventory From Template: spring-service.xml.vm  -->
+    <bean id="inventoryManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.inventory.service.impl.InventoryManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+    <bean id="inventoryService" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.common.service.impl.InventoryServiceImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+    <bean id="inventoryDashboardManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.inventory.service.impl.InventoryDashboardManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for Inventory From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for Product From Template: spring-service.xml.vm  -->
+    <bean id="productManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.catalog.service.impl.ProductManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+    <bean id="productService" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.common.service.impl.ProductServiceImpl" autowire="byName"/>
+        </property>
+    </bean>
+    <bean id="catalogDashboardManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.catalog.service.impl.CatalogDashboardManagerImpl" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for Product From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for Product From Template: spring-service.xml.vm  -->
+    <bean id="productMainManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.catalog.service.impl.ProductMainManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for Product From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for ProductCategory From Template: spring-service.xml.vm  -->
+    <bean id="productCategoryManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.catalog.service.impl.ProductCategoryManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for ProductCategory From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for ProductDescription From Template: spring-service.xml.vm  -->
+    <bean id="productDescriptionManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.catalog.service.impl.ProductDescriptionManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for ProductDescription From Template: spring-service.xml.vm  -->
+
+<!-- start:  Generated for ProductDescription From Template: spring-service.xml.vm  -->
+    <bean id="productHandDrawManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.catalog.service.impl.ProductHandDrawManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for ProductDescription From Template: spring-service.xml.vm  -->
+
+<!-- start:  Generated for ProductMedia From Template: spring-service.xml.vm  -->
+    <bean id="productMediaManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.catalog.service.impl.ProductMediaManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for ProductMedia From Template: spring-service.xml.vm  -->
+
+    <bean id="productMediaUpManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.catalog.service.impl.ProductMediaUpManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+
+<!-- start:  Generated for ProductPackageItem From Template: spring-service.xml.vm  -->
+    <bean id="productPackageItemManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.catalog.service.impl.ProductPackageItemManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for ProductPackageItem From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for ProductRateItem From Template: spring-service.xml.vm  -->
+    <bean id="productRateItemManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.catalog.service.impl.ProductRateItemManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for ProductRateItem From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for ProductRateValue From Template: spring-service.xml.vm  -->
+    <bean id="productRateValueManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.catalog.service.impl.ProductRateValueManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for ProductRateValue From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for ProductReview From Template: spring-service.xml.vm  -->
+    <bean id="productReviewManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.catalog.service.impl.ProductReviewManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for ProductReview From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for ProductSku From Template: spring-service.xml.vm  -->
+    <bean id="productSkuManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.catalog.service.impl.ProductSkuManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for ProductSku From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for ProductSkuOptionValue From Template: spring-service.xml.vm  -->
+    <bean id="productSkuOptionValueManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.catalog.service.impl.ProductSkuOptionValueManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for ProductSkuOptionValue From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for ProductType From Template: spring-service.xml.vm  -->
+    <bean id="productTypeManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.catalog.service.impl.ProductTypeManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for ProductType From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for ProductTypeSkuOption From Template: spring-service.xml.vm  -->
+    <bean id="productTypeSkuOptionManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.catalog.service.impl.ProductTypeSkuOptionManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for ProductTypeSkuOption From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for SkuOption From Template: spring-service.xml.vm  -->
+    <bean id="skuOptionManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.catalog.service.impl.SkuOptionManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for SkuOption From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for SkuOptionValue From Template: spring-service.xml.vm  -->
+    <bean id="skuOptionValueManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.catalog.service.impl.SkuOptionValueManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for SkuOptionValue From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for WholesalePrice From Template: spring-service.xml.vm  -->
+    <bean id="wholesalePriceManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.catalog.service.impl.WholesalePriceManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for WholesalePrice From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for ProductAttGroupItem From Template: spring-service.xml.vm  -->
+    <bean id="productAttGroupItemManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.catalog.service.impl.ProductAttGroupItemManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for ProductAttGroupItem From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for ProductAttGroup From Template: spring-service.xml.vm  -->
+    <bean id="productAttGroupManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.catalog.service.impl.ProductAttGroupManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for ProductAttGroup From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for ProductStat From Template: spring-service.xml.vm  -->
+    <bean id="productStatManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.catalog.service.impl.ProductStatManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for ProductStat From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for ReviewVote From Template: spring-service.xml.vm  -->
+    <bean id="reviewVoteManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.catalog.service.impl.ReviewVoteManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for ReviewVote From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for InventoryAudit From Template: spring-service.xml.vm  -->
+    <bean id="inventoryAuditManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.inventory.service.impl.InventoryAuditManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for InventoryAudit From Template: spring-service.xml.vm  -->
+	<bean id="salesDashboardManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.sales.service.impl.SalesDashboardManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- start:  Generated for PromoRule From Template: spring-service.xml.vm  -->
+    <bean id="promoRuleManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.sales.service.impl.PromoRuleManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for PromoRule From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for PromoRuleElement From Template: spring-service.xml.vm  -->
+    <bean id="promoRuleElementManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.sales.service.impl.PromoRuleElementManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for PromoRuleElement From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for PromoRuleParameter From Template: spring-service.xml.vm  -->
+    <bean id="promoRuleParameterManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.sales.service.impl.PromoRuleParameterManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for PromoRuleParameter From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for Coupon From Template: spring-service.xml.vm  -->
+    <bean id="couponManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.sales.service.impl.CouponManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for Coupon From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for ShoppingcartItem From Template: spring-service.xml.vm  -->
+    <bean id="shoppingcartItemManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.cart.service.impl.ShoppingcartItemManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for ShoppingcartItem From Template: spring-service.xml.vm  -->
+
+<!-- start:  Generated for shoppingcartPromotionManager From Template: spring-service.xml.vm  -->
+    <bean id="shoppingcartPromotionManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.cart.service.impl.ShoppingcartPromotionManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for shoppingcartPromotionManager From Template: spring-service.xml.vm  -->
+
+<!-- start:  Generated for SalesOrder From Template: spring-service.xml.vm  -->
+    <bean id="salesOrderManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.order.service.impl.SalesOrderManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+    <bean id="orderProcessFlowManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.order.service.impl.OrderProcessFlowManagerImpl" autowire="byName"/>
+        </property>
+    </bean>
+    <bean id="orderService" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.common.service.impl.OrderServiceImpl" autowire="byName"/>
+        </property>
+    </bean>
+     <bean id="orderAuditHelper" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.order.service.impl.OrderAuditHelperImpl" autowire="byName"/>
+        </property>
+    </bean>
+    <bean id="orderDashboardManager" class="com.cartmatic.estore.order.service.impl.OrderDashboardManagerImpl" autowire="byName">
+    </bean>
+    <bean id="orderRobotManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.order.service.impl.OrderRobotManagerImpl" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for SalesOrder From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for OrderPickList From Template: spring-service.xml.vm  -->
+    <bean id="orderPickListManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.order.service.impl.OrderPickListManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for OrderPickList From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for OrderReturn From Template: spring-service.xml.vm  -->
+    <bean id="orderReturnManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.order.service.impl.OrderReturnManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for OrderReturn From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for OrderSettlement From Template: spring-service.xml.vm  -->
+    <bean id="orderSettlementManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.order.service.impl.OrderSettlementManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for OrderSettlement From Template: spring-service.xml.vm  -->
+    <bean id="shoppingCartUtil" class="com.cartmatic.estore.cart.util.ShoppingCartUtil" autowire="byName" lazy-init="false" factory-method="getInstance"/>
+    <bean id="checkoutUtil" class="com.cartmatic.estore.cart.util.CheckoutUtil" autowire="byName" lazy-init="false" factory-method="getInstance"/>
+    <bean id="paymentMethodService" class="com.cartmatic.estore.common.service.impl.PaymentMethodServiceImp" autowire="byName"></bean>
+	<bean id="shoppingcartItemGcManager" class="com.cartmatic.estore.cart.service.impl.ShoppingcartItemGcManagerImpl" autowire="byName"></bean>
+<!-- start:  Generated for OrderMessage From Template: spring-service.xml.vm  -->
+    <bean id="orderMessageManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.order.service.impl.OrderMessageManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for OrderMessage From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for SalesOrderGeoip From Template: spring-service.xml.vm  -->
+    <bean id="salesOrderGeoipManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.order.service.impl.SalesOrderGeoipManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+    <bean id="geoIpCollectorIpAdress" class="com.cartmatic.estore.order.service.impl.GeoIpCollectorIpAdressAPIImpl" autowire="byName">
+    </bean>
+<!-- end:  Generated for SalesOrderGeoip From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for SystemQueue From Template: spring-service.xml.vm  -->
+    <bean id="systemQueueManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.system.service.impl.SystemQueueManagerImpl" parent="genericManager" autowire="byName">
+            	<property name="daysToKeep" value="${mail.daysToKeep}"/>
+            </bean>
+        </property>
+        <property name="transactionAttributes">
+			<props merge="true">
+				<prop key="fetchQueueListToProcess">PROPAGATION_REQUIRES_NEW,ISOLATION_READ_COMMITTED</prop>
+			</props>
+		</property>
+    </bean>
+    <bean id="systemQueueExecutor" class="com.cartmatic.estore.system.service.impl.SystemQueueExecutor" autowire="byName">
+        <property name="maxExecTimes" value="${mail.maxSendTimes}" />
+        <property name="numOfQueuePerTime" value="${mail.numOfEmailsPerTime}" />
+		<property name="retryIntervalSec" value="${mail.retryIntervalSecs}" />
+		<property name="geoIpCollector" ref="geoIpCollectorIpAdress" />
+    </bean>    
+<!-- end:  Generated for SystemQueue From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for Address From Template: spring-service.xml.vm  -->
+    <bean id="addressManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.customer.service.impl.AddressManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for Address From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for Favorite From Template: spring-service.xml.vm  -->
+    <bean id="favoriteManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.customer.service.impl.FavoriteManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for Favorite From Template: spring-service.xml.vm  -->
+
+<!-- start:  Generated for userRss From Template: spring-service.xml.vm  -->
+    <bean id="userRssManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.customer.service.impl.UserRssManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for userRss From Template: spring-service.xml.vm  -->
+
+<!-- start:  Generated for Feedback From Template: spring-service.xml.vm  -->
+    <bean id="feedbackManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.customer.service.impl.FeedbackManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for Feedback From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for Membership From Template: spring-service.xml.vm  -->
+    <bean id="membershipManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.customer.service.impl.MembershipManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for Membership From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for ShopPoint From Template: spring-service.xml.vm  -->
+    <bean id="shopPointManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.customer.service.impl.ShopPointManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for ShopPoint From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for ShopPointHistory From Template: spring-service.xml.vm  -->
+    <bean id="shopPointHistoryManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.customer.service.impl.ShopPointHistoryManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for ShopPointHistory From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for ValidationSession From Template: spring-service.xml.vm  -->
+    <bean id="validationSessionManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.customer.service.impl.ValidationSessionManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for ValidationSession From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for Wishlist From Template: spring-service.xml.vm  -->
+    <bean id="wishlistManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.customer.service.impl.WishlistManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for Wishlist From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for WishlistItem From Template: spring-service.xml.vm  -->
+    <bean id="wishlistItemManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.customer.service.impl.WishlistItemManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for WishlistItem From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for AppUser From Template: spring-service.xml.vm  -->
+    <bean id="appUserManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.system.service.impl.AppUserManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for AppUser From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for AccessoryGroup From Template: spring-service.xml.vm  -->
+    <bean id="accessoryGroupManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.catalog.service.impl.AccessoryGroupManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for AccessoryGroup From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for Accessory From Template: spring-service.xml.vm  -->
+    <bean id="accessoryManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.catalog.service.impl.AccessoryManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for Accessory From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for Supplier From Template: spring-service.xml.vm  -->
+    <bean id="supplierManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.supplier.service.impl.SupplierManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for Supplier From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for SupplierProduct From Template: spring-service.xml.vm  -->
+    <bean id="supplierProductManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.supplier.service.impl.SupplierProductManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for SupplierProduct From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for PurchaseOrder From Template: spring-service.xml.vm  -->
+    <bean id="purchaseOrderManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.supplier.service.impl.PurchaseOrderManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for PurchaseOrder From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for PurchaseOrderItem From Template: spring-service.xml.vm  -->
+    <bean id="purchaseOrderItemManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.supplier.service.impl.PurchaseOrderItemManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for PurchaseOrderItem From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for AwaitingPurchase From Template: spring-service.xml.vm  -->
+    <bean id="awaitingPurchaseManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.supplier.service.impl.AwaitingPurchaseManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for AwaitingPurchase From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for Currency From Template: spring-service.xml.vm  -->
+    <bean id="currencyManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.system.service.impl.CurrencyManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for Currency From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for TransferRecord From Template: spring-service.xml.vm  -->
+    <bean id="transferRecordManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.order.service.impl.TransferRecordManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for TransferRecord From Template: spring-service.xml.vm  -->
+
+	<bean id="urlBuilderUtil" class="com.cartmatic.estore.catalog.util.UrlBuilderUtil" lazy-init="false" factory-method="getInstance" autowire="byName">
+    </bean>
+<!-- start:  Generated for TbCategoryRefer From Template: spring-service.xml.vm  -->
+    <bean id="tbCategoryReferManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.supplier.service.impl.TbCategoryReferManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for TbCategoryRefer From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for TbCatPropRefer From Template: spring-service.xml.vm  -->
+    <bean id="tbCatPropReferManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.supplier.service.impl.TbCatPropReferManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for TbCatPropRefer From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for TbCatPropValueRefer From Template: spring-service.xml.vm  -->
+    <bean id="tbCatPropValueReferManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.supplier.service.impl.TbCatPropValueReferManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for TbCatPropValueRefer From Template: spring-service.xml.vm  -->
+	<bean id="importSupplierProductManager" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="com.cartmatic.estore.supplier.service.impl.ImportSupplierProductManagerImpl" autowire="byName" />
+		</property>
+	</bean>
+<!-- start:  Generated for Catalog From Template: spring-service.xml.vm  -->
+    <bean id="catalogManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.catalog.service.impl.CatalogManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for Catalog From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for Store From Template: spring-service.xml.vm  -->
+    <bean id="storeManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.system.service.impl.StoreManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for Store From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for AdminInfo From Template: spring-service.xml.vm  -->
+    <bean id="adminInfoManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.system.service.impl.AdminInfoManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for AdminInfo From Template: spring-service.xml.vm  -->
+<!-- start:  Generated for TextMessage From Template: spring-service.xml.vm  -->
+    <bean id="textMessageManager" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.customer.service.impl.TextMessageManagerImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+<!-- end:  Generated for TextMessage From Template: spring-service.xml.vm  -->
+
+    <bean id="awardService" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.activity.service.impl.AwardServiceImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+    
+        <bean id="userAwardService" parent="txProxyTemplate">
+        <property name="target">
+            <bean class="com.cartmatic.estore.activity.service.impl.UserAwardServiceImpl" parent="genericManager" autowire="byName"/>
+        </property>
+    </bean>
+    
+</beans>
